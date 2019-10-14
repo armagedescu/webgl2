@@ -52,9 +52,10 @@ var func = () =>
    var translation = gl.getUniformLocation(shaderProgram, 'translation');
 
    var time_old = 0;
-   let animate = function(time) {
+   let animate = function(time)
+   {
 
-      var dt = time-time_old;
+      var dt = time - time_old;
 	  Tx = 0.5  * Math.cos(dt*0.005);
 	  Ty = 0.5 *  Math.sin(dt*0.005);
 	  Tz = 0.5 *  Math.sin(dt*0.005);

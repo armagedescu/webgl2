@@ -1,7 +1,7 @@
 var func = () =>
-{
+{// https://www.khronos.org/webgl/wiki/Tutorial
    let canvas, gl;
-   canvas = document.getElementById('mycanvas4');
+   canvas = document.getElementById('mycanvas4a');
    gl = canvas.getContext('experimental-webgl');
    //gl = canvas.getContext('webgl');
    gl.clearColor(0.5, 0.5, 0.5, 0.9);              // Clear the canvas
@@ -10,10 +10,9 @@ var func = () =>
    gl.viewport(0, 0, canvas.width, canvas.height); // Set the view port
 
    var vertCode = 'attribute vec4 coordinates; //in js getAttribLocation \n' +
-                  'uniform   vec4 translation; //in js getUniformLocation \n' +
                   'void main(void)\n'+
                   '{\n' +
-                  '   gl_Position = coordinates + translation;\n' +
+                  '   gl_Position = coordinates; //vec4(coordinates,  1.0);\n' +
                   '}';
    var vertShader = gl.createShader(gl.VERTEX_SHADER);  //Create a vertex shader object
    gl.shaderSource(vertShader, vertCode);  //Attach vertex shader source code
@@ -35,12 +34,17 @@ var func = () =>
 
    /* Step2: Define the geometry and store it in buffer objects */
 
-   var vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
-                    0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
+   //var normals = [   2.0,  1.0,  0.8,     2.0,  1.0, 0.8,      2.0,  1.0, 0.8,
+   //                 -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36 ];
+   //var normalBuffer = gl.createBuffer();
+   //gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+   ////gl.bindBuffer(gl.ARRAY_BUFFER, normals);
+   //gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
    // Create a new buffer object
+   var vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
+                    0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
    var vertex_buffer = gl.createBuffer();
-
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -48,11 +52,7 @@ var func = () =>
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);    //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
    /* ==========translation======================================*/
-   var Tx = 0.5, Ty = 0.5, Tz = 0.0; //translation
-   var translation = gl.getUniformLocation(shaderProgram, 'translation');  //uniform   vec4 translation
 
-   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-   gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 

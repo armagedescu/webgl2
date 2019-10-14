@@ -6,7 +6,7 @@ var func = () =>
    //gl = canvas.getContext('webgl');
    gl.clearColor(0.5, 0.5, 0.5, 0.9);              // Clear the canvas
    gl.enable(gl.DEPTH_TEST);                       // Enable the depth test
-   gl.clear (gl.COLOR_BUFFER_BIT);                 // Clear the color buffer bit
+   //gl.clear (gl.COLOR_BUFFER_BIT);                 // Clear the color buffer bit
    gl.viewport(0, 0, canvas.width, canvas.height); // Set the view port
 
    var vertCode = 'attribute vec4 coordinates; //in js getAttribLocation \n' +
@@ -52,7 +52,8 @@ var func = () =>
    var translation = gl.getUniformLocation(shaderProgram, 'translation');
  
    var time_old = 0;
-   let animate = function(time) {
+   let animate = function(time)
+   {
 
       var dt = time-time_old;
 	  Tx = 0.5  * Math.cos(dt*0.005);
