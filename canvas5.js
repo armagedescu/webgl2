@@ -1,7 +1,7 @@
 var func = () =>
 {
    let canvas, gl;
-   canvas = document.getElementById('mycanvas4');
+   canvas = document.getElementById('mycanvas5');
    gl = canvas.getContext('experimental-webgl');
    //gl = canvas.getContext('webgl');
    gl.clearColor(0.5, 0.5, 0.5, 0.9);              // Clear the canvas
@@ -44,17 +44,27 @@ var func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   var coord = gl.getAttribLocation (shaderProgram, "coordinates"); //attribute vec4 coordinates           
+   var coord = gl.getAttribLocation (shaderProgram, "coordinates"); //Get the attribute location            
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);    //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
    /* ==========translation======================================*/
    var Tx = 0.5, Ty = 0.5, Tz = 0.0; //translation
-   var translation = gl.getUniformLocation(shaderProgram, 'translation');  //uniform   vec4 translation
+   var translation = gl.getUniformLocation(shaderProgram, 'translation');
+ 
+   var time_old = 0;
+   let animate = function(time) {
 
-   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-   gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
-   gl.drawArrays(gl.TRIANGLES, 0, 6);
+      var dt = time-time_old;
+	  Tx = 0.5  * Math.cos(dt*0.005);
+	  Ty = 0.5 *  Math.sin(dt*0.005);
+	  Tz = 0.5 *  Math.sin(dt*0.005);
 
+	  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
 
+      window.requestAnimationFrame(animate);
+   }
+   animate(0);
 };
 document.addEventListener('DOMContentLoaded', func);
