@@ -1,9 +1,7 @@
-var context;
-var gl;
 var func = () =>
 {
-   canvas = document.getElementById('mycanvas3');
-   gl = canvas.getContext('experimental-webgl');
+   let canvas = document.getElementById('mycanvas3');
+   let gl = canvas.getContext('experimental-webgl');
    //gl = canvas.getContext('webgl');
    gl.clearColor(0.5, 0.5, 0.5, 0.9);              // Clear the canvas
    gl.enable(gl.DEPTH_TEST);                       // Enable the depth test
