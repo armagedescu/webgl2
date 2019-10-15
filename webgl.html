@@ -11,7 +11,49 @@
          #mycanvas5{border:2px solid cyan;}
          #mycanvas6{border:2px solid magenta;}
       </style>
-	  <!-- link rel="stylesheet" href="w3.css" -->
+
+      <script id="mycanvas3_vertex_shader"   type="x-shader/x-vertex">
+         attribute vec2 coordinates;
+         void main(void)
+         {
+            gl_Position = vec4(coordinates, 0.0, 1.0);
+		    //gl_PointSize = 10.0;\n' +
+         }
+	  </script>
+      <script id="mycanvas3_fragment_shader" type="x-shader/x-fragment">
+	     void main(void)
+         {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+         }
+	  </script>
+      <script id="mycanvas4_vertex_shader"   type="x-shader/x-vertex">
+         attribute vec4 coordinates; //in js getAttribLocation
+         uniform   vec4 translation;
+         void main(void)
+         {
+            gl_Position = coordinates + translation;
+         }
+	  </script>
+      <script id="mycanvas4_fragment_shader" type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+         }
+	  </script>
+      <script id="mycanvas4a_vertex_shader"   type="x-shader/x-vertex">
+         attribute vec4 coordinates;
+         void main(void)
+         {
+            gl_Position = coordinates;
+         }
+	  </script>
+      <script id="mycanvas4a_fragment_shader" type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+         }
+	  </script>
+      <script src="./glwrapper.js"></script>
       <script src="./canvas1.js"></script>
       <script src="./canvas2.js"></script>
       <script src="./canvas3.js"></script>
@@ -22,9 +64,9 @@
 
 </head>
 <body>
-   <canvas id = "mycanvas3" width = "200" height = "200"></canvas><canvas id = "mycanvas4" width = "200" height = "200" ></canvas>
-   <canvas id = "mycanvas4" width = "200" height = "200" ></canvas><br/>
-   <canvas id = "mycanvas5" width = "200" height = "200" ></canvas><canvas id = "mycanvas6" width = "200" height = "200" ></canvas><br/>
-   <canvas id = "mycanvas1" width = "310" height =  "40"></canvas><canvas id = "mycanvas2" width =  "40" height =  "40"></canvas><br/>
+   <canvas id = "mycanvas3"  width = "200" height = "200"></canvas><canvas id = "mycanvas4" width = "200" height = "200" ></canvas>
+   <canvas id = "mycanvas4a" width = "200" height = "200"></canvas><br/>
+   <canvas id = "mycanvas5"  width = "200" height = "200"></canvas><canvas id = "mycanvas6" width = "200" height = "200" ></canvas><br/>
+   <canvas id = "mycanvas1"  width = "310" height =  "40"></canvas><canvas id = "mycanvas2" width =  "40" height =  "40" ></canvas><br/>
 </body>
 </html>
