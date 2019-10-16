@@ -8,6 +8,7 @@
          #mycanvas3{border:2px solid blue;}
          #mycanvas4{border:2px solid yellow;}
          #mycanvas4a{border:2px solid yellow;}
+         #mycanvas4b{border:2px solid yellow;}
          #mycanvas5{border:2px solid cyan;}
          #mycanvas6{border:2px solid magenta;}
       </style>
@@ -44,7 +45,6 @@
 	     attribute vec4 coordinates;
          attribute vec3 inputNormal;
          varying vec4 forFragColor;
-         
          void main(){
              gl_Position = coordinates;
              forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(inputNormal, 0.5);
@@ -52,12 +52,27 @@
          }
 	  </script>
       <script id="mycanvas4a_fragment_shader" type="x-shader/x-fragment">
-         precision mediump float; 
+         precision mediump float;
          varying vec4 forFragColor;
-         
          void main() 
          {
            gl_FragColor = forFragColor;
+         }
+	  </script>
+      <script id="mycanvas4b_vertex_shader"   type="x-shader/x-vertex">
+         attribute vec4 coordinates;
+         varying vec4 forFragColor;
+         void main(void)
+         {
+            gl_Position = coordinates;
+         }
+	  </script>
+      <script id="mycanvas4b_fragment_shader" type="x-shader/x-fragment">
+	     precision mediump float;
+	     varying vec4 forFragColor;
+         void main(void)
+         {
+            gl_FragColor = forFragColor; //vec4(0.0, 1.0, 0.0, 1.0);
          }
 	  </script>
       <script src="./glwrapper.js"></script>
@@ -66,13 +81,14 @@
       <script src="./canvas3.js"></script>
       <script src="./canvas4.js"></script>
       <script src="./canvas4a.js"></script>
+      <script src="./canvas4b.js"></script>
       <script src="./canvas5.js"></script>
       <script src="./canvas6.js"></script>
 
 </head>
 <body>
-   <canvas id = "mycanvas3"  width = "200" height = "200"></canvas><canvas id = "mycanvas4" width = "200" height = "200" ></canvas>
-   <canvas id = "mycanvas4a" width = "200" height = "200"></canvas><br/>
+   <canvas id = "mycanvas3"  width = "200" height = "200"></canvas><canvas id = "mycanvas4"  width = "200" height = "200" ></canvas>
+   <canvas id = "mycanvas4a" width = "200" height = "200"></canvas><canvas id = "mycanvas4b" width = "200" height = "200"></canvas><br/>
    <canvas id = "mycanvas5"  width = "200" height = "200"></canvas><canvas id = "mycanvas6" width = "200" height = "200" ></canvas><br/>
    <canvas id = "mycanvas1"  width = "310" height =  "40"></canvas><canvas id = "mycanvas2" width =  "40" height =  "40" ></canvas><br/>
 </body>
