@@ -23,8 +23,12 @@ var func = () =>
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
-   var normals = [   -1,  -1,  -1,    -1,  -1,  -1,    -1,  -1,  -1,               -2.0,  -1.0, -0.8,      2.0,  1.0, 0.8,
-                    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36 ];
+   var normals = [
+                    //1,  1,  1,    1,  1,  1,    1,  1,  1,               
+                    1,  1,  1,    -1,  -1,  1,    1,  1,  1,               
+					-2.0,  -1.0, -0.8,      2.0,  1.0, 0.8,
+                    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36 
+					 ];
    var normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    ////gl.bindBuffer(gl.ARRAY_BUFFER, normals);

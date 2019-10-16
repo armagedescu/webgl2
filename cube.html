@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>WebGL Example: Transforming normals</title>
+    <script language="JavaScript" type="text/javascript" src="./shapes.js"></script>
+    <script language="JavaScript" type="text/javascript" src="./renderer.js"></script>
+    <script language="JavaScript" type="text/javascript">
+      var renderer = 0;
+
+      function run() {
+        var vertSrc = document.getElementById("code_vert").value;
+        var fracSrc = document.getElementById("code_frag").value;
+
+        renderer = new Renderer("myWebGLCanvas", vertSrc, fracSrc);
+        renderer.init();
+        renderer.display();
+      }
+
+      function updateRenderer() {
+        var vertSrc = document.getElementById("code_vert").value;
+        var fragSrc = document.getElementById("code_frag").value;
+
+        renderer.updateShader(vertSrc, fragSrc);
+        renderer.display();
+      }
+
+      var interval = setInterval(timerFunc, 40);
+
+      function timerFunc() {
+        var offset = 1.0;
+        renderer.t += offset;
+        renderer.display();
+      }
+
+      function modeChanged() {
+        var d = document.getElementById("select_id").value;
+        renderer.modeVal = d;
+      }
+
+      function modelChanged() {
+        var d = document.getElementById("select_id2").value;
+        renderer.updateModel(d);
+        renderer.display();
+      }
+
+    </script>
+
+  </head>
+  <body onload="run();">
+    <h1>WebGL Example: Transforming normals</h1>
+    <div style="max-width: 550px;">
+      <p>
+        The JavaScript source of this example is: <a href="./renderer.js">renderer.js</a><br>
+        If you do not see an output below, your browser does not support <a href="http://www.khronos.org/webgl/">WebGL</a>. The WebGL shader code is slightly different from the GLSL code (version 1.4 ) that is used in the <a href="http://www.uni-marburg.de/fb12/grafikmultimedia/lehre/grafik1">lecture</a>.
+        This is because WebGL shaders must conform to the OpenGL ES Shading Language (Version 1.0) which can be found <a href="http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf">here</a>.
+      </p>
+    </div>
+    <canvas id="myWebGLCanvas" width="640" height="480">Your browser does not support the canvas element</canvas>
+
+    <div style="max-width: 550px;">Edit the shader code below and click on the button to see the result:
+      <button type="button" onclick="updateRenderer()">Reload Shader Code</button></div>
+
+    <br>
+    <select onchange="modeChanged()" id="select_id">
+      <option value="1">mode = 1</option>
+      <option value="2">mode = 2</option>
+      <option value="3">mode = 3</option>
+      <option value="4">mode = 4</option>
+      <option value="5">mode = 5</option>
+    </select> 
+
+    <select onchange="modelChanged()" id="select_id2">
+      <option value="./cube.txt">Cube</option>
+      <option value="./sphere.txt">Sphere</option>
+      <option value="./hose.txt">Hose</option>
+      <option value="./knot.txt">Knot</option>
+      <option value="./teapot.txt">Teapot</option>
+    </select> 
+
+    <table border="0" class="maintable" cellpadding="3px" cellspacing="3px">
+      <tr style="vertical-align: top;">
+        <td>Vertex shader: <br><textarea cols="40" rows="10" class="code_input_vert" id="code_vert">
+attribute vec3 inputPosition;
+attribute vec2 inputTexCoord;
+attribute vec3 inputNormal;
+
+uniform mat4 projection;
+uniform mat4 modelview;
+uniform mat4 normalMat;
+uniform int mode;
+
+varying vec4 forFragColor;
+
+void main(){
+    gl_Position = projection * modelview * vec4(inputPosition, 1.0);
+
+    vec4 normal = normalMat * vec4(inputNormal, 0.0);
+    forFragColor = vec4(1.0,0.0,0.0,1.0);
+    if(mode == 1) forFragColor = normal;
+    if(mode == 2) forFragColor = vec4(inputNormal, 1.0);
+    if(mode == 3) forFragColor = gl_Position;
+    if(mode == 4) forFragColor = vec4(inputPosition, 1.0);
+    if(mode == 5) forFragColor = vec4(inputTexCoord, 0.0, 1.0);
+}
+          </textarea>
+          <p id="code_vert_error" style="width: 200px;"></p>
+        </td>
+
+        <td>Fragment shader: <br><textarea cols="40" rows="10" class="code_input" id="code_frag">
+precision mediump float; 
+varying vec4 forFragColor;
+
+void main() 
+{
+  gl_FragColor = forFragColor;
+}
+          </textarea>
+          <p id="code_frag_error" style="width: 200px;"></p>
+        </td>
+      </tr>
+    </table>
+    <div style="max-width: 550px;">
+      <p>
+        Note: The interface on this website is kept very simple. If you are looking for a more advanced online GLSL editor that allows uploading own 3D meshes and can handle custom
+        uniform variables, the <a href="https://www.gsn-lib.org/docs/nodes/ShaderPluginNode.php">GSN Composer</a> might be of interest.<br>
+        Transforming normals: <a href="https://www.gsn-lib.org/index.html#projectName=public3dshader&graphName=NormalTrans">Open example in the GSN Composer</a>
+      </p>
+    </div>
+
+  </body>
+</html>

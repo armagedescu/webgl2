@@ -37,42 +37,19 @@
       <script id="mycanvas4_fragment_shader" type="x-shader/x-fragment">
          void main(void)
          {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
          }
 	  </script>
       <script id="mycanvas4a_vertex_shader"   type="x-shader/x-vertex">
 	     attribute vec4 coordinates;
-	     uniform   vec4 translation;
-	     //attribute vec3 inputPosition;
-         //attribute vec2 inputTexCoord;
          attribute vec3 inputNormal;
-         
-         //uniform mat4 projection;
-         //uniform mat4 modelview;
-         uniform mat4 normalMat;
-         //uniform int mode;
-         
          varying vec4 forFragColor;
          
          void main(){
-             //gl_Position = projection * modelview * vec4(inputPosition, 1.0);
-             gl_Position = coordinates + translation;
-         
-             //vec4 normal = normalMat * vec4(inputNormal, 0.0);
-             //forFragColor = vec4(1.0,0.0,0.0,1.0);
-             //forFragColor = normalMat * vec4(inputNormal, 0.0);
-             forFragColor = vec4(inputNormal, 0.5);
-             //if(mode == 1) forFragColor = normal;
-             //if(mode == 2) forFragColor = vec4(inputNormal, 1.0);
-             //if(mode == 3) forFragColor = gl_Position;
-             //if(mode == 4) forFragColor = vec4(inputPosition, 1.0);
-             //if(mode == 5) forFragColor = vec4(inputTexCoord, 0.0, 1.0);
+             gl_Position = coordinates;
+             forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(inputNormal, 0.5);
+             //forFragColor = vec4(inputNormal, 0.5);
          }
-         //attribute vec4 coordinates;
-         //void main(void)
-         //{
-         //   gl_Position = coordinates;
-         //}
 	  </script>
       <script id="mycanvas4a_fragment_shader" type="x-shader/x-fragment">
          precision mediump float; 
@@ -82,10 +59,6 @@
          {
            gl_FragColor = forFragColor;
          }
-         //void main(void)
-         //{
-         //   gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
-         //}
 	  </script>
       <script src="./glwrapper.js"></script>
       <script src="./canvas1.js"></script>
