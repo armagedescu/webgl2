@@ -1,7 +1,7 @@
 var func = () =>
 {
    let canvas, gl;
-   canvas = document.getElementById('mycanvas3');
+   canvas = document.getElementById('draw');
    let prog = buildGlProgram(canvas);
    gl = prog.gl;
 

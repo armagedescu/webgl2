@@ -3,17 +3,35 @@
    <title>webgl test</title>
 
       <style>
-         #mycanvas1{border:1px solid red;}
-         #mycanvas2{border:1px solid green;}
-         #mycanvas3{border:2px solid blue;}
-         #mycanvas4{border:2px solid yellow;}
-         #mycanvas4a{border:2px solid yellow;}
-         #mycanvas4b{border:2px solid yellow;}
-         #mycanvas5{border:2px solid cyan;}
-         #mycanvas6{border:2px solid magenta;}
+         canvas.cyan{border:2px solid cyan;}
+         canvas.magenta{border:2px solid magenta;}
+		 canvas.blue{border:1px solid blue;}
+		 canvas.red{border:1px solid red;}
+         canvas.yellow{border:2px solid yellow;}
+		 canvas.green{border:1px solid green;}
       </style>
 
-      <script id="mycanvas3_vertex_shader"   type="x-shader/x-vertex">
+      <script id="translate_vertex_shader"   type="x-shader/x-vertex">
+         attribute vec4 coordinates; //in js getAttribLocation
+         uniform   vec4 translation; //<-- uniform = global, pass to frag shader
+         void main(void)
+         {
+            gl_Position = coordinates + translation;
+         }
+	  </script>
+      <script id="translate_fragment_shader" type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+         }
+	  </script>
+      <script src="./glwrapper.js"></script>
+      
+</head>
+<body>
+   <canvas id = "draw"  width = "200" height = "200" class="blue">
+      <script src="./draw.js"></script>
+      <script type="x-shader/x-vertex">
          attribute vec2 coordinates;
          void main(void)
          {
@@ -21,75 +39,92 @@
 		    //gl_PointSize = 10.0;\n' +
          }
 	  </script>
-      <script id="mycanvas3_fragment_shader" type="x-shader/x-fragment">
+      <script type="x-shader/x-fragment">
 	     void main(void)
          {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
          }
 	  </script>
-      <script id="mycanvas4_vertex_shader"   type="x-shader/x-vertex">
-         attribute vec4 coordinates; //in js getAttribLocation
-         uniform   vec4 translation;
-         void main(void)
-         {
-            gl_Position = coordinates + translation;
-         }
-	  </script>
-      <script id="mycanvas4_fragment_shader" type="x-shader/x-fragment">
-         void main(void)
-         {
-            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-         }
-	  </script>
-      <script id="mycanvas4a_vertex_shader"   type="x-shader/x-vertex">
-	     attribute vec4 coordinates;
-         attribute vec3 inputNormal;
-         varying vec4 forFragColor;
-         void main(){
+   </canvas>
+   <canvas id = "translate"  width = "200" height = "200" class="yellow" ><script src="./translate.js"></script></canvas>
+   <canvas id = "normals" width = "200" height = "200"  class="yellow">
+      <script src="./normals.js"></script>
+      <script type="x-shader/x-vertex">
+   	      attribute vec4 coordinates;
+          attribute vec3 inputNormal;
+          varying vec4 forFragColor;
+          void main()
+          {
              gl_Position = coordinates;
+             //multiply normal with green color
              forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(inputNormal, 0.5);
              //forFragColor = vec4(inputNormal, 0.5);
-         }
-	  </script>
-      <script id="mycanvas4a_fragment_shader" type="x-shader/x-fragment">
+          }
+   	  </script>
+      <script type="x-shader/x-fragment">
          precision mediump float;
          varying vec4 forFragColor;
          void main() 
          {
            gl_FragColor = forFragColor;
          }
-	  </script>
-      <script id="mycanvas4b_vertex_shader"   type="x-shader/x-vertex">
+   	  </script>
+   </canvas>
+   <canvas id = "usecolors" width = "200" height = "200"  class="yellow">
+       <script src="./usecolors.js"></script>
+       <script type="x-shader/x-vertex">
          attribute vec4 coordinates;
-         varying vec4 forFragColor;
+         attribute vec4  forFragColor;
+         varying lowp vec4 fragColor; //<-- varying = pass to frag shader
          void main(void)
          {
             gl_Position = coordinates;
+            fragColor = forFragColor;
          }
 	  </script>
-      <script id="mycanvas4b_fragment_shader" type="x-shader/x-fragment">
-	     precision mediump float;
-	     varying vec4 forFragColor;
+      <script type="x-shader/x-fragment">
+	     //precision mediump float; varying vec4 fragColor; <-- without lowp??
+	     varying lowp vec4 fragColor;
          void main(void)
          {
-            gl_FragColor = forFragColor; //vec4(0.0, 1.0, 0.0, 1.0);
+            gl_FragColor = fragColor; //vec4(0.0, 1.0, 0.0, 1.0);
          }
 	  </script>
-      <script src="./glwrapper.js"></script>
-      <script src="./canvas1.js"></script>
-      <script src="./canvas2.js"></script>
-      <script src="./canvas3.js"></script>
-      <script src="./canvas4.js"></script>
-      <script src="./canvas4a.js"></script>
-      <script src="./canvas4b.js"></script>
-      <script src="./canvas5.js"></script>
-      <script src="./canvas6.js"></script>
-
-</head>
-<body>
-   <canvas id = "mycanvas3"  width = "200" height = "200"></canvas><canvas id = "mycanvas4"  width = "200" height = "200" ></canvas>
-   <canvas id = "mycanvas4a" width = "200" height = "200"></canvas><canvas id = "mycanvas4b" width = "200" height = "200"></canvas><br/>
-   <canvas id = "mycanvas5"  width = "200" height = "200"></canvas><canvas id = "mycanvas6" width = "200" height = "200" ></canvas><br/>
-   <canvas id = "mycanvas1"  width = "310" height =  "40"></canvas><canvas id = "mycanvas2" width =  "40" height =  "40" ></canvas><br/>
+   </canvas><br/>
+   <canvas id = "animate"  width = "200" height = "200" class="cyan">
+      <script src="./animate.js"></script>
+      <script type="x-shader/x-vertex">
+          attribute vec4 coordinates;
+          uniform   vec4 translation;
+          void main(void)
+          {
+             gl_Position = coordinates + translation;
+          }
+	  </script>
+      <script type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+         }
+	  </script>
+   </canvas>
+   <canvas id = "animate second instance" width = "200" height = "200" class="magenta">
+       <script src="./animate2.js"></script>
+       <script type="x-shader/x-vertex">
+          attribute vec4 coordinates;
+          uniform   vec4 translation;
+          void main(void)
+          {
+             gl_Position = coordinates + translation;
+          }
+	  </script>
+      <script type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+         }
+	  </script></canvas><br/>
+   <canvas id = "mycanvas1"  width = "310" height =  "40" class="red"><script src="./2d.js"></script></canvas>
+   <canvas id = "mycanvas2" width =  "40" height =  "40" class="green"><script src="./simple.js"></script></canvas><br/>
 </body>
 </html>

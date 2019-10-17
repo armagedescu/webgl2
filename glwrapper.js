@@ -10,13 +10,14 @@ function buildGlProgram(canvasVar)
    gl.viewport(0, 0, canvas.width, canvas.height);
    
    let canvas_id = canvas.id;
+   let codes = getGLShaderCodes (canvas);
 
-   let vertCode   = document.getElementById(canvas.getAttribute("id") + "_vertex_shader").innerText;
+   let vertCode   = codes.vertCode;
    let vertShader = gl.createShader(gl.VERTEX_SHADER);
    gl.shaderSource(vertShader, vertCode);
    gl.compileShader(vertShader);
 
-   let fragCode   = document.getElementById(canvas.getAttribute("id") + "_fragment_shader").innerText;
+   let fragCode   = codes.fragCode;
    let fragShader = gl.createShader(gl.FRAGMENT_SHADER);
    gl.shaderSource(fragShader, fragCode);
    gl.compileShader(fragShader);
@@ -28,4 +29,32 @@ function buildGlProgram(canvasVar)
    gl.useProgram   (shaderProgram);
 
    return {canvas:canvas,gl:gl, shaderProgram:shaderProgram};
+}
+function getGLShaderCodes (canvas)
+{
+	//canvas.
+	let vertCode  = "";
+	let fragCode  = "";
+	let vertElement = null;
+	let fragElement = null;
+	let els = canvas.getElementsByTagName("script");
+
+	for (let i = 0; i < els.length; i++)
+	{
+		let el = els.item(i);
+		switch ( el.getAttribute("type") )
+        {
+        case  "x-shader/x-vertex":
+			vertElement = el;
+			break;
+        case "x-shader/x-fragment":
+			fragElement = el;
+			break;
+        }
+	}
+	if(vertElement == null) vertElement = document.getElementById(canvas.getAttribute("id") + "_vertex_shader");
+	if(fragElement == null) fragElement = document.getElementById(canvas.getAttribute("id") + "_fragment_shader");
+	if(vertElement) vertCode = vertElement.innerText;
+	if(fragElement) fragCode = fragElement.innerText;
+	return {vertCode:vertCode, fragCode:fragCode};
 }
