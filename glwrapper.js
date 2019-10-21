@@ -1,3 +1,4 @@
+const RADGRAD = Math.PI / 180;
 function buildGlProgram(canvasVar)
 {
    let canvas = null;

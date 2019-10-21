@@ -47,6 +47,29 @@
 	  </script>
    </canvas>
    <canvas id = "translate"  width = "200" height = "200" class="yellow" ><script src="./translate.js"></script></canvas>
+   <canvas id = "cone" width = "200" height = "200"  class="yellow">
+      <script src="./cone.js"></script>
+      <script type="x-shader/x-vertex">
+   	      attribute vec4 coordinates;
+          attribute vec3 inputNormal;
+          varying vec4 forFragColor;
+          void main()
+          {
+             gl_Position = coordinates;
+             //multiply normal with green color
+             forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(inputNormal, 1.0);//0.5);
+             //forFragColor = vec4(inputNormal, 0.5);
+          }
+   	  </script>
+      <script type="x-shader/x-fragment">
+         precision mediump float;
+         varying vec4 forFragColor;
+         void main() 
+         {
+           gl_FragColor = forFragColor;
+         }
+   	  </script>
+   </canvas>
    <canvas id = "normals" width = "200" height = "200"  class="yellow">
       <script src="./normals.js"></script>
       <script type="x-shader/x-vertex">
@@ -124,7 +147,7 @@
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
          }
 	  </script></canvas><br/>
-   <canvas id = "mycanvas1"  width = "310" height =  "40" class="red"><script src="./2d.js"></script></canvas>
-   <canvas id = "mycanvas2" width =  "40" height =  "40" class="green"><script src="./simple.js"></script></canvas><br/>
+   <canvas id = "mycanvas1"  width = "310" height =  "40"   class = "red"><script src="./2d.js"></script></canvas>
+   <canvas id = "mycanvas2"  width =  "40" height =  "40" class = "green"><script src="./simple.js"></script></canvas><br/>
 </body>
 </html>
