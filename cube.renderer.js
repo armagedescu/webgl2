@@ -137,7 +137,7 @@ function Renderer(canvasName, vertSrc, fragSrc)
     var modelviewInv = new Float32Array(16);
     var normalmatrix = new Float32Array(16);
     mat4Invert(modelview, modelviewInv);
-    mat4Transpose(modelviewInv, normalmatrix);
+    mat4Transpose(modelviewInv, normalmatrix); //<-- "normalMat"
     
     gl.useProgram(progID);
     

@@ -1,0 +1,1 @@
+const RADGRAD = Math.PI / 180;
