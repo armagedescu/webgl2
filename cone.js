@@ -1,18 +1,13 @@
 {
 let canvas = document.currentScript.parentElement;
 let func = () =>
-{// https://www.khronos.org/webgl/wiki/Tutorial
- //https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderNormalTrans/ShaderNormalTrans.html
-   let gl;
-
+{
    let prog = buildGlProgram(canvas);
-   gl = prog.gl;
+   let gl   = prog.gl;
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
-
-   /* Step2: Define the geometry and store it in buffer objects */
 
    let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
 
@@ -20,9 +15,9 @@ let func = () =>
    let indices  = [0];
    for (let i = 0, ix = 3,iy = 4,iz = 5; i <= ns; i++, ix += 3,iy += 3,iz += 3)
    {
-	   verts   [ix]    =   dr * Math.cos(2 * Math.PI * i / ns);
-	   verts   [iy]    =   dr * Math.sin(2 * Math.PI * i / ns);
-	   verts   [iz]    =   -1;//nh * dnh;
+       verts   [ix]    =   dr * Math.cos(2 * Math.PI * i / ns);
+       verts   [iy]    =   dr * Math.sin(2 * Math.PI * i / ns);
+       verts   [iz]    =   -1;//<-- tip of the cone
    }
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -37,10 +32,10 @@ let func = () =>
 
    for (let i = 0, ix = 3,iy = 4,iz = 5; i <= ns; i++, ix += 3,iy += 3,iz += 3)
    {
-	   norms[ix] = 0;//verts[ix];
-	   norms[iy] = 1;//verts[iy];
-	   norms[iz] = 1;//verts[iz];
-	   //indices [i + 1] =  i + 1;
+       norms[ix] = 0;//verts[ix];
+       norms[iy] = 1;//verts[iy];
+       norms[iz] = 1;//verts[iz];
+       //indices [i + 1] =  i + 1;
    }
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);

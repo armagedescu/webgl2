@@ -26,10 +26,8 @@ let func = () =>
    gl.enableVertexAttribArray (coord);
 
    let normals = [
-                    //1,  1,  1,    1,  1,  1,    1,  1,  1,               
-                       1,    1,     1,      -1,   -1,    1,    1,  1,  1,               
-					-2.0, -1.0,  -0.8,     2.0,  1.0,  0.8,
-                    -1.0, -0.8,  0.36,    -1.0, -0.8, 0.36,    -1.0, -0.8, 0.36 
+                       1.0,    1.0,    -1.0,       1.0,    1.0,   -1.0,    1.0,  1.0, -1.0,
+                       1.0,    1.0,     1.0,       1.0,    1.0,    1.0,    1.0,  1.0,  1.0
 				 ];
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);

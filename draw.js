@@ -1,14 +1,12 @@
 var func = () =>
 {
-   let canvas, gl;
-   canvas = document.getElementById('draw');
+   let canvas = document.getElementById('draw');
    let prog = buildGlProgram(canvas);
-   gl = prog.gl;
+   let gl = prog.gl;
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
-   //gl.viewport(0, 0, canvas.width, canvas.height);
 
    shaderProgram = prog.shaderProgram;
 
@@ -21,7 +19,7 @@ var func = () =>
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
    var coord = gl.getAttribLocation (shaderProgram, "coordinates");
-   gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0);    //point an attribute to the currently bound VBO
+   gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0); //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
 
    gl.drawArrays(gl.TRIANGLES, 0, 6);

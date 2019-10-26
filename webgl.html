@@ -5,40 +5,18 @@
       <style>
          canvas.cyan{border:2px solid cyan;}
          canvas.magenta{border:2px solid magenta;}
-		 canvas.blue{border:1px solid blue;}
-		 canvas.red{border:1px solid red;}
+         canvas.blue{border:1px solid blue;}
+         canvas.red{border:1px solid red;}
          canvas.yellow{border:2px solid yellow;}
-		 canvas.green{border:1px solid green;}
+         canvas.green{border:1px solid green;}
+         div.inline { display: inline; clear:left;}
       </style>
 
-      <script id="translate_vertex_shader"   type="x-shader/x-vertex">
-         attribute vec4 coordinates; //in js getAttribLocation
-         uniform   vec4 translation; //<-- uniform = global, pass to frag shader
-         void main(void)
-         {
-            gl_Position = coordinates + translation;
-         }
-	  </script>
-      <script id="translate_fragment_shader" type="x-shader/x-fragment">
-         void main(void)
-         {
-            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-         }
-	  </script>
       <script src="./glwrapper.js"></script>
       <script src="./glmath.js"></script>
       
 </head>
 <body>
-   <a href="https://www.tutorialspoint.com/webgl/index.htm">Tutorials Point</a><br/>
-   <a href="https://webglfundamentals.org/webgl/lessons/webgl-3d-lighting-directional.html">lighting</a><br/>
-   <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)">componend wise multiplication</a><br/>
-   <a href="https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations">Vector And Matrix Operations</a><br/>
-   <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.1/html/cross.xhtml">cross prod</a><br/>
-   <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.1/html/dot.xhtml">Dot prod</a><br/>
-   <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/transpose.xhtml">Transpose</a><br/>
-   <a href="https://community.khronos.org/t/glsl-1-5-inverse-and-transpose-functions/66755">Transpose and Inverse</a><br/>
-   <a href="https://webglfundamentals.org/webgl/lessons/webgl-text-canvas2d.html">Text And 3D</a><br/>
    <canvas id = "draw"  width = "200" height = "200" class="blue">
       <script src="./draw.js"></script>
       <script type="x-shader/x-vertex">
@@ -46,21 +24,36 @@
          void main(void)
          {
             gl_Position = vec4(coordinates, 0.0, 1.0);
-		    //gl_PointSize = 10.0;\n' +
+            //gl_PointSize = 10.0;\n' +
          }
-	  </script>
+      </script>
       <script type="x-shader/x-fragment">
-	     void main(void)
+         void main(void)
          {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
          }
-	  </script>
+      </script>
    </canvas>
-   <canvas id = "translate"  width = "200" height = "200" class="yellow" ><script src="./translate.js"></script></canvas>
+   <canvas id = "translate"  width = "200" height = "200" class="yellow" >
+      <script src="./translate.js"></script>
+      <script type="x-shader/x-vertex">
+         attribute vec4 coordinates;
+         void main(void)
+         {
+            gl_Position = coordinates + vec4(0.5, 0.5, 0.0, 0.0);
+         }
+      </script>
+      <script type="x-shader/x-fragment">
+         void main(void)
+         {
+            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+         }
+      </script>
+   </canvas>
    <canvas id = "cone" width = "200" height = "200"  class="yellow">
       <script src="./cone.js"></script>
       <script type="x-shader/x-vertex">
-   	      attribute vec4 coordinates;
+          attribute vec4 coordinates;
           attribute vec3 inputNormal;
           varying vec4 forFragColor;
           void main()
@@ -68,7 +61,7 @@
              gl_Position = coordinates;
              forFragColor = vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(inputNormal, 0.9);
           }
-   	  </script>
+      </script>
       <script type="x-shader/x-fragment">
          precision mediump float;
          varying vec4 forFragColor;
@@ -76,57 +69,85 @@
          {
            gl_FragColor = forFragColor;
          }
-   	  </script>
+      </script>
+   </canvas><br/>
+   <canvas id = "cone1animate" width = "200" height = "200"  class="yellow">
+      <script src="./cone1animate.js"></script>
+      <script type="x-shader/x-vertex">
+          attribute vec4 coordinates;
+          attribute vec3 inputNormal;
+          varying vec4 forFragColor;
+          uniform vec2  lightDirection; // Direction -> right up forward
+          const vec3  greenColor = vec3(0.0,  1.0,  0.0); // RGB of green
+          void main()
+          {
+             gl_Position = coordinates;
+             float prod   =  dot ( -1.0 * normalize(vec3(lightDirection, -1.0)),   normalize(inputNormal));
+             forFragColor = vec4 (greenColor * prod,  1.0);
+          }
+         </script>
+      <script type="x-shader/x-fragment">
+         //precision lowp float;
+         //precision highp float;
+         precision mediump float;
+         varying vec4 forFragColor;
+         void main()
+         {
+           gl_FragColor = forFragColor;
+         }
+         </script>
    </canvas>
    <canvas id = "cone1" width = "200" height = "200"  class="yellow">
       <script src="./cone1.js"></script>
       <script type="x-shader/x-vertex">
-   	      attribute vec4 coordinates;
+          attribute vec4 coordinates;
           attribute vec3 inputNormal;
-          varying vec4 forFragColor;
-		  //vec3 amp(vec3 a, float x){return vec3(a.x * x, a.y * x, a.z * z);}
+          varying mediump vec4 forFragColor;
+          const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
+          const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
           void main()
           {
              gl_Position = coordinates;
-             //multiply normal with green color
-             //forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(normalize(inputNormal), 1.0);//0.5);
-             forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(normalize(inputNormal), 0.8);//0.5);
-             //forFragColor = vec4(0.0, 1.0, 0.0, 1.0);
-             //forFragColor = vec4(inputNormal, 0.5);
+             //find the cos of angle between plane normal and light direction
+             float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(inputNormal));
+			 forFragColor = vec4 (greenColor * prod,  1.0);
           }
-   	  </script>
+         </script>
       <script type="x-shader/x-fragment">
-         precision mediump float;
-         varying vec4 forFragColor;
+         //precision mediump float;
+         varying mediump vec4 forFragColor;
          void main() 
          {
            gl_FragColor = forFragColor;
          }
-   	  </script>
+         </script>
    </canvas>
    <canvas id = "normals" width = "200" height = "200"  class="yellow">
       <script src="./normals.js"></script>
       <script type="x-shader/x-vertex">
-   	      attribute vec4 coordinates;
+          attribute vec4 coordinates;
           attribute vec3 inputNormal;
-          varying vec4 forFragColor;
+          varying vec4 forFragColor; //used in fragment shader
+          const vec3  lightDirection = vec3(1.0,  1.0, -1.0); // Direction -> right up forward
+          const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
           void main()
           {
              gl_Position = coordinates;
-             //multiply normal with green color
-             forFragColor = vec4(0.0, 1.0, 0.0, 1.0) * vec4(inputNormal, 0.5);
-             //forFragColor = vec4(inputNormal, 0.5);
+             //find the cos of angle between plane normal and light direction
+             float prod   =  dot (normalize(lightDirection),   normalize(inputNormal));
+             forFragColor = vec4 (greenColor * prod,  1.0);
           }
-   	  </script>
+      </script>
       <script type="x-shader/x-fragment">
          precision mediump float;
-         varying vec4 forFragColor;
+         varying vec4 forFragColor; //calculated in vertex shader
          void main() 
          {
            gl_FragColor = forFragColor;
          }
-   	  </script>
+      </script>
    </canvas>
+
    <canvas id = "usecolors" width = "200" height = "200"  class="yellow">
        <script src="./usecolors.js"></script>
        <script type="x-shader/x-vertex">
@@ -138,15 +159,15 @@
             gl_Position = coordinates;
             fragColor = forFragColor;
          }
-	  </script>
+      </script>
       <script type="x-shader/x-fragment">
-	     //precision mediump float; varying vec4 fragColor; <-- without lowp??
-	     varying lowp vec4 fragColor;
+         //precision mediump float; varying vec4 fragColor; <-- without lowp??
+         varying lowp vec4 fragColor;
          void main(void)
          {
-            gl_FragColor = fragColor; //vec4(0.0, 1.0, 0.0, 1.0);
+            gl_FragColor = fragColor;
          }
-	  </script>
+      </script>
    </canvas><br/>
    <canvas id = "animate"  width = "200" height = "200" class="cyan">
       <script src="./animate.js"></script>
@@ -157,31 +178,48 @@
           {
              gl_Position = coordinates + translation;
           }
-	  </script>
+      </script>
       <script type="x-shader/x-fragment">
          void main(void)
          {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
          }
-	  </script>
+      </script>
    </canvas>
    <canvas id = "animate second instance" width = "200" height = "200" class="magenta">
        <script src="./animate2.js"></script>
        <script type="x-shader/x-vertex">
           attribute vec4 coordinates;
-          uniform   vec4 translation;
+          uniform   vec3 translation;
+          //vec3 amp(vec3 a, float x){return vec3(a.x * x, a.y * x, a.z * x);}
+		  //float xxx(){return 1.0;}
+		  //float xxx(float yyy){return yyy;}
           void main(void)
           {
-             gl_Position = coordinates + translation;
+             gl_Position = coordinates + vec4(translation, 0.0);
           }
-	  </script>
+      </script>
       <script type="x-shader/x-fragment">
          void main(void)
          {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
          }
-	  </script></canvas><br/>
+      </script></canvas><br/>
    <canvas id = "mycanvas1"  width = "310" height =  "40"   class = "red"><script src="./2d.js"></script></canvas>
    <canvas id = "mycanvas2"  width =  "40" height =  "40" class = "green"><script src="./simple.js"></script></canvas><br/>
+   Tutorials:<br/>
+   <a href="https://www.tutorialspoint.com/webgl/index.htm">Tutorials Point</a><br/>
+   <a href="https://webglfundamentals.org/webgl/lessons/webgl-3d-lighting-directional.html">lighting</a><br/>
+   <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)">componend wise multiplication</a><br/>
+   <a href="https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations">Vector And Matrix Operations</a><br/>
+   <a href="https://en.wikibooks.org/wiki/GLSL_Programming/Applying_Matrix_Transformations">Applying Matrix Transformations</a><br/>
+   <a href="https://www.khronos.org/webgl/wiki/Tutorial">Kronos tutorial</a><br/>
+   <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.1/html/cross.xhtml">cross prod</a><br/>
+   <a href="https://www.khronos.org/registry/OpenGL-Refpages/es3.1/html/dot.xhtml">Dot prod</a><br/>
+   <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/transpose.xhtml">Transpose</a><br/>
+   <a href="https://community.khronos.org/t/glsl-1-5-inverse-and-transpose-functions/66755">Transpose and Inverse</a><br/>
+   <a href="https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderNormalTrans/ShaderNormalTrans.html">Maths of normals</a><br/>
+   <a href="https://webglfundamentals.org/webgl/lessons/webgl-text-canvas2d.html">Text And 3D</a><br/>
+
 </body>
 </html>
