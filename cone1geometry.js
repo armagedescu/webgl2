@@ -9,32 +9,36 @@ let func = () =>
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let nh = 1, ns = 20, dnh = 0.2, dr = 0.6;
+   let nh = 1, ns = 20, dnh = 0.2, dr = 1.0;
 
    let verts    = [];
    let norms    = [];
    let tgs = 0;
    for (let i = 0, ix = 0,iy = 1,iz = 2; i <= ns; i++, ix += 9,iy += 9,iz += 9)
    {
-       verts[ix] = 0.0;
-       verts[iy] = 0.0;
-       verts[iz] = 0.7;
-       verts[ix + 3] =  dr * Math.cos(2 * Math.PI * i / ns);
-       verts[iy + 3] =  dr * Math.sin(2 * Math.PI * i / ns);
-       verts[iz + 3] =  0.0;
-       verts[ix + 6] =  dr * Math.cos(2 * Math.PI * (i+1) / ns);
-       verts[iy + 6] =  dr * Math.sin(2 * Math.PI * (i+1) / ns);
-       verts[iz + 6] =  0.0;
-
-       norms[ix]     =  verts[ix + 3];
-       norms[iy]     =  verts[iy + 3];
-       norms[iz]     =  0.7;
-       norms[ix + 3] =  verts[ix + 3];
-       norms[iy + 3] =  verts[iy + 3];
-       norms[iz + 3] =  0.7;
-       norms[ix + 6] =  verts[ix + 3];
-       norms[iy + 6] =  verts[iy + 3];
-       norms[iz + 6] =  0.7;
+	   let p1 = {x:0.0,                                     y:0.0,                                     z:1.0}; //<--points in direction of us
+	   let p2 = {x:dr * Math.cos(2 * Math.PI * i / ns),     y:dr * Math.sin(2 * Math.PI * i / ns),     z:0.0};
+	   let p3 = {x:dr * Math.cos(2 * Math.PI * (i+1) / ns), y:dr * Math.sin(2 * Math.PI * (i+1) / ns), z:0.0};
+	   let cr = cross3v(p1, p2, p3);
+       verts[ix] = p1.x;
+       verts[iy] = p1.y;
+       verts[iz] = p1.z;
+       verts[ix + 3] =  p2.x;
+       verts[iy + 3] =  p2.y;
+       verts[iz + 3] =  p2.z;
+       verts[ix + 6] =  p3.x;
+       verts[iy + 6] =  p3.y;
+       verts[iz + 6] =  p3.z;
+	
+       norms[ix]     =  cr.x;
+       norms[iy]     =  cr.y;
+       norms[iz]     =  cr.z;
+       norms[ix + 3] =  cr.x;
+       norms[iy + 3] =  cr.y;
+       norms[iz + 3] =  cr.z;
+       norms[ix + 6] =  cr.x;
+       norms[iy + 6] =  cr.y;
+       norms[iz + 6] =  cr.z;
 
    }
    let vertex_buffer = gl.createBuffer();

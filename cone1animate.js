@@ -18,23 +18,23 @@ let func = () =>
    {
        verts[ix] = 0.0;//<-- tip of the cone
        verts[iy] = 0.0;//<-- tip of the cone
-       verts[iz] = 0.0;//<-- tip of the cone
+       verts[iz] = 0.7;//<-- tip of the cone points to us
        verts[ix + 3] =  dr * Math.cos(2 * Math.PI * i / ns);
        verts[iy + 3] =  dr * Math.sin(2 * Math.PI * i / ns);
-       verts[iz + 3] =  0.7;
+       verts[iz + 3] =  0.0;
        verts[ix + 6] =  dr * Math.cos(2 * Math.PI * (i+1) / ns);
        verts[iy + 6] =  dr * Math.sin(2 * Math.PI * (i+1) / ns);
-       verts[iz + 6] =  0.7;
+       verts[iz + 6] =  0.0;
 
        norms[ix]     =  verts[ix + 3];
        norms[iy]     =  verts[iy + 3];
-       norms[iz]     =  verts[iz + 3];
+       norms[iz]     =  0.7; //verts[iz + 3];
        norms[ix + 3] =  verts[ix + 3];
        norms[iy + 3] =  verts[iy + 3];
-       norms[iz + 3] =  verts[iz + 3];
+       norms[iz + 3] =  0.7; //verts[iz + 3];
        norms[ix + 6] =  verts[ix + 3];
        norms[iy + 6] =  verts[iy + 3];
-       norms[iz + 6] =  verts[iz + 3];
+       norms[iz + 6] =  0.7; //verts[iz + 3];
 
    }
    let vertex_buffer = gl.createBuffer();

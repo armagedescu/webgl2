@@ -1,8 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 let func = () =>
-{// https://www.khronos.org/webgl/wiki/Tutorial
- //https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderNormalTrans/ShaderNormalTrans.html
+{
    let gl;
 
    let prog = buildGlProgram(canvas);
@@ -26,8 +25,8 @@ let func = () =>
    gl.enableVertexAttribArray (coord);
 
    let normals = [
-                       1.0,    1.0,    -1.0,       1.0,    1.0,   -1.0,    1.0,  1.0, -1.0,
-                       1.0,    1.0,     1.0,       1.0,    1.0,    1.0,    1.0,  1.0,  1.0
+                       1.0,    1.0,     1.0,       1.0,    1.0,    1.0,    1.0,  1.0,  1.0,
+                       1.0,    0.0,     1.0,       1.0,    0.0,    1.0,    1.0,  0.0,  1.0
 				 ];
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);

@@ -6,6 +6,8 @@ function buildGlProgram(canvasVar)
        canvas = document.getElementById(canvasVar);
    else if (typeof canvasVar =="object")
        canvas = canvasVar;
+   //gl = canvas.getContext('webgl2');
+   //gl = canvas.getContext('experimental-webgl2');
    gl = canvas.getContext('experimental-webgl');
    gl.viewport(0, 0, canvas.width, canvas.height);
    
@@ -30,6 +32,7 @@ function buildGlProgram(canvasVar)
 
    return {canvas:canvas,gl:gl, shaderProgram:shaderProgram};
 }
+
 function getGLShaderCodes (canvas)
 {
     let vertCode  = "";
