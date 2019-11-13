@@ -2,12 +2,12 @@
 <head>
    <title>webgl test</title>
       <style>
-         canvas.cyan{border:2px solid cyan;}
-         canvas.magenta{border:2px solid magenta;}
-         canvas.blue{border:2px solid blue;}
-         canvas.red{border:2px solid red;}
-         canvas.yellow{border:2px solid yellow;}
-         canvas.green{border:1px solid green;}
+         canvas.cyan    {border:2px solid cyan;}
+         canvas.magenta {border:2px solid magenta;}
+         canvas.blue    {border:2px solid blue;}
+         canvas.red     {border:2px solid red;}
+         canvas.yellow  {border:2px solid yellow;}
+         canvas.green   {border:1px solid green;}
          div.sample { display: inline-block;white-space: nowrap; border:1px solid magenta}
       </style>
       <script src="./glwrapper.js"></script>
@@ -102,13 +102,13 @@
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying vec4 forFragColor; //used in fragment shader
-             const vec3  lightDirection = vec3(-1.0,  -1.0, -1.0); // Direction -> to left down forward
+             const vec3  lightDirection = normalize(vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
              const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
              void main()
              {
                 gl_Position = coordinates;
                 //find the cos of angle between plane normal and light direction
-                float prod   =  dot (normalize(-lightDirection),   normalize(inputNormal));
+                float prod   =  -dot (lightDirection,   normalize(inputNormal));
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
@@ -148,8 +148,9 @@
       </canvas>
    </div><br/>
    <div class="sample">
-      <br/><br/>
-      Cone TRIANGLE_FAN (wrong)</br>
+      <br/>
+      Cone TRIANGLE_FAN<br/>
+	  (wrong)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
          <script src="./cone.js"></script>
          <script type="x-shader/x-vertex">
@@ -187,7 +188,7 @@
              void main()
              {
                 gl_Position = coordinates;
-                float prod   =  dot ( -1.0 * normalize(vec3(lightDirection, -1.0)),   normalize(inputNormal));
+                float prod   =  -dot ( normalize(vec3(lightDirection, -1.0)),   normalize(inputNormal));
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
@@ -209,6 +210,36 @@
 	  Normals simple <br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
          <script src="./cone1.js"></script>
+         <script type="x-shader/x-vertex">
+             attribute vec4 coordinates;
+             attribute vec3 inputNormal;
+             varying mediump vec4 forFragColor;
+             const vec3  lightDirection = normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
+             const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
+             void main()
+             {
+                gl_Position = coordinates;
+                //find the cos of angle between plane normal and light direction
+                float prod   =  -dot (lightDirection,   normalize(inputNormal));
+                forFragColor = vec4 (greenColor * prod,  1.0);
+             }
+         </script>
+         <script type="x-shader/x-fragment">
+            //precision mediump float;
+            varying mediump vec4 forFragColor;
+            void main() 
+            {
+              gl_FragColor = forFragColor;
+            }
+         </script>
+      </canvas>
+   </div>
+   <div class="sample">
+      </br>
+      Cone TRIANGLES (correct), </br>
+	  Geometry <br/>
+      <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
+         <script src="./cone1geometry.js"></script>
          <script type="x-shader/x-vertex">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -237,8 +268,8 @@
       </br>
       Cone TRIANGLES (correct), </br>
 	  Geometry <br/>
-      <canvas id = "cone1geometri" width = "200" height = "200"  class="yellow">
-         <script src="./cone1geometry.js"></script>
+      <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
+         <script src="./cone1_heart_geometry.js"></script>
          <script type="x-shader/x-vertex">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -262,7 +293,8 @@
             }
          </script>
       </canvas>
-   </div><br/>
+   </div>
+   <br/>
    <canvas id = "mycanvas1"  width = "310" height =  "40"   class = "red"><script src="./2d.js"></script></canvas>
    <canvas id = "mycanvas2"  width =  "40" height =  "40" class = "green"><script src="./simple.js"></script></canvas><br/>
    Tutorials:<br/>

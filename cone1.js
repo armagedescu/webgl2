@@ -14,11 +14,11 @@ let func = () =>
    let verts    = [];
    let norms    = [];
    let tgs = 0;
-   for (let i = 0, ix = 0,iy = 1,iz = 2; i <= ns; i++, ix += 9,iy += 9,iz += 9)
+   for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
    {
        verts[ix] = 0.0;
        verts[iy] = 0.0;
-       verts[iz] = 0.7;
+       verts[iz] = 0.7; //<-- tip pointint to us
        verts[ix + 3] =  dr * Math.cos(2 * Math.PI * i / ns);
        verts[iy + 3] =  dr * Math.sin(2 * Math.PI * i / ns);
        verts[iz + 3] =  0.0;

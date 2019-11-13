@@ -7,9 +7,11 @@ let func = () =>
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
+   gl.enable(gl.FACE_CULLING);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let nh = 20, ns = 20, dnh = 0.2, dr = 1.0;
+   let nh = 3, ns = 100, dnh = 0.2, dr = 1.0;
+   if (ns & 1) ns++;
 
    let verts    = [];
    let norms    = [];
@@ -17,9 +19,13 @@ let func = () =>
 
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {
-	  let ps = [{x:0.0,                                            y:0.0,                                          z:(1.0)}, //<--points in direction of us
-	            {x:(dr/nh) * Math.cos(2 * Math.PI *      i / ns ), y:(dr/nh) * Math.sin(2 * Math.PI *     i / ns), z:(1 - 1/nh)},
-	            {x:(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), y:(dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:(1 - 1/nh)}];
+      dr      =  2 *  i      * (1/ns); // <-- increase from 0 to 2 (PI)
+	  let drd =  2 * (i + 1) * (1/ns); // <-- increase from 0 to 2 (PI)
+      if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
+      if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
+	  let ps = [{x:0.0,                                             y:0.0,                                           z:(1.0)}, //<--points in direction of us
+	            {x:(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), y:(dr /nh) * Math.sin(2 * Math.PI *  i    / ns), z:(1 - 1/nh)},
+	            {x:(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), y:(drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:(1 - 1/nh)}];
 	  let cr = cross3v(ps[0], ps[1], ps[2]);
       verts[ix]     =  ps[0].x;
       verts[iy]     =  ps[0].y;
@@ -47,10 +53,15 @@ let func = () =>
    {
       for (let i = 0;    i < ns; i++,       ix += 9,iy += 9,iz += 9)
       {
-		  let ps = [{x:     (h*dr/nh) * Math.cos(2 * Math.PI *     i/ns), y:    (h*dr/nh) * Math.sin(2 * Math.PI *     i / ns), z:1 -     h*1/nh},  // 1  4
-		            {x:     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), y:    (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:1 -     h*1/nh},  //    6
-		            {x: ((h+1)*dr/nh) * Math.cos(2 * Math.PI *     i/ns), y:((h+1)*dr/nh) * Math.sin(2 * Math.PI *     i / ns), z:1 - (h+1)*1/nh},  // 2
-		            {x: ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), y:((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:1 - (h+1)*1/nh}]; // 3  5
+          dr      =  2 *  i      * (1/ns);
+	      let drd =  2 * (i + 1) * (1/ns);
+          if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
+          if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
+
+		  let ps = [{x: ( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), y:( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), z:1 -  h   *1/nh},  // 1  4
+		            {x: ( h   *drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), y:( h   *drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:1 -  h   *1/nh},  //    6
+		            {x: ((h+1)*dr /nh) * Math.cos(2 * Math.PI *  i   /ns), y:((h+1)*dr /nh) * Math.sin(2 * Math.PI *  i    / ns), z:1 - (h+1)*1/nh},  // 2
+		            {x: ((h+1)*drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), y:((h+1)*drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), z:1 - (h+1)*1/nh}]; // 3  5
 
           let cr = cross3v(ps[0], ps[2], ps[3]);
 

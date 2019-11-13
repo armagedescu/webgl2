@@ -14,7 +14,7 @@ let func = () =>
    let verts    = [];
    let norms    = [];
    let tgs = 0;
-   for (let i = 0, ix = 0,iy = 1,iz = 2; i <= ns; i++, ix += 9,iy += 9,iz += 9)
+   for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
    {
        verts[ix] = 0.0;//<-- tip of the cone
        verts[iy] = 0.0;//<-- tip of the cone
@@ -28,13 +28,13 @@ let func = () =>
 
        norms[ix]     =  verts[ix + 3];
        norms[iy]     =  verts[iy + 3];
-       norms[iz]     =  0.7; //verts[iz + 3];
+       norms[iz]     =  0.7;
        norms[ix + 3] =  verts[ix + 3];
        norms[iy + 3] =  verts[iy + 3];
-       norms[iz + 3] =  0.7; //verts[iz + 3];
+       norms[iz + 3] =  0.7;
        norms[ix + 6] =  verts[ix + 3];
        norms[iy + 6] =  verts[iy + 3];
-       norms[iz + 6] =  0.7; //verts[iz + 3];
+       norms[iz + 6] =  0.7;
 
    }
    let vertex_buffer = gl.createBuffer();

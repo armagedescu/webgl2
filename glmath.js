@@ -1,4 +1,5 @@
-const RADGRAD = Math.PI / 180;
+const RADGRAD    = Math.PI / 180;
+const C2PI       = 2 * Math.PI;
 function delta3v(p1, p2)
 {
    return {x:(p2.x - p1.x), y:(p2.y - p1.y), z:(p2.z - p1.z)};
