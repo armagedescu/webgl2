@@ -7,7 +7,7 @@ let func = () =>
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
-   gl.enable(gl.FACE_CULLING);
+   gl.enable(gl.CULL_FACE);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
    let nh = 3, ns = 100, dnh = 0.2, dr = 1.0;

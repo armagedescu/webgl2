@@ -177,8 +177,8 @@
       Cone TRIANGLES (correct), </br>
 	  Normals simple, <br/>
 	  Light change direction<br/>
-      <canvas id = "cone1animate" width = "200" height = "200"  class="yellow">
-         <script src="./cone1animate.js"></script>
+      <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
+         <script src="./cone1_animate.js"></script>
          <script type="x-shader/x-vertex">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -239,7 +239,7 @@
       Cone TRIANGLES (correct), </br>
 	  Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./cone1geometry.js"></script>
+         <script src="./cone1_geometry.js"></script>
          <script type="x-shader/x-vertex">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -263,10 +263,10 @@
             }
          </script>
       </canvas>
-   </div>
+   </div><br/>
    <div class="sample">
       </br>
-      Cone TRIANGLES (correct), </br>
+      Cone TRIANGLES (cross), </br>
 	  Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
          <script src="./cone1_heart_geometry.js"></script>
@@ -274,13 +274,13 @@
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying mediump vec4 forFragColor;
-             const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
+             const vec3  lightDirection = -normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
              const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
              void main()
              {
                 gl_Position = coordinates;
                 //find the cos of angle between plane normal and light direction
-                float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(inputNormal));
+                float prod   =  dot (lightDirection,   normalize(inputNormal));
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
@@ -290,6 +290,35 @@
             void main() 
             {
               gl_FragColor = forFragColor;
+            }
+         </script>
+      </canvas>
+   </div>
+   <div class="sample">
+      </br>
+      Cone TRIANGLES (grad), </br>
+	  Geometry <br/>
+      <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
+         <script src="./cone1_heart_geometry2.js"></script>
+         <script type="x-shader/x-vertex">
+             attribute vec4 coordinates;
+             attribute vec3 inputNormal;
+			 varying mediump vec3 nm;
+             void main()
+             {
+                gl_Position = coordinates;
+				nm = inputNormal;
+             }
+         </script>
+         <script type="x-shader/x-fragment">
+            precision mediump float;
+            varying mediump vec3 nm;
+			
+			const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
+			const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
+            void main()
+            {
+               gl_FragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
             }
          </script>
       </canvas>

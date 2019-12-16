@@ -1,5 +1,12 @@
 const RADGRAD    = Math.PI / 180;
 const C2PI       = 2 * Math.PI;
+function wrap(x)
+{
+	if (isFinite(x)) return x;
+    if (x == Number.POSITIVE_INFINITY) return Number.MAX_VALUE;
+	if (x == Number.NEGATIVE_INFINITY) return Number.MIN_VALUE;
+	return 0.0;
+}
 function delta3v(p1, p2)
 {
    return {x:(p2.x - p1.x), y:(p2.y - p1.y), z:(p2.z - p1.z)};
