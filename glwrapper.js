@@ -2,9 +2,9 @@ function buildGlProgram(canvasVar)
 {
    let canvas = null;
    let gl = null;
-   if (typeof canvasVar =="string")
+   if (typeof canvasVar == "string")
        canvas = document.getElementById(canvasVar);
-   else if (typeof canvasVar =="object")
+   else if (typeof canvasVar == "object")
        canvas = canvasVar;
    //gl = canvas.getContext('webgl2');
    //gl = canvas.getContext('experimental-webgl2');

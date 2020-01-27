@@ -1,5 +1,134 @@
 {
 let canvas = document.currentScript.parentElement;
+
+
+function buildGeometry (sectors, revealInvisible)
+{
+   let dfi = 2 * Math.PI / sectors;
+
+   let base = [], norms = [];
+   let sec2 = sectors / 2;
+   // Calculate from 0 to PI
+   for (let i = 0, fi = 0; i <= sec2; i++, fi += dfi)
+   {
+      //Calculate and normalize geometry: Resize all 0..PI to 0..1
+      base[i]  = mul3v([               fi * Math.cos(fi),                    fi * Math.sin(fi),   0.0], [1.0 / Math.PI, 1.0 / Math.PI,  1.0          ]);
+      norms[i] = mul3v([Math.sin(fi) + fi * Math.cos(fi),   -(Math.cos(fi) - fi * Math.sin(fi)),   fi], [1.0          , 1.0          ,  1.0 / Math.PI]);
+   }
+   if(revealInvisible) base[0] = [0.5, 0.0, 0];
+
+   return {base:base, norms:norms};
+}
+
+function buildSides (geometry, slices, sectors) 
+{
+   let sec2 = sectors / 2;
+   let dh = 1 / slices;
+
+   let sides = [[], []];
+   for (let j = 0, s = 1, h = 1 - dh; j < slices; j++, s++, h -= dh)
+   {
+      sides[0][j] = [];
+      sides[1][j] = [];
+      for (let i = 0, i2 = sec2; i <= sec2; i++, i2--)
+      {
+         let bs = geometry.base[i];
+         let ns = geometry.norms[i];
+         sd = [s * bs[0] / slices, s * bs[1] / slices, h,   ns[0], ns[1], ns[2]]; //[coords.xyz  |  norms.xyz]
+         sides[0][j][i]  = [sd[0],  sd[1], sd[2],    sd[3],  sd[4], sd[5]];
+         sides[1][j][i2] = [sd[0], -sd[1], sd[2],    sd[3], -sd[4], sd[5]];
+      }
+   }
+   return sides;
+}
+function buildShape ()
+{}
+function buildCone(slices, sectors, revealInvisibles)
+{
+   let nfi = 0;
+   if (sectors &  1) throw "Must have even number of sectors: "             + sectors;
+   if (sectors &  3) throw "Number of sectors must be a multiple of 4: "    + sectors;
+   if (sectors < 10) throw "Must have no less than 10 sectors: "            + sectors;
+   if (sectors <  1) throw "Must have no less than 1 slices: "              + slices;
+
+   let geo = buildGeometry (sectors, revealInvisibles);
+
+   let sides = buildSides(geo, slices, sectors);
+   let sec2 = sectors / 2;
+   let verts = [];
+   let verts_norms = [];
+   let i0 = 0, i1 = 1, i2 = 2;
+
+   for (let side of sides)
+      for (let j = 0; j < slices; j++)
+         for (let i = 0; i < sec2; i++)
+         {
+            let s11, s12; // s11   \      // s11 <- s12
+            let s21, s22; // s21 -> s22   //    \   s22
+            if (j == 0) //tip of the cone
+            {
+               s11 = [0, 0, 1, 0, 0, 0]; //coord:xyz norm:000
+               s21 = side [j]  [i]; s22 = side[j]  [i+1];
+            }
+            else
+            {
+               s11 = side [j-1][i]; s12 = side[j-1][i+1];
+               s21 = side [j]  [i]; s22 = side[j]  [i+1];
+            }
+			//if (j == 0){
+            verts [i0] = s21[0];
+            verts [i1] = s21[1];
+            verts [i2] = s21[2];
+            verts_norms[i0] = s21[3];
+            verts_norms[i1] = s21[4];
+            verts_norms[i2] = s21[5];
+
+            verts [i0 + 3] = s22[0];
+            verts [i1 + 3] = s22[1];
+            verts [i2 + 3] = s22[2];
+            verts_norms[i0 + 3] = s22[3];
+            verts_norms[i1 + 3] = s22[4];
+            verts_norms[i2 + 3] = s22[5];
+
+            verts [i0 + 6] = s11[0];
+            verts [i1 + 6] = s11[1];
+            verts [i2 + 6] = s11[2];
+            verts_norms[i0 + 6] = s11[3];
+            verts_norms[i1 + 6] = s11[4];	
+            verts_norms[i2 + 6] = s11[5];
+            i0 += 9; i1 += 9; i2 += 9;
+			//}
+
+            // because this is the tip of the cone
+            if (j == 0) continue;
+            //if(0){
+            verts [i0] = s22[0];
+            verts [i1] = s22[1];
+            verts [i2] = s22[2];
+            verts_norms[i0] = s22[3];
+            verts_norms[i1] = s22[4];
+            verts_norms[i2] = s22[5];
+			
+            verts [i0 + 3] = s12[0];
+            verts [i1 + 3] = s12[1];
+            verts [i2 + 3] = s12[2];
+            verts_norms[i0 + 3] = s12[3];
+            verts_norms[i1 + 3] = s12[4];
+            verts_norms[i2 + 3] = s12[5];
+			
+            verts [i0 + 6] = s11[0];
+            verts [i1 + 6] = s11[1];
+            verts [i2 + 6] = s11[2];
+            verts_norms[i0 + 6] = s11[3];
+            verts_norms[i1 + 6] = s11[4];
+            verts_norms[i2 + 6] = s11[5];
+            //}
+            i0 += 9; i1 += 9; i2 += 9;
+         }
+   return {verts:verts, norms:verts_norms};
+
+}
+
 let func = () =>
 {
    let prog = buildGlProgram(canvas);
@@ -7,201 +136,15 @@ let func = () =>
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
-   //gl.enable(gl.CULL_FACE);
+   gl.enable(gl.CULL_FACE);
    gl.clear (gl.COLOR_BUFFER_BIT);
-
-   let nh = 2, ns = 40;
-   if (ns & 1) ns++;
-
-   let verts    = [];
-   let norms    = [];
-   let tgs = 0;
-
-   let PI_2 = 2 * Math.PI;      //2 * Pi
-   let FI_S = 2 * Math.PI / ns; //angular size of one sector
-   let R_S  = 2 / ns;           //Radius = FI normalized (FI / PI)
-   let D_H  = 1 / nh;
-
-
-   for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
-   {
-      let ps, cr;
-	  if (i < ns/2)
-	  {
-         let fi1 = i   * FI_S;
-         let fi2 = fi1 + FI_S; //next fi
-	     
-         let rc1 = i   * R_S; //<-- radius coeficient
-         let rc2 = rc1 + R_S; //<-- next radius coeficient
-
-         let r1 = rc1 / nh; //<-- radius
-         let r2 = rc2 / nh; //<-- next radius
-	     
-         ps = [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
-               {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)},
-               {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)}];
-         let crz = cross3v(ps[0], ps[1], ps[2]);
-
-         cr = [{x : 0,   y :0,   z : 0},
-               {x : (Math.sin(fi1) + fi1 * Math.cos(fi1)),   y : -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   z : 1 + fi1},
-               {x : (Math.sin(fi2) + fi2 * Math.cos(fi2)),   y : -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   z : 1 + fi2}];
-
-	  } else
-	  {
-		 i2 = i - ns / 2;
-         let fi1 = -i2   * FI_S;
-         let fi2 =  fi1  - FI_S;
-	     
-         let rc1 = i2  * R_S; //<-- radius coeficients
-         let rc2 = rc1 + R_S; //<-- radius coeficients
-
-         let r1 = rc1 / nh; //<-- radius
-         let r2 = rc2 / nh; //<-- radius
-	     
-         ps =     [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
-                   {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)},
-				   {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)}];
-
-         cr = [{x: 0, y: 0, z: 0},
-		       {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z: 1 + fi2},
-               {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z: 1 + fi1}];
-	  }
-      verts[ix]     =  ps[0].x;
-      verts[iy]     =  ps[0].y;
-      verts[iz]     =  ps[0].z;
-      verts[ix + 3] =  ps[1].x;
-      verts[iy + 3] =  ps[1].y;
-      verts[iz + 3] =  ps[1].z;
-      verts[ix + 6] =  ps[2].x;
-      verts[iy + 6] =  ps[2].y;
-      verts[iz + 6] =  ps[2].z;
-
-      norms[ix]     =  cr[0].x;
-      norms[iy]     =  cr[0].y;
-      norms[iz]     =  cr[0].z;
-      norms[ix + 3] =  cr[1].x;
-      norms[iy + 3] =  cr[1].y;
-      norms[iz + 3] =  cr[1].z;
-      norms[ix + 6] =  cr[2].x;
-      norms[iy + 6] =  cr[2].y;
-      norms[iz + 6] =  cr[2].z;
-   }
-
-   //1 triangle = 3 points * 3 coordinates
-   for (let h = 1, ix = ns*9, iy = ns*9 + 1, iz = ns*9 + 2;    h < nh; h++)
-   {
-      let h1n = h/nh, h2n = (h+1)/nh; //<-- start and stop height
-      for (let i = 0;    i < ns; i++,       ix += 9,iy += 9,iz += 9)
-      {
-         let ps, cr;
-         if (i < ns / 2)
-         {
-            let fi1 = i   * FI_S;
-            let fi2 = fi1 + FI_S;
-
-            let rc1 = i   * R_S; //<-- radius coeficients
-            let rc2 = rc1 + R_S; //<-- radius coeficients
-            //if (rc1 > 1) rc1 = 2 - rc1; //<-- decreases when passes Pi
-            //if (rc2 > 1) rc2 = 2 - rc2; //<-- decreases when passes Pi
-            let r11 = rc1 * h1n; //<-- radius
-            let r12 = rc2 * h1n; //<-- radius
-            let r21 = rc1 * h2n; //<-- radius
-            let r22 = rc2 * h2n; //<-- radius
-
-            ps = [{x: r11 * Math.cos(fi1),  y: r11 * Math.sin(fi1),  z: 1 - h1n},  // <-- points [1] []    [1]   [4]
-                  {x: r12 * Math.cos(fi2),  y: r12 * Math.sin(fi2),  z: 1 - h1n},  // <-- points [ ] []    [ ]   [6]
-                  {x: r21 * Math.cos(fi1),  y: r21 * Math.sin(fi1),  z: 1 - h2n},  // <-- points [3] []    [2]   [ ]
-                  {x: r22 * Math.cos(fi2),  y: r22 * Math.sin(fi2),  z: 1 - h2n}]; // <-- points [2] []    [3]   [5]
-
-            //let cr = cross3v(ps[0], ps[2], ps[3]);
-            //cr = [cross3v(ps[0], ps[2], ps[3])];
-
-            cr = [{x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-                  {x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-                 ];
-         } else
-         {
-            i2 = i - ns / 2;
-            let fi1 = -i2 * FI_S;
-            let fi2 = fi1 - FI_S;
-
-            let rc1 = i2  * R_S; //<-- radius coeficients
-            let rc2 = rc1 + R_S; //<-- radius coeficients
-            //if (rc1 > 1) rc1 = 2 - rc1; //<-- decreases when passes Pi
-            //if (rc2 > 1) rc2 = 2 - rc2; //<-- decreases when passes Pi
-            let r11 = rc1 * h1n; //<-- radius
-            let r12 = rc2 * h1n; //<-- radius
-            let r21 = rc1 * h2n; //<-- radius
-            let r22 = rc2 * h2n; //<-- radius
-
-            ps = [{x: r11 * Math.cos(fi1),  y: r11 * Math.sin(fi1),  z: 1 - h1n},  // <-- points [1]   [4]
-                  {x: r12 * Math.cos(fi2),  y: r12 * Math.sin(fi2),  z: 1 - h1n},  // <-- points [ ]   [6]
-                  {x: r21 * Math.cos(fi1),  y: r21 * Math.sin(fi1),  z: 1 - h2n},  // <-- points [2]   [ ]
-                  {x: r22 * Math.cos(fi2),  y: r22 * Math.sin(fi2),  z: 1 - h2n}]; // <-- points [3]   [5]
-
-            //let cr = cross3v(ps[0], ps[2], ps[3]);
-            //cr = [cross3v(ps[0], ps[2], ps[3])];
-
-		    cr = [{x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-		          {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-                 ];
-         }
-
-
-         verts[ix]     =  ps[0].x;
-         verts[iy]     =  ps[0].y;
-         verts[iz]     =  ps[0].z;
-         verts[ix + 3] =  ps[2].x;
-         verts[iy + 3] =  ps[2].y;
-         verts[iz + 3] =  ps[2].z;
-         verts[ix + 6] =  ps[3].x;
-         verts[iy + 6] =  ps[3].y;
-         verts[iz + 6] =  ps[3].z;
-
-         norms[ix]     =  cr[0].x;
-         norms[iy]     =  cr[0].y;
-         norms[iz]     =  cr[0].z;
-         norms[ix + 3] =  cr[1].x;
-         norms[iy + 3] =  cr[1].y;
-         norms[iz + 3] =  cr[1].z;
-         norms[ix + 6] =  cr[2].x;
-         norms[iy + 6] =  cr[2].y;
-         norms[iz + 6] =  cr[2].z;
-
-         ix += 9;iy += 9;iz += 9;
-         //cr = [cross3v(ps[0], ps[3], ps[1])];
-
-         verts[ix]     =  ps[0].x;
-         verts[iy]     =  ps[0].y;
-         verts[iz]     =  ps[0].z;
-         verts[ix + 3] =  ps[1].x;
-         verts[iy + 3] =  ps[1].y;
-         verts[iz + 3] =  ps[1].z;
-         verts[ix + 6] =  ps[3].x;
-         verts[iy + 6] =  ps[3].y;
-         verts[iz + 6] =  ps[3].z;
-
-         norms[ix]     =  cr[3].x;
-         norms[iy]     =  cr[3].y;
-         norms[iz]     =  cr[3].z;
-         norms[ix + 3] =  cr[4].x;
-         norms[iy + 3] =  cr[4].y;
-         norms[iz + 3] =  cr[4].z;
-         norms[ix + 6] =  cr[5].x;
-         norms[iy + 6] =  cr[5].y;
-         norms[iz + 6] =  cr[5].z;
-
-      }
-   }
-
+   ////////////////////////////////////
+   const revealInvisibles = false;
+   let ns = 12, nh = 3;
+   let obj = buildCone(nh, ns, revealInvisibles);
+   let verts = obj.verts;
+   let norms = obj.norms;
+   ////////////////////////////////////
 
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -212,7 +155,6 @@ let func = () =>
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
-
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
@@ -221,7 +163,9 @@ let func = () =>
    gl.enableVertexAttribArray (noord);
 
    gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
+   //gl.drawArrays(gl.LINES, 0, ns * 3 + ns * 6 * (nh - 1));
+   //gl.drawArrays(gl.LINE_STRIP, 0, ns * 3 + ns * 6 * (nh - 1));
+}
 
-};
 document.addEventListener('DOMContentLoaded', func);
 }
