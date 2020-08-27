@@ -1,12 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
 
-function normalize3v(norm)
-{
-	let len = Math.sqrt (norm[0] * norm[0] + norm[1] * norm[1] + norm[2] * norm[2]);
-	return [norm[0] / len, norm[1] / len, norm[2] / len];
-
-}
 function buildGeometry (sectors, revealInvisible)
 {
    let dfi = 2 * Math.PI / sectors;
@@ -83,14 +77,14 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
                s11 = side [j-1][i]; s12 = side[j-1][i+1];
                s21 = side [j]  [i]; s22 = side[j]  [i+1];
             }
-			//if (j == 0){
+            //if (j == 0){
             verts [i0]      =  s21[0];
             verts [i1]      =  s21[1];
             verts [i2]      =  s21[2];
             verts_norms[i0] =  s21[3];
             verts_norms[i1] =  s21[4];
             verts_norms[i2] =  s21[5];
-			nverts [n0]     =  s21[0];
+            nverts [n0]     =  s21[0];
             nverts [n1]     =  s21[1];
             nverts [n2]     = -s21[2];
             nverts [n0 + 3] =  s21[0] + s21[3] / nv;
@@ -103,7 +97,7 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 3] =  s22[3];
             verts_norms[i1 + 3] =  s22[4];
             verts_norms[i2 + 3] =  s22[5];
-			nverts [n0 + 6]     =  s22[0];
+            nverts [n0 + 6]     =  s22[0];
             nverts [n1 + 6]     =  s22[1];
             nverts [n2 + 6]     = -s22[2];
             nverts [n0 + 9]     =  s22[0] + s22[3] / nv;
@@ -114,9 +108,9 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts [i1 + 6]      =  s11[1];
             verts [i2 + 6]      =  s11[2];
             verts_norms[i0 + 6] =  s11[3];
-            verts_norms[i1 + 6] =  s11[4];	
+            verts_norms[i1 + 6] =  s11[4];
             verts_norms[i2 + 6] =  s11[5];
-			nverts [n0 + 12]    =  s11[0];
+            nverts [n0 + 12]    =  s11[0];
             nverts [n1 + 12]    =  s11[1];
             nverts [n2 + 12]    = -s11[2];
             nverts [n0 + 15]    =  s11[0] + s11[3] / nv;
@@ -125,7 +119,7 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
 
             i0 += 9;  i1 += 9;  i2 += 9;
             n0 += 18; n1 += 18; n2 += 18;
-			//}
+            //}
 
             // because this is the tip of the cone
             if (j == 0) continue;
@@ -136,7 +130,7 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0] =  s22[3];
             verts_norms[i1] =  s22[4];
             verts_norms[i2] =  s22[5];
-			nverts [n0]     =  s22[0];
+            nverts [n0]     =  s22[0];
             nverts [n1]     =  s22[1];
             nverts [n2]     = -s22[2];
             nverts [n0 + 3] =  s22[0] + s22[3] / nv;
@@ -149,7 +143,7 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 3] =  s12[3];
             verts_norms[i1 + 3] =  s12[4];
             verts_norms[i2 + 3] =  s12[5];
-			nverts [n0 + 6]     =  s12[0];
+            nverts [n0 + 6]     =  s12[0];
             nverts [n1 + 6]     =  s12[1];
             nverts [n2 + 6]     = -s12[2];
             nverts [n0 + 9]     =  s12[0] + s12[3] / nv;
@@ -162,7 +156,7 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 6] =  s11[3];
             verts_norms[i1 + 6] =  s11[4];
             verts_norms[i2 + 6] =  s11[5];
-			nverts [n0 + 12]    =  s11[0];
+            nverts [n0 + 12]    =  s11[0];
             nverts [n1 + 12]    =  s11[1];
             nverts [n2 + 12]    = -s11[2];
             nverts [n0 + 15]    =  s11[0] + s11[3] / nv;
@@ -196,7 +190,7 @@ let func = () =>
    }
    catch(err)
    {
-	  alert(err);
+      alert(err);
    }
    let verts = obj.verts;
    let norms = obj.norms;
