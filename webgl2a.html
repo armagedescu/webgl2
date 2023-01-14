@@ -1,0 +1,46 @@
+<html>
+<head>
+   <title>webgl test</title>
+   <link rel="stylesheet" href="./css/default.css">
+   <script src="./glwrapper.js"></script>
+   <script src="./glmath.js"></script>
+
+</head>
+<body>
+   <div class="sample">
+      <br />
+      Shape: Cone TRIANGLES A (grad)<br />
+	  Geometry, Using Highly Improved Siding Algorithm <br/>
+	  GL: Using Index Array, Element Draw<br/>
+      <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
+         <script src="./webgl2a/cone1_heart_geometry3a.js"></script>
+         <script type="x-shader/x-vertex">
+             attribute vec4 coordinates;
+             attribute vec3 inputNormal;
+			 varying vec3 nm;
+             void main()
+             {
+                gl_Position = coordinates;
+				nm = inputNormal;
+             }
+         </script>
+         <script type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec3 nm; //varying mediump
+
+			const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
+			const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
+            void main()
+            {
+               gl_FragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
+            }
+         </script>
+      </canvas>
+   </div>
+
+   <br/>
+   <a href="./tutorials.html">Tutorials</a>
+
+
+</body>
+</html>

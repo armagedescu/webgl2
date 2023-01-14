@@ -6,11 +6,9 @@ function buildGlProgram(canvasVar)
        canvas = document.getElementById(canvasVar);
    else if (typeof canvasVar == "object")
        canvas = canvasVar;
-   //gl = canvas.getContext('webgl2');
-   //gl = canvas.getContext('experimental-webgl2');
-   gl = canvas.getContext('experimental-webgl');
+   gl = canvas.getContext('webgl2');
    gl.viewport(0, 0, canvas.width, canvas.height);
-   
+
    let canvas_id = canvas.id;
    let codes = getGLShaderCodes (canvas);
 
