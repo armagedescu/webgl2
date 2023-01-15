@@ -181,7 +181,8 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
 
 let func = () =>
 {
-   let prog = buildGlProgram(canvas);
+   let glWrapper = new GlWrapper(canvas);
+   let prog = glWrapper.context;
    let gl = prog.gl;
    let shaderProgram = prog.shaderProgram;
    gl.useProgram   (shaderProgram);

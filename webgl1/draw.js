@@ -1,7 +1,7 @@
 let func = () =>
 {
-   let canvas = document.getElementById('draw');
-   let prog = buildGlProgram(canvas);
+   let glWrapper = new GlWrapper('draw');
+   let prog = glWrapper.context;
    let gl = prog.gl;
    let shaderProgram = prog.shaderProgram;
    gl.useProgram   (shaderProgram);

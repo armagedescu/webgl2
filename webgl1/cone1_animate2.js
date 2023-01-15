@@ -29,9 +29,9 @@ let func = () =>
        verts[iy + 6] =  dr * Math.sin(2 * Math.PI * (i+1) / ns);
        verts[iz + 6] =  0.0;
 
-       norms[ix]     =  0;
-       norms[iy]     =  0;
-       norms[iz]     =  0;
+       norms[ix]     =  verts[ix + 3];
+       norms[iy]     =  verts[iy + 3];
+       norms[iz]     =  0.7;
        norms[ix + 3] =  verts[ix + 3];
        norms[iy + 3] =  verts[iy + 3];
        norms[iz + 3] =  0.7;

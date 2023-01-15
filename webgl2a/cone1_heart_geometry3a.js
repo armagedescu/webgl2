@@ -152,11 +152,15 @@ function buildCone (slices, sectors, revealInvisibles)
    return sides;
 
 }
-function draw (obj, prog)
+
+function buildVao (obj, prog)
 {
    let gl = prog.gl;
    let shaderProgram = prog.shaderProgram;
    gl.useProgram   (shaderProgram);
+
+   const vao = gl.createVertexArray();
+   gl.bindVertexArray(vao);
 
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -176,12 +180,20 @@ function draw (obj, prog)
    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indb);
    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.indices), gl.STATIC_DRAW);
 
-   gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
-
+   obj.vao = vao;
+}
+function drawVao(coat, prog)
+{
+   let gl = prog.gl;
+   let shaderProgram = prog.shaderProgram;
+   gl.useProgram (shaderProgram);
+   gl.bindVertexArray (coat.vao);
+   gl.drawElements (gl.TRIANGLES, coat.indices.length, gl.UNSIGNED_SHORT, 0);
 }
 let func = () =>
 {
-   let prog = buildGlProgram(canvas);
+   let glWrapper = new GlWrapper(canvas);
+   let prog = glWrapper.context;
    let gl = prog.gl;
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
@@ -195,8 +207,11 @@ let func = () =>
    let ns = 12, nh = 2;
    //let ns = 80, nh = 20;
    let coats = buildCone (nh, ns, revealInvisibles);
+
    for (let coat of coats)
-      draw(coat, prog);
+      buildVao(coat, prog);
+   for (let coat of coats)
+      drawVao(coat, prog);
 }
 
 document.addEventListener('DOMContentLoaded', func);
