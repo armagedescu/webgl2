@@ -2,9 +2,11 @@
 let canvas = document.currentScript.parentElement;
 let func = () =>
 {
-   let gl;
    let prog = buildGlProgram(canvas);
-   gl = prog.gl;
+   let gl = prog.gl;
+   let shaderProgram = prog.shaderProgram;
+   gl.useProgram (shaderProgram);
+
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
 
@@ -23,13 +25,13 @@ let func = () =>
    let translation = gl.getUniformLocation(prog.shaderProgram, 'translation');
  
    let time_old = 0;
-   let animate = function(time)
+   let animate = (time) =>
    {
-
+      gl.useProgram (shaderProgram);
       let dt = time-time_old;
-      let Tx = 0.5 *  Math.cos(dt*0.005);
-      let Ty = 0.5 *  Math.sin(dt*0.005);
-      let Tz = 0.5 *  Math.sin(dt*0.005);
+      let Tx = 0.5 *  Math.cos(dt * 0.005);
+      let Ty = 0.5 *  Math.sin(dt * 0.005);
+      let Tz = 0.5 *  Math.sin(dt * 0.005);
       gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

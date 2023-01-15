@@ -155,9 +155,8 @@ function buildCone (slices, sectors, revealInvisibles)
 function draw (obj, prog)
 {
    let gl = prog.gl;
-   ////////////////////////////////////
-
    let shaderProgram = prog.shaderProgram;
+   gl.useProgram   (shaderProgram);
 
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);

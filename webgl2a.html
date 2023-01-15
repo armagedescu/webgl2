@@ -14,17 +14,18 @@
 	  GL: Using Index Array, Element Draw<br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
          <script src="./webgl2a/cone1_heart_geometry3a.js"></script>
-         <script type="x-shader/x-vertex">
+         <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
 			 varying vec3 nm;
+			 //buzz si iar buzz
              void main()
              {
                 gl_Position = coordinates;
 				nm = inputNormal;
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             varying vec3 nm; //varying mediump
 

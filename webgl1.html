@@ -11,7 +11,7 @@
       Simple draw:<br/>
       <canvas id = "draw"  width = "120" height = "120" class="blue">
          <script src="./webgl1/draw.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec2 coordinates;
             void main(void)
             {
@@ -19,7 +19,7 @@
                //gl_PointSize = 10.0;\n' +
             }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             void main(void)
             {
                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
@@ -31,14 +31,14 @@
       Translate:<br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
          <script src="./webgl1/translate.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec4 coordinates;
             void main(void)
             {
                gl_Position = coordinates + vec4(0.5, 0.5, 0.0, 0.0);
             }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             void main(void)
             {
                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
@@ -50,7 +50,7 @@
       Translate animate 1:<br/>
       <canvas id = "animate"  width = "120" height = "120" class="cyan">
          <script src="./webgl1/animate.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              uniform   vec4 translation;
              void main(void)
@@ -58,7 +58,7 @@
                 gl_Position = coordinates + translation;
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             void main(void)
             {
                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
@@ -70,7 +70,7 @@
       Translate animate 2:<br/>
       <canvas id = "animate second instance" width = "120" height = "120" class="magenta">
           <script src="./webgl1/animate2.js"></script>
-          <script type="x-shader/x-vertex">
+          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              uniform   vec3 translation;
              void main(void)
@@ -78,7 +78,7 @@
                 gl_Position = coordinates + vec4(translation, 0.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             void main(void)
             {
                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
@@ -90,7 +90,7 @@
       Normals:<br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
          <script src="./webgl1/normals.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying vec4 forFragColor; //used in fragment shader
@@ -104,7 +104,7 @@
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             varying vec4 forFragColor; //calculated in vertex shader
             void main() 
@@ -119,7 +119,7 @@
       Colors:<br/>
       <canvas id = "usecolors" width = "120" height = "120"  class="yellow">
           <script src="./webgl1/usecolors.js"></script>
-          <script type="x-shader/x-vertex">
+          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec4 coordinates;
             attribute vec4  forFragColor;
             varying lowp vec4 fragColor; //<-- varying = pass to frag shader
@@ -129,7 +129,7 @@
                fragColor = forFragColor;
             }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             //precision mediump float; varying vec4 fragColor; <-- without lowp??
             varying lowp vec4 fragColor;
             void main(void)
@@ -145,7 +145,7 @@
 	  (wrong)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
          <script src="./webgl1/cone.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying vec4 forFragColor;
@@ -155,7 +155,7 @@
                 forFragColor = vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(inputNormal, 0.9);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             varying vec4 forFragColor;
             void main() 
@@ -171,7 +171,7 @@
 	  Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
          <script src="./webgl1/cone1_animate.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying vec4 forFragColor;
@@ -184,7 +184,7 @@
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             //precision lowp float;
             //precision highp float;
             precision mediump float;
@@ -202,7 +202,7 @@
 	  Normals simple <br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
          <script src="./webgl1/cone1.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying mediump vec4 forFragColor;
@@ -216,7 +216,7 @@
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             //precision mediump float;
             varying mediump vec4 forFragColor;
             void main() 
@@ -232,7 +232,7 @@
 	  Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
          <script src="./webgl1/cone1_geometry.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying mediump vec4 forFragColor;
@@ -246,7 +246,7 @@
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             //precision mediump float;
             varying mediump vec4 forFragColor;
             void main() 
@@ -262,7 +262,7 @@
 	  Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
          <script src="./webgl1/cone1_heart_geometry.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              varying mediump vec4 forFragColor;
@@ -276,7 +276,7 @@
                 forFragColor = vec4 (greenColor * prod,  1.0);
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             //precision mediump float;
             varying mediump vec4 forFragColor;
             void main() 
@@ -292,7 +292,7 @@
 	  Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
          <script src="./webgl1/cone1_heart_geometry2.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
 			 varying mediump vec3 nm;
@@ -302,7 +302,7 @@
 				nm = inputNormal;
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             varying mediump vec3 nm;
 			

@@ -1,24 +1,24 @@
-var func = () =>
+let func = () =>
 {
    let canvas = document.getElementById('draw');
    let prog = buildGlProgram(canvas);
    let gl = prog.gl;
+   let shaderProgram = prog.shaderProgram;
+   gl.useProgram   (shaderProgram);
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   shaderProgram = prog.shaderProgram;
-
-   var vertices = [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
+   let vertices = [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
                     0.0, -0.5,    0.8, 0.4,   -0.4,  0.5];
 
    // Create a new buffer object
-   var vertex_buffer = gl.createBuffer();
+   let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   var coord = gl.getAttribLocation (shaderProgram, "coordinates");
+   let coord = gl.getAttribLocation (shaderProgram, "coordinates");
    gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0); //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
 

@@ -12,7 +12,7 @@
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
          <script src="./webgl4/cone1_heart_geometry3.js"></script>
-         <script type="x-shader/x-vertex">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
              uniform float isDrawNorms;
@@ -26,7 +26,7 @@
                 isNormsColor = isDrawNorms;
              }
          </script>
-         <script type="x-shader/x-fragment">
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             varying vec3 nm; //varying mediump
 
