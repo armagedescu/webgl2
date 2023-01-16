@@ -1,7 +1,7 @@
 class GlWrapper
 {
-   #glObj     = null;
-   #canvasObj = null;
+   #glObj       = null;
+   #canvasObj   = null;
    #programMap  = new Map();
 
    constructor (canvasVar)
@@ -86,6 +86,9 @@ class GlWrapper
    get programs () { return this.#programMap; }
    get program  () { return this.programs.get("___DEFAULT_PROGRAM___").program; }
    get context  () { return {canvas: this.canvas, gl: this.gl, shaderProgram: this.program}; }
+
+   getProgram   (progName) { return this.programs.get(progName).program; }
+   getContext   (progName) { return {canvas: this.canvas, gl: this.gl, shaderProgram: this.getProgram (progName)}; }
 
 }
 
