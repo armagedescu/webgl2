@@ -1,7 +1,7 @@
 let func = () =>
 {
-   let glWrapper = new GlWrapper('draw');
-   let prog = glWrapper.context;
+   let glCanvas = new GlCanvas('draw');
+   let prog = glCanvas.context;
    let gl = prog.gl;
    let shaderProgram = prog.shaderProgram;
    gl.useProgram   (shaderProgram);
