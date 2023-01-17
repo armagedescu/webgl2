@@ -5,19 +5,28 @@ class GlShader
    {
       this.source = "";
       this.gl     = gl;
+      this.shader = null;
 	  if (type) this.type = type;
       if (!obj) return;
       if (typeof obj == "string") this.#setString(obj);
-      else if (typeof obj == "object") this.#setScriptElement(obj);
+      else if (obj instanceof Element) this.#setScriptElement(obj);
+      else if (obj instanceof WebGLShader) this.shader = obj;
    }
 
+   //internal automatic full compile
+   #compile()
+   {
+      this.shader = this.gl.createShader (this.#glType);
+      this.gl.shaderSource  (this.shader, this.source);
+	  this.compileShader();
+   }
    //private:
    #setString(str) //type ="vertex-shader"/"fragment-shader"
    {
 	  this.source = str;
       if (!this.type) return;
       if (this.type.length <= 0) return;
-	  this.compile();
+	  this.#compile();
    }
    #setScriptElement(obj)
    {
@@ -27,6 +36,8 @@ class GlShader
    }
 
    //public:
+   //this.shader
+   //this.gl
    get type() { return this.#glType; }
    set type(str) //type ="vertex-shader"/"fragment-shader" or gl VERTEX_SHADER/FRAGMENT_SHADER
    {
@@ -40,23 +51,43 @@ class GlShader
       else
          this.#glType = str; //if is gl type VERTEX_SHADER/VERTEX_SHADER
    }
-   compile()
+   compileShader()
    {
-      this.shader = this.gl.createShader (this.#glType);
-      this.gl.shaderSource  (this.shader, this.source);
       this.gl.compileShader (this.shader);
 	  let msg = this.gl.getShaderInfoLog(this.shader);
-      //console.log ("Compile shader result:  " + name + ":vertex-shader: " + this.gl.getShaderInfoLog(this.shader));
    }
-   deleteShader() { this.gl.deleteShader(this.shader); }
+   deleteShader() { this.gl.deleteShader(this.shader); this.#glType = null; this.source = ""; this.shader = null;}
 }
 
 class GlProgram
 {
+   #shaders = [];
    constructor (gl)
    {
       this.gl = gl;
+	  this.program = this.gl.createProgram ();
    }
+   add (shader, type)
+   {
+      if (!shader)
+	  {
+         console.log("null shader");
+		 return;
+	  }
+      if (shader instanceof GlShader)         this.#shaders.push(shader);
+	  else if (shader instanceof WebGLShader) this.#shaders.push(new GlShader(this.gl, shader));
+	  else if (shader instanceof Element)     this.#shaders.push(new GlShader(this.gl, shader, type));
+	  else if (typeof shader == "string")     this.#shaders.push(new GlShader(this.gl, shader, type));
+	   //this.gl.attachShader (this.program, shader.shader);
+   }
+   linkProgram()
+   {
+      for (let shader of this.#shaders) this.gl.attachShader (this.program, shader.shader);
+      this.gl.linkProgram(this.program);
+      //console.log("Compile program result:  " + name + ": " + this.gl.getProgramInfoLog(program));
+      for (let shader of this.#shaders) shader.deleteShader();
+   }
+   useProgram(){this.gl.useProgram(this.program);}
 }
 
 class GlCanvas
@@ -70,7 +101,7 @@ class GlCanvas
       this.#canvas = canvasVar;
       this.#extractShaderCodes();
       for (let program of this.programs)
-         this.#buildSingleGLProgram(program);
+         program[1].linkProgram();
    }
    
 
@@ -88,27 +119,17 @@ class GlCanvas
    #extractShaderCodes ()
    {
       let scripts = this.canvas.getElementsByTagName("script");
-      const shaders = document.evaluate("./script[@type='text/glsl-shader']", this.canvas);
+      const shaderElements = document.evaluate("./script[@type='text/glsl-shader']", this.canvas);
       
-      for (let el = shaders.iterateNext(); el; el = shaders.iterateNext())
+      for (let el = shaderElements.iterateNext(); el; el = shaderElements.iterateNext())
       {
           let info = this.#extractProgramInfo(el);
           if (! this.programs.has(info.id) )
-             this.programs.set (info.id, {id: info.id, program: new GlProgram(this.gl), shaders:[]}); // {id/key {id, []}/value} map
-          this.programs.get(info.id).shaders.push(info.shader);
+             this.programs.set (info.id, new GlProgram(this.gl));
+          this.programs.get(info.id).add(info.shader);
       }
    }
-   #buildSingleGLProgram(progInfo)
-   {
-      let name = progInfo[0];
-      let prog = progInfo[1];
-      let program = this.gl.createProgram ();
-      for (let shader of prog.shaders) this.gl.attachShader (program, shader.shader);
-      this.gl.linkProgram(program);
-      //console.log("Compile program result:  " + name + ": " + this.gl.getProgramInfoLog(program));
-      prog.program = program;
-      for (let shader of prog.shaders) shader.deleteShader();
-   }
+
    set #gl (glObj){this.#glObj = glObj;}
    set #canvas (canvasVar)
    {
@@ -125,11 +146,8 @@ class GlCanvas
    get canvas   () { return this.#canvasObj;  }
    get programs () { return this.#programMap; }
    //default context and default program
-   get program  () { return this.programs.get("___DEFAULT_PROGRAM___").program; }
-   get context  () { return {canvas: this.canvas, gl: this.gl, shaderProgram: this.program}; }
-   //if more than one single program are being in use
-   getProgram   (progName) { return this.programs.get(progName).program; }
-   getContext   (progName) { return {canvas: this.canvas, gl: this.gl, shaderProgram: this.getProgram (progName)}; }
+   get program  () { return this.programs.get("___DEFAULT_PROGRAM___"); }
+   getProgram   (progName) { return this.programs.get(progName); }
 
 }
 

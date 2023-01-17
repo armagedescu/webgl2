@@ -156,8 +156,7 @@ function buildCone (slices, sectors, revealInvisibles)
 function buildVao (obj, prog)
 {
    let gl = prog.gl;
-   let shaderProgram = prog.shaderProgram;
-   gl.useProgram   (shaderProgram);
+   prog.useProgram ();
 
    const vao = gl.createVertexArray();
    gl.bindVertexArray(vao);
@@ -165,14 +164,14 @@ function buildVao (obj, prog)
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.verts), gl.STATIC_DRAW);
-   let coord = gl.getAttribLocation (shaderProgram, "coordinates");
+   let coord = gl.getAttribLocation (prog.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (shaderProgram, "inputNormal");
+   let noord = gl.getAttribLocation (prog.program, "inputNormal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
 
@@ -185,16 +184,15 @@ function buildVao (obj, prog)
 function drawVao(coat, prog)
 {
    let gl = prog.gl;
-   let shaderProgram = prog.shaderProgram;
-   gl.useProgram (shaderProgram);
+   prog.useProgram ();
    gl.bindVertexArray (coat.vao);
    gl.drawElements (gl.TRIANGLES, coat.indices.length, gl.UNSIGNED_SHORT, 0);
 }
 let func = () =>
 {
    let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.context;
-   let gl = prog.gl;
+   let prog = glCanvas.program;
+   let gl = glCanvas.gl;
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);

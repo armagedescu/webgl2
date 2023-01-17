@@ -3,10 +3,9 @@ let canvas = document.currentScript.parentElement;
 let func = () =>
 {
    let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.context;
+   let prog = glCanvas.program;
    let gl = prog.gl;
-   let shaderProgram = prog.shaderProgram;
-   gl.useProgram   (shaderProgram);
+   prog.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
@@ -19,16 +18,16 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (shaderProgram, "coordinates");
+   let coord = gl.getAttribLocation (prog.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
    //let Tx = 0.5, Ty = 0.5, Tz = 0.0;
-   let translation = gl.getUniformLocation(shaderProgram, 'translation');
+   let translation = gl.getUniformLocation(prog.program, 'translation');
 
    let time_old = 0;
    let animate = (time) =>
    {
-      gl.useProgram   (shaderProgram);
+      gl.useProgram   (prog.program);
       let dt = time - time_old;
       let Tx = 0.5  * Math.cos(dt*0.005);
       let Ty = 0.5 *  Math.sin(dt*0.005);

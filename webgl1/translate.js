@@ -4,10 +4,9 @@ let func = () =>
    let canvas = document.getElementById('translate');
 
    let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.context;
-   let gl = prog.gl;
-   let shaderProgram = prog.shaderProgram;
-   gl.useProgram   (shaderProgram);
+   let prog = glCanvas.program;
+   let gl = glCanvas.gl;
+   prog.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
@@ -19,11 +18,11 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (shaderProgram, "coordinates");
+   let coord = gl.getAttribLocation (prog.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
-   let translation = gl.getUniformLocation(shaderProgram, 'translation');
+   let translation = gl.getUniformLocation(prog.program, 'translation');
    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
    gl.uniform4f(translation, 0.5, 0.5, 0.0, 0.0);
 
