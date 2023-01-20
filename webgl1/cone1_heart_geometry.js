@@ -11,12 +11,11 @@ let func = () =>
    gl.enable(gl.CULL_FACE);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let nh = 3, ns = 100, dnh = 0.2, dr = 1.0;
+   let nh = 3, ns = 100, dr = 1.0;
    if (ns & 1) ns++;
 
    let verts    = [];
    let norms    = [];
-   let tgs = 0;
 
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {

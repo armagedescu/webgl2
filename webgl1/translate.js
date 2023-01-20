@@ -10,6 +10,7 @@ let func = () =>
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
+   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
    let vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
                     0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
@@ -21,11 +22,6 @@ let func = () =>
    let coord = gl.getAttribLocation (prog.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
-
-   let translation = gl.getUniformLocation(prog.program, 'translation');
-   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-   gl.uniform4f(translation, 0.5, 0.5, 0.0, 0.0);
-
 
    gl.drawArrays(gl.TRIANGLES, 0, 6);
 

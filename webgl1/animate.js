@@ -23,12 +23,12 @@ let func = () =>
    gl.enableVertexAttribArray (coord);
 
    let translation = gl.getUniformLocation(prog.program, 'translation');
- 
+
    let time_old = 0;
    let animate = (time) =>
    {
       gl.useProgram (prog.program);
-      let dt = time-time_old;
+      let dt = time - time_old;
       let Tx = 0.5 *  Math.cos(dt * 0.005);
       let Ty = 0.5 *  Math.sin(dt * 0.005);
       let Tz = 0.5 *  Math.sin(dt * 0.005);

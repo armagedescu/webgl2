@@ -5,17 +5,17 @@ let func = () =>
    let glCanvas = new GlCanvas(canvas);
    let prog = glCanvas.program;
    let gl = prog.gl;
-   prog.useProgram   ();
+   prog.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let nh = 1, ns = 5, dnh = 0.2, dr = 0.6;
+   let nh = 1, ns = 5, dr = 0.6;
 
    let verts    = [];
    let norms    = [];
-   let tgs = 0;
+
    for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
    {
        verts[ix] = 0.0;//<-- tip of the cone
@@ -60,7 +60,7 @@ let func = () =>
    let time_old = 0;
    let animate = (time) =>
    {
-      prog.useProgram   ();
+      prog.useProgram ();
       let dt = time - time_old;
       let lightx =  Math.cos (dt * 0.002);
       let lighty =  Math.sin (dt * 0.002);

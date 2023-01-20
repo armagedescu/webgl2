@@ -153,40 +153,45 @@ function buildCone (slices, sectors, revealInvisibles)
 
 }
 
-function buildVao (obj, prog)
+
+
+class HeartCoat extends GlVAObject
 {
-   let gl = prog.gl;
-   prog.useProgram ();
+   constructor(context, coat)
+   {
+      if (context instanceof GlProgram)
+		super(context);
+      else
+        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      this.coat = coat;
+	  this.init();
+   }
+   init ()
+   {
+      this.bindVertexArray();
+	  let gl = this.gl;
 
-   const vao = gl.createVertexArray();
-   gl.bindVertexArray(vao);
+      this.vertex_buffer = this.arrayBuffer(new Float32Array(this.coat.verts));
+      this.coord = this.vertex_buffer.attrib ("coordinates", 3, gl.FLOAT);
 
-   let vertex_buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.verts), gl.STATIC_DRAW);
-   let coord = gl.getAttribLocation (prog.program, "coordinates");
-   gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (coord);
+      this.normal_buffer = this.arrayBuffer(new Float32Array(this.coat.norms));
+      this.noord = this.normal_buffer.attrib ("inputNormal", 3, gl.FLOAT);
 
-   let normalBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (prog.program, "inputNormal");
-   gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (noord);
-
-   let indb = gl.createBuffer();
-   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indb);
-   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.indices), gl.STATIC_DRAW);
-
-   obj.vao = vao;
+      this.indb = this.indexBuffer(new Uint16Array(this.coat.indices));
+   }
+   drawVao()
+   {
+      let gl = this.gl;
+      gl.drawElements (gl.TRIANGLES, this.coat.indices.length, gl.UNSIGNED_SHORT, 0);
+   }
 }
-function drawVao(coat, prog)
+class HeartSet
 {
-   let gl = prog.gl;
-   prog.useProgram ();
-   gl.bindVertexArray (coat.vao);
-   gl.drawElements (gl.TRIANGLES, coat.indices.length, gl.UNSIGNED_SHORT, 0);
+   constructor(prog, nh, ns, revealInvisibles)
+   {
+	  this.vaos = buildCone (nh, ns, revealInvisibles).map ((coat) => {return new HeartCoat(prog, coat)});
+   }
+   draw(){for (let vao of this.vaos) vao.draw()}
 }
 let func = () =>
 {
@@ -204,12 +209,10 @@ let func = () =>
    //let ns = 12, nh = 3;
    let ns = 12, nh = 2;
    //let ns = 80, nh = 20;
-   let coats = buildCone (nh, ns, revealInvisibles);
+   let heartObj = new HeartSet(glCanvas.program, nh, ns, revealInvisibles);
+   heartObj.draw();
 
-   for (let coat of coats)
-      buildVao(coat, prog);
-   for (let coat of coats)
-      drawVao(coat, prog);
+
 }
 
 document.addEventListener('DOMContentLoaded', func);

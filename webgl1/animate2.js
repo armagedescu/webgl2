@@ -21,17 +21,17 @@ let func = () =>
    let coord = gl.getAttribLocation (prog.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
-   //let Tx = 0.5, Ty = 0.5, Tz = 0.0;
+
    let translation = gl.getUniformLocation(prog.program, 'translation');
 
    let time_old = 0;
    let animate = (time) =>
    {
-      gl.useProgram   (prog.program);
+      gl.useProgram (prog.program);
       let dt = time - time_old;
-      let Tx = 0.5  * Math.cos(dt*0.005);
-      let Ty = 0.5 *  Math.sin(dt*0.005);
-      let Tz = 0.5 *  Math.sin(dt*0.005);
+      let Tx = 0.5 *  Math.cos(dt * 0.005);
+      let Ty = 0.5 *  Math.sin(dt * 0.005);
+      let Tz = 0.5 *  Math.sin(dt * 0.005);
 
       gl.uniform3f(translation, Tx, Ty, Tz);
 

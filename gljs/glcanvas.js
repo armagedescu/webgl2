@@ -58,13 +58,61 @@ class GlShader
    }
    deleteShader() { this.gl.deleteShader(this.shader); this.#glType = null; this.source = ""; this.shader = null;}
 }
-
-class GlProgram
+class GlBuffer
+{
+   constructor (gl, type, program, buffer, glDrawType)
+   {
+      this.gl = gl;
+      this.type   = type;
+      this.program = program;
+      this.buffer = buffer;
+      this.id = gl.createBuffer();
+	  if (buffer) this.arrayBuffer(buffer, glDrawType);
+   }
+   bindBuffer() { this.gl.bindBuffer(this.type, this.id); }
+   arrayBuffer(buffer, glDrawType)
+   {
+      let gl = this.gl;
+      let draw = gl.STATIC_DRAW;
+	  if (glDrawType) draw = glDrawType;
+      this.bindBuffer ();
+      gl.bufferData(this.type, buffer, draw);
+      return this.id;
+   }
+   attrib (name, size, type, normalized = false, stride = 0, offset = 0)
+   {
+      this.bindBuffer();
+      let id = this.gl.getAttribLocation (this.program, name);
+      this.gl.vertexAttribPointer     (id, size, type, normalized, stride, offset);
+      this.gl.enableVertexAttribArray (id);
+      return id;
+   }
+}
+class GlApi
+{
+   constructor (gl){this.gl = gl;}
+   arrayBuffer (buffer, glDrawType)
+   {
+      let gl = this.gl;
+      let glBuffer = new GlBuffer(gl, gl.ARRAY_BUFFER, this.program);//, buffer, glDrawType); ok
+	  glBuffer.arrayBuffer (buffer, glDrawType);
+	  return glBuffer;
+   }
+   indexBuffer(buffer, glDrawType)
+   {
+      let gl = this.gl;
+	  let glBuffer = new GlBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, this.program, buffer, glDrawType);
+	  //glBuffer.arrayBuffer (buffer, glDrawType); //two parameter above passed
+	  return glBuffer;
+   }
+   useProgram(){this.gl.useProgram(this.program);}
+}
+class GlProgram extends GlApi
 {
    #shaders = [];
    constructor (gl)
    {
-      this.gl = gl;
+	  super(gl);
 	  this.program = this.gl.createProgram ();
    }
    add (shader, type)
@@ -78,7 +126,6 @@ class GlProgram
 	  else if (shader instanceof WebGLShader) this.#shaders.push(new GlShader(this.gl, shader));
 	  else if (shader instanceof Element)     this.#shaders.push(new GlShader(this.gl, shader, type));
 	  else if (typeof shader == "string")     this.#shaders.push(new GlShader(this.gl, shader, type));
-	   //this.gl.attachShader (this.program, shader.shader);
    }
    linkProgram()
    {
@@ -89,7 +136,38 @@ class GlProgram
    }
    useProgram(){this.gl.useProgram(this.program);}
 }
-
+class GlVAObject extends GlApi
+{
+   //program WebGLProgram gl WebGL2RenderingContext
+   constructor(context, program)
+   {
+      if (context instanceof WebGLProgram)
+      {
+         super(context);
+         this.program = program;
+      }
+	  else if (context instanceof GlProgram)
+      {
+         super(context.gl);
+         this.program = context.program;
+	  }
+	  else
+         throw "GlSurface constructor: unknown context";
+      this.vao = this.gl.createVertexArray();
+   }
+   init(){}
+   drawVao(){}
+   bindVertexArray()
+   {
+      this.useProgram();
+      this.gl.bindVertexArray(this.vao);
+   }
+   draw ()
+   {
+      this.bindVertexArray();
+      this.drawVao();
+   }
+}
 class GlCanvas
 {
    #glObj       = null;

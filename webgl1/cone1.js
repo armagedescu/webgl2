@@ -11,11 +11,10 @@ let func = () =>
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let nh = 1, ns = 20, dnh = 0.2, dr = 0.6;
+   let nh = 1, ns = 20, dr = 0.6;
 
    let verts    = [];
    let norms    = [];
-   let tgs = 0;
    for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
    {
        verts[ix] = 0.0;

@@ -17,7 +17,6 @@ let func = () =>
 
    let verts    = [];
    let norms    = [];
-   let tgs = 0;
 
    let PI_2 = 2 * Math.PI;      //2 * Pi
    let FI_S = 2 * Math.PI / ns; //angular size of one sector
@@ -28,17 +27,17 @@ let func = () =>
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {
       let ps, cr;
-	  if (i < ns/2)
-	  {
+      if (i < ns/2)
+      {
          let fi1 = i   * FI_S;
          let fi2 = fi1 + FI_S; //next fi
-	     
+         
          let rc1 = i   * R_S; //<-- radius coeficient
          let rc2 = rc1 + R_S; //<-- next radius coeficient
 
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- next radius
-	     
+         
          ps = [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
                {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)},
                {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)}];
@@ -48,26 +47,26 @@ let func = () =>
                {x : (Math.sin(fi1) + fi1 * Math.cos(fi1)),   y : -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   z : 1 + fi1},
                {x : (Math.sin(fi2) + fi2 * Math.cos(fi2)),   y : -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   z : 1 + fi2}];
 
-	  } else
-	  {
-		 i2 = i - ns / 2;
+      } else
+      {
+         let i2 = i - ns / 2;
          let fi1 = -i2   * FI_S;
          let fi2 =  fi1  - FI_S;
-	     
+         
          let rc1 = i2  * R_S; //<-- radius coeficients
          let rc2 = rc1 + R_S; //<-- radius coeficients
 
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- radius
-	     
+         
          ps =     [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
                    {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)},
-				   {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)}];
+                   {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)}];
 
          cr = [{x: 0, y: 0, z: 0},
-		       {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z: 1 + fi2},
+               {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z: 1 + fi2},
                {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z: 1 + fi1}];
-	  }
+      }
       verts[ix]     =  ps[0].x;
       verts[iy]     =  ps[0].y;
       verts[iz]     =  ps[0].z;
@@ -127,7 +126,7 @@ let func = () =>
                  ];
          } else
          {
-            i2 = i - ns / 2;
+            let i2 = i - ns / 2;
             let fi1 = -i2 * FI_S;
             let fi2 = fi1 - FI_S;
 
@@ -148,10 +147,10 @@ let func = () =>
             //let cr = cross3v(ps[0], ps[2], ps[3]);
             //cr = [cross3v(ps[0], ps[2], ps[3])];
 
-		    cr = [{x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
+            cr = [{x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
                   {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
                   {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-		          {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
+                  {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
                   {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
                   {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
                  ];
