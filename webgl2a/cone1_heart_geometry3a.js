@@ -71,33 +71,6 @@ function buildSides (geometry, slices)
    }
    return sides;
 
-   let dh = 1. / slices;
-
-   let verts = [];
-   let norms = [];
-   let i0 = 0, i1 = 1, i2 = 2;
-
-   //init tip of the cone
-   verts[i0] = 0; verts[i1] = 0; verts[i2] = 1;
-   norms[i0] = 0; norms[i1] = 0; norms[i2] = 0;
-   i0 += 3; i1 += 3; i2 += 3;
-   //end init tip of the cone
-
-   for (let j = 0, s = 1, h = 1 - dh;   j < slices;   j++, s++, h -= dh)
-   {
-      for (let i = 0; i < geometry.verts.length; i++)
-      {
-         let bs = geometry.verts[i];
-         let ns = geometry.norms[i];
-         verts [i0]  = s * bs[0] / slices; verts [i1]  = s * bs[1] / slices; verts [i2]  = h;
-         norms [i0]  = ns[0]; norms [i1]  = ns[1]; norms [i2]  = ns[2];
-         i0 += 3; i1 += 3; i2 += 3;
-      }
-   }
-
-   return [  {verts : verts,            norms : norms,            sectors : geometry.sectors, slices : slices},
-             {verts : mirror_y (verts), norms : mirror_y (norms), sectors : geometry.sectors, slices : slices}  ];
-
 }
 
 function buildIndexes (side)
@@ -126,11 +99,11 @@ function buildIndexes (side)
          indices[i1] =   j * sec2a + ib;
          indices[i2] =  ja * sec2a + ib;
          i0 += 3; i1 += 3; i2 += 3;
-         console.log (  JSON.stringify({t1:{i:ja * sec2a + ia, j:j * sec2a + ia, k: j * sec2a + ib},
-                               t2:{i:ja * sec2a + ia, j:j * sec2a + ib, k:ja * sec2a + ib}}))
+         //console.log (  JSON.stringify({t1:{i:ja * sec2a + ia, j:j * sec2a + ia, k: j * sec2a + ib},
+         //                      t2:{i:ja * sec2a + ia, j:j * sec2a + ib, k:ja * sec2a + ib}}))
       }
    }
-   console.log("end indicex");
+   //console.log("end indicex");
    return indices;
 }
 
@@ -148,21 +121,16 @@ function buildCone (slices, sectors, revealInvisibles)
    for (let side of sides)
       side.indices =  buildIndexes (side);
 
-   console.log("so far");
+   //console.log("so far");
    return sides;
 
 }
-
-
 
 class HeartCoat extends GlVAObject
 {
    constructor(context, coat)
    {
-      if (context instanceof GlProgram)
-		super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.coat = coat;
 	  this.init();
    }
@@ -185,33 +153,32 @@ class HeartCoat extends GlVAObject
       gl.drawElements (gl.TRIANGLES, this.coat.indices.length, gl.UNSIGNED_SHORT, 0);
    }
 }
-class HeartSet
+class HeartSet extends GlCanvas
 {
-   constructor(prog, nh, ns, revealInvisibles)
+   constructor(context, nh, ns, revealInvisibles)
    {
-	  this.vaos = buildCone (nh, ns, revealInvisibles).map ((coat) => {return new HeartCoat(prog, coat)});
+      super(context);
+	  this.vaos = buildCone (nh, ns, revealInvisibles).map ((coat) => {return new HeartCoat(this, coat)});
    }
    draw(){for (let vao of this.vaos) vao.draw()}
 }
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.program;
-   let gl = glCanvas.gl;
+   const revealInvisibles = false;//false;
+   //const revealInvisibles = true;//false;
+   //let ns = 12, nh = 3;
+   let ns = 12, nh = 2;
+   //let ns = 80, nh = 20;
+   let heartObj = new HeartSet(canvas, nh, ns, revealInvisibles);
+   let gl = heartObj.gl;
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.enable(gl.CULL_FACE);
    gl.clear (gl.COLOR_BUFFER_BIT);
    ////////////////////////////////////
-   const revealInvisibles = false;//false;
-   //const revealInvisibles = true;//false;
-   //let ns = 12, nh = 3;
-   let ns = 12, nh = 2;
-   //let ns = 80, nh = 20;
-   let heartObj = new HeartSet(glCanvas.program, nh, ns, revealInvisibles);
-   heartObj.draw();
 
+   heartObj.draw();
 
 }
 

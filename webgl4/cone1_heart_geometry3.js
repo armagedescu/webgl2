@@ -182,9 +182,9 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
 let func = () =>
 {
    let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.program;
-   let gl = prog.gl;
-   prog.useProgram ();
+   let glProgram = glCanvas.glProgram;
+   let gl = glProgram.gl;
+   glProgram.useProgram ();
 
    gl.enable(gl.DEPTH_TEST);
    gl.enable(gl.CULL_FACE);
@@ -209,18 +209,18 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (prog.program, "coordinates");
+   let coord = gl.getAttribLocation (glProgram.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (prog.program, "inputNormal");
+   let noord = gl.getAttribLocation (glProgram.program, "inputNormal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
 
-   let drawNorms = gl.getUniformLocation(prog.program, 'isDrawNorms');
+   let drawNorms = gl.getUniformLocation(glProgram.program, 'isDrawNorms');
    gl.uniform1f(drawNorms, 0.0);
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
@@ -238,7 +238,6 @@ let func = () =>
       gl.enableVertexAttribArray (coord);
 
       gl.drawArrays(gl.LINES, 0, 2* ( ns * 3 + ns * 6 * (nh - 1)));
-      //gl.drawArrays(gl.LINE_STRIP, 0, ns * 3 + ns * 6 * (nh - 1));
    }
 }
 
