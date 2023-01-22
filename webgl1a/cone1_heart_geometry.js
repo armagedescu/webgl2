@@ -9,10 +9,7 @@ class HeartGeometry1 extends GlVAObject
    #ns = null;
    constructor(context, nh = 2, ns = 40)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.initGeometry(nh, ns);
       this.init();
    }
@@ -45,7 +42,7 @@ class HeartGeometry1 extends GlVAObject
          this.#verts[ix + 6] =  ps[2].x;
          this.#verts[iy + 6] =  ps[2].y;
          this.#verts[iz + 6] =  ps[2].z;
-      
+
          this.#norms[ix]     =  cr.x;
          this.#norms[iy]     =  cr.y;
          this.#norms[iz]     =  cr.z;
@@ -56,7 +53,7 @@ class HeartGeometry1 extends GlVAObject
          this.#norms[iy + 6] =  cr.y;
          this.#norms[iz + 6] =  cr.z;
       }
-      
+
       //1 triangle = 3 points * 3 coordinates
       for (let h = 1, ix = ns*9, iy = ns*9 + 1, iz = ns*9 + 2;    h < nh; h++)
       {
@@ -66,14 +63,14 @@ class HeartGeometry1 extends GlVAObject
              let drd =  2 * (i + 1) * (1/this.#ns);
              if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
              if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
-      
+
              let ps = [{x: ( h   *dr /this.#nh) * Math.cos(2 * Math.PI *  i   /this.#ns), y:( h   *dr /this.#nh) * Math.sin(2 * Math.PI *  i    / this.#ns), z:1 -  h   *1/this.#nh},  // 1  4
                        {x: ( h   *drd/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:( h   *drd/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 -  h   *1/this.#nh},  //    6
                        {x: ((h+1)*dr /this.#nh) * Math.cos(2 * Math.PI *  i   /this.#ns), y:((h+1)*dr /this.#nh) * Math.sin(2 * Math.PI *  i    / this.#ns), z:1 - (h+1)*1/this.#nh},  // 2
                        {x: ((h+1)*drd/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:((h+1)*drd/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 - (h+1)*1/this.#nh}]; // 3  5
-      
+
              let cr = cross3v(ps[0], ps[2], ps[3]);
-      
+
              this.#verts[ix]     =  ps[0].x;
              this.#verts[iy]     =  ps[0].y;
              this.#verts[iz]     =  ps[0].z;
@@ -83,7 +80,7 @@ class HeartGeometry1 extends GlVAObject
              this.#verts[ix + 6] =  ps[3].x;
              this.#verts[iy + 6] =  ps[3].y;
              this.#verts[iz + 6] =  ps[3].z;
-      
+
              this.#norms[ix]     =  cr.x;
              this.#norms[iy]     =  cr.y;
              this.#norms[iz]     =  cr.z;
@@ -93,10 +90,10 @@ class HeartGeometry1 extends GlVAObject
              this.#norms[ix + 6] =  cr.x;
              this.#norms[iy + 6] =  cr.y;
              this.#norms[iz + 6] =  cr.z;
-      
+
              ix += 9;iy += 9;iz += 9;
              cr = cross3v(ps[0], ps[3], ps[1]);
-      
+
              this.#verts[ix]     =  ps[0].x;
              this.#verts[iy]     =  ps[0].y;
              this.#verts[iz]     =  ps[0].z;
@@ -106,7 +103,7 @@ class HeartGeometry1 extends GlVAObject
              this.#verts[ix + 6] =  ps[3].x;
              this.#verts[iy + 6] =  ps[3].y;
              this.#verts[iz + 6] =  ps[3].z;
-      
+
              this.#norms[ix]     =  cr.x;
              this.#norms[iy]     =  cr.y;
              this.#norms[iz]     =  cr.z;
@@ -116,7 +113,7 @@ class HeartGeometry1 extends GlVAObject
              this.#norms[ix + 6] =  cr.x;
              this.#norms[iy + 6] =  cr.y;
              this.#norms[iz + 6] =  cr.z;
-      
+
          }
       }
    }
@@ -140,9 +137,7 @@ class HeartGeometry1 extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let heartGeometry1  = new HeartGeometry1(glCanvas.program, 3, 100);
-   let prog = heartGeometry1.program;
+   let heartGeometry1  = new HeartGeometry1(canvas, 3, 100);
    let gl = heartGeometry1.gl;
    heartGeometry1.useProgram ();
    gl.clearColor(0.5, 0.5, 0.5, 0.9);

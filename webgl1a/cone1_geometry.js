@@ -9,10 +9,8 @@ class Cone1Geometry extends GlVAObject
    #ns = null;
    constructor(context, nh = 2, ns = 40)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
+
       this.initGeometry(nh, ns);
       this.init();
    }
@@ -39,7 +37,7 @@ class Cone1Geometry extends GlVAObject
          this.#verts[ix + 6] =  ps[2].x;
          this.#verts[iy + 6] =  ps[2].y;
          this.#verts[iz + 6] =  ps[2].z;
-      
+
          this.#norms[ix]     =  cr.x;
          this.#norms[iy]     =  cr.y;
          this.#norms[iz]     =  cr.z;
@@ -60,9 +58,9 @@ class Cone1Geometry extends GlVAObject
                        {x:     (h*dr/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:    (h*dr/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 -     h*1/this.#nh},  //    6
                        {x: ((h+1)*dr/this.#nh) * Math.cos(2 * Math.PI *     i/this.#ns), y:((h+1)*dr/this.#nh) * Math.sin(2 * Math.PI *     i / this.#ns), z:1 - (h+1)*1/this.#nh},  // 2
                        {x: ((h+1)*dr/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:((h+1)*dr/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 - (h+1)*1/this.#nh}]; // 3  5
-      
+
              let cr = cross3v(ps[0], ps[2], ps[3]);
-      
+
              this.#verts[ix]     =  ps[0].x;
              this.#verts[iy]     =  ps[0].y;
              this.#verts[iz]     =  ps[0].z;
@@ -72,7 +70,7 @@ class Cone1Geometry extends GlVAObject
              this.#verts[ix + 6] =  ps[3].x;
              this.#verts[iy + 6] =  ps[3].y;
              this.#verts[iz + 6] =  ps[3].z;
-      
+
              this.#norms[ix]     =  cr.x;
              this.#norms[iy]     =  cr.y;
              this.#norms[iz]     =  cr.z;
@@ -82,10 +80,10 @@ class Cone1Geometry extends GlVAObject
              this.#norms[ix + 6] =  cr.x;
              this.#norms[iy + 6] =  cr.y;
              this.#norms[iz + 6] =  cr.z;
-      
+
              ix += 9;iy += 9;iz += 9;
              cr = cross3v(ps[0], ps[3], ps[1]);
-      
+
              this.#verts[ix]     =  ps[0].x;
              this.#verts[iy]     =  ps[0].y;
              this.#verts[iz]     =  ps[0].z;
@@ -95,7 +93,7 @@ class Cone1Geometry extends GlVAObject
              this.#verts[ix + 6] =  ps[3].x;
              this.#verts[iy + 6] =  ps[3].y;
              this.#verts[iz + 6] =  ps[3].z;
-      
+
              this.#norms[ix]     =  cr.x;
              this.#norms[iy]     =  cr.y;
              this.#norms[iz]     =  cr.z;
@@ -105,7 +103,7 @@ class Cone1Geometry extends GlVAObject
              this.#norms[ix + 6] =  cr.x;
              this.#norms[iy + 6] =  cr.y;
              this.#norms[iz + 6] =  cr.z;
-      
+
          }
       }
 
@@ -132,9 +130,7 @@ class Cone1Geometry extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let cone1Geometry = new Cone1Geometry (glCanvas.program);
-   let prog = cone1Geometry.program;
+   let cone1Geometry = new Cone1Geometry (canvas);
    let gl = cone1Geometry.gl;
    cone1Geometry.useProgram   ();
 

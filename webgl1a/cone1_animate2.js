@@ -11,10 +11,7 @@ class Cone1Animate2 extends GlVAObject
    #oldTime = 0;
    constructor(context, nh = 1, ns = 5)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.initGeometry(nh, ns);
       this.init();
    }
@@ -24,7 +21,7 @@ class Cone1Animate2 extends GlVAObject
       this.#ns = ns;
       this.#verts    = [];
       this.#norms    = [];
-	  let  dr = 0.6;
+      let  dr = 0.6;
 
       for (let i = 0, ix = 0,iy = 1,iz = 2; i < this.#ns; i++, ix += 9,iy += 9,iz += 9)
       {
@@ -37,7 +34,7 @@ class Cone1Animate2 extends GlVAObject
           this.#verts[ix + 6] =  dr * Math.cos(2 * Math.PI * (i+1) / this.#ns);
           this.#verts[iy + 6] =  dr * Math.sin(2 * Math.PI * (i+1) / this.#ns);
           this.#verts[iz + 6] =  0.0;
-      
+
           this.#norms[ix]     =  this.#verts[ix + 3];
           this.#norms[iy]     =  this.#verts[iy + 3];
           this.#norms[iz]     =  0.7;
@@ -47,7 +44,7 @@ class Cone1Animate2 extends GlVAObject
           this.#norms[ix + 6] =  this.#verts[ix + 6];
           this.#norms[iy + 6] =  this.#verts[iy + 6];
           this.#norms[iz + 6] =  0.7;
-      
+
       }
 
    }
@@ -72,28 +69,26 @@ class Cone1Animate2 extends GlVAObject
       let lightx =  Math.cos (this.#dt * 0.002);
       let lighty =  Math.sin (this.#dt * 0.002);
       gl.uniform2f(this.lightDirection, lightx, lighty);
-	  gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
    }
 }
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let cone1Animate2 = new Cone1Animate2(glCanvas.program);
-   let prog = cone1Animate2.program;
+   let cone1Animate2 = new Cone1Animate2(canvas);
    let gl = cone1Animate2.gl;
 
    let animate = (time) =>
    {
       cone1Animate2.useProgram ();
-	  
+
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	  cone1Animate2.t  = time;
-	  cone1Animate2.draw();
+      cone1Animate2.t  = time;
+      cone1Animate2.draw();
 
       window.requestAnimationFrame(animate);
    }

@@ -5,10 +5,7 @@ class SimpleDraw extends GlVAObject
                  0.0, -0.5,    0.8, 0.4,   -0.4,  0.5];
    constructor(context)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.init();
    }
    init ()
@@ -29,9 +26,7 @@ class SimpleDraw extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas('draw');
-   let simpleDraw = new SimpleDraw(glCanvas.program);
-   let prog = simpleDraw.program;
+   let simpleDraw = new SimpleDraw('draw');
    let gl = simpleDraw.gl;
    simpleDraw.useProgram ();
 

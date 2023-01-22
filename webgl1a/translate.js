@@ -7,10 +7,7 @@ class Translate extends GlVAObject
 
    constructor(context)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.init();
    }
    init ()
@@ -31,19 +28,13 @@ class Translate extends GlVAObject
 
 let func = () =>
 {
-   let canvas = document.getElementById('translate');
-
-   let glCanvas = new GlCanvas(canvas);
-   let translate = new Translate(glCanvas.program);
-
-
-   let prog = translate.program;
+   let translate = new Translate('translate');
    let gl = translate.gl;
+
    translate.useProgram ();
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
    translate.draw ();
-
 };
 document.addEventListener('DOMContentLoaded', func);
 }

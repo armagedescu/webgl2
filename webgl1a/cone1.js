@@ -10,10 +10,7 @@ class Cone1 extends GlVAObject
    #dt = 0;
    constructor(context, nh = 1, ns = 20)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.initGeometry(nh, ns);
       this.init();
    }
@@ -71,8 +68,7 @@ class Cone1 extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let cone1 = new Cone1(glCanvas.program);
+   let cone1 = new Cone1(canvas);
    let gl = cone1.gl;
    cone1.useProgram ();
 

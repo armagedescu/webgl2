@@ -9,10 +9,7 @@ class Normals extends GlVAObject
                  1.0, 0.0, 1.0,   1.0, 0.0, 1.0,    1.0,  0.0,  1.0  ];
    constructor(context)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.init();
    }
    init ()
@@ -35,17 +32,14 @@ class Normals extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let normals = new Normals(glCanvas.program);
-   let simpleDraw = glCanvas.program;
-   let gl = simpleDraw.gl;
-   simpleDraw.useProgram ();
+   let normals = new Normals(canvas);
+   let gl = normals.gl;
+   normals.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
    normals.draw();
-
 };
 document.addEventListener('DOMContentLoaded', func);
 }

@@ -9,10 +9,7 @@ class TriangleFan extends GlVAObject
    #nh = null; #ns = null; #dr = null;
    constructor(context, nh = 1, ns = 16, dr = 0.6)//, dnh = 0.2,)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.#nh = nh; this.#ns = ns; this.#dr = dr;
       this.initGeometry();
       this.init();
@@ -52,17 +49,14 @@ class TriangleFan extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.program;
-   let gl   = glCanvas.gl;
-   let triangleFan = new TriangleFan(glCanvas.program); //nh = 1, ns = 16, dr = 0.6;// dnh = 0.2,
+   let triangleFan = new TriangleFan(canvas); //nh = 1, ns = 16, dr = 0.6;// dnh = 0.2,
+   let gl   = triangleFan.gl;
    triangleFan.useProgram();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
    triangleFan.draw();
-
 };
 document.addEventListener('DOMContentLoaded', func);
 }

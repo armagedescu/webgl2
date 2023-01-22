@@ -9,10 +9,7 @@ class UseColors extends GlVAObject
                  1.0, 0.0, 0.0, 1.0,      1.0, 0.0, 0.0, 1.0,       1.0, 0.0, 0.0, 1.0];
    constructor(context)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.init();
    }
    init ()
@@ -33,12 +30,9 @@ class UseColors extends GlVAObject
    }
 }
 
-
 let func = () =>
 {
-   let glCanvas  = new GlCanvas (canvas);
-   let useColors = new UseColors (glCanvas.program);
-   let prog = useColors.program;
+   let useColors = new UseColors (canvas);
    let gl = useColors.gl;
    useColors.useProgram();
 
@@ -47,8 +41,6 @@ let func = () =>
    gl.clear (gl.COLOR_BUFFER_BIT); // Clear the color buffer bit
 
    useColors.draw();
-
-
 };
 document.addEventListener('DOMContentLoaded', func);
 }

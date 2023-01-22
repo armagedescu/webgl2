@@ -9,10 +9,7 @@ class Animate1 extends GlVAObject
    #timeOld = 0;
    constructor(context)
    {
-      if (context instanceof GlProgram)
-        super(context);
-      else
-        throw "GlHeartCoat:GlSurface constructor: unknown context";
+      super(context);
       this.init();
    }
 
@@ -44,8 +41,7 @@ class Animate1 extends GlVAObject
 
 let func = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let animate1 = new Animate1(glCanvas.program);
+   let animate1 = new Animate1(canvas);
    let gl = animate1.gl;
 
    let animate = (time) =>
