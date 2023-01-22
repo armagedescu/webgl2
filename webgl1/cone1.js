@@ -3,9 +3,9 @@ let canvas = document.currentScript.parentElement;
 let func = () =>
 {
    let glCanvas = new GlCanvas(canvas);
-   let prog = glCanvas.program;
-   let gl = prog.gl;
-   prog.useProgram ();
+   let glProgram = glCanvas.glProgram;
+   let gl = glProgram.gl;
+   glProgram.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
@@ -42,7 +42,7 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (prog.program, "coordinates");
+   let coord = gl.getAttribLocation (glProgram.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
@@ -50,7 +50,7 @@ let func = () =>
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (prog.program, "inputNormal");
+   let noord = gl.getAttribLocation (glProgram.program, "inputNormal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
 
