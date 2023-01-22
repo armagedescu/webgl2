@@ -6,7 +6,7 @@ class GlShader
       this.source = "";
       this.gl     = gl;
       this.shader = null;
-	  if (type) this.type = type;
+      if (type) this.type = type;
       if (!obj) return;
       if (typeof obj == "string") this.#setString(obj);
       else if (obj instanceof Element) this.#setScriptElement(obj);
@@ -18,21 +18,22 @@ class GlShader
    {
       this.shader = this.gl.createShader (this.#glType);
       this.gl.shaderSource  (this.shader, this.source);
-	  this.compileShader();
+      this.compileShader();
    }
    //private:
    #setString(str) //type ="vertex-shader"/"fragment-shader"
    {
-	  this.source = str;
+      if (!str) {console.log("no string for shader to compile"); return;}
+      this.source = str.trimStart();
       if (!this.type) return;
       if (this.type.length <= 0) return;
-	  this.#compile();
+      this.#compile();
    }
    #setScriptElement(obj)
    {
       let type = obj.getAttribute("data-gl-type");
-	  if (type) { if (type.length > 0) this.type = type; }
-	  this.#setString(obj.innerText);
+      if (type) { if (type.length > 0) this.type = type; }
+      this.#setString(obj.innerText);
    }
 
    //public:
@@ -54,7 +55,8 @@ class GlShader
    compileShader()
    {
       this.gl.compileShader (this.shader);
-	  let msg = this.gl.getShaderInfoLog(this.shader);
+      let msg = this.gl.getShaderInfoLog(this.shader);
+      console.log("shader compile result: " + msg);
    }
    deleteShader() { this.gl.deleteShader(this.shader); this.#glType = null; this.source = ""; this.shader = null;}
 }
@@ -67,14 +69,14 @@ class GlBuffer
       this.program = program;
       this.buffer = buffer;
       this.id = gl.createBuffer();
-	  if (buffer) this.arrayBuffer(buffer, glDrawType);
+      if (buffer) this.arrayBuffer(buffer, glDrawType);
    }
    bindBuffer() { this.gl.bindBuffer(this.type, this.id); }
    arrayBuffer(buffer, glDrawType)
    {
       let gl = this.gl;
       let draw = gl.STATIC_DRAW;
-	  if (glDrawType) draw = glDrawType;
+      if (glDrawType) draw = glDrawType;
       this.bindBuffer ();
       gl.bufferData(this.type, buffer, draw);
       return this.id;
@@ -87,6 +89,7 @@ class GlBuffer
       this.gl.enableVertexAttribArray (id);
       return id;
    }
+
 }
 class GlApi
 {
@@ -95,43 +98,52 @@ class GlApi
    {
       let gl = this.gl;
       let glBuffer = new GlBuffer(gl, gl.ARRAY_BUFFER, this.program);//, buffer, glDrawType); ok
-	  glBuffer.arrayBuffer (buffer, glDrawType);
-	  return glBuffer;
+      glBuffer.arrayBuffer (buffer, glDrawType);
+      return glBuffer;
    }
    indexBuffer(buffer, glDrawType)
    {
       let gl = this.gl;
-	  let glBuffer = new GlBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, this.program, buffer, glDrawType);
-	  //glBuffer.arrayBuffer (buffer, glDrawType); //two parameter above passed
-	  return glBuffer;
+      let glBuffer = new GlBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, this.program, buffer, glDrawType);
+      //glBuffer.arrayBuffer (buffer, glDrawType); //two parameter above passed
+      return glBuffer;
    }
    useProgram(){this.gl.useProgram(this.program);}
+   uniformMatrix4fv (name)
+   {
+      this.useProgram();
+      //this.bindBuffer();
+      let id = this.gl.getUniformLocation (this.program, name);
+      //this.gl.uniformMatrix4fv     (id, size, transpose, value);
+      //this.gl.enableVertexAttribArray (id);
+      return id;
+   }
 }
 class GlProgram extends GlApi
 {
    #shaders = [];
    constructor (gl)
    {
-	  super(gl);
-	  this.program = this.gl.createProgram ();
+      super(gl);
+      this.program = this.gl.createProgram ();
    }
    add (shader, type)
    {
       if (!shader)
-	  {
+      {
          console.log("null shader");
-		 return;
-	  }
+         return;
+      }
       if (shader instanceof GlShader)         this.#shaders.push(shader);
-	  else if (shader instanceof WebGLShader) this.#shaders.push(new GlShader(this.gl, shader));
-	  else if (shader instanceof Element)     this.#shaders.push(new GlShader(this.gl, shader, type));
-	  else if (typeof shader == "string")     this.#shaders.push(new GlShader(this.gl, shader, type));
+      else if (shader instanceof WebGLShader) this.#shaders.push(new GlShader(this.gl, shader));
+      else if (shader instanceof Element)     this.#shaders.push(new GlShader(this.gl, shader, type));
+      else if (typeof shader == "string")     this.#shaders.push(new GlShader(this.gl, shader, type));
    }
    linkProgram()
    {
       for (let shader of this.#shaders) this.gl.attachShader (this.program, shader.shader);
       this.gl.linkProgram(this.program);
-      //console.log("Compile program result:  " + name + ": " + this.gl.getProgramInfoLog(program));
+      console.log("Compile program result:  " + name + ": " + this.gl.getProgramInfoLog(this.program));
       for (let shader of this.#shaders) shader.deleteShader();
    }
    useProgram(){this.gl.useProgram(this.program);}
@@ -146,13 +158,25 @@ class GlVAObject extends GlApi
          super(context);
          this.program = program;
       }
-	  else if (context instanceof GlProgram)
+      else if (context instanceof GlCanvas)
+      {
+          super(context.gl);
+          this.glCanvas  = context;
+          this.program = context.program;
+      }
+      else if (context instanceof GlProgram)
       {
          super(context.gl);
-         this.program = context.program;
-	  }
-	  else
-         throw "GlSurface constructor: unknown context";
+         this.program  = context.program;
+      }
+      else
+      {
+         let canvas  = new GlCanvas(context);
+		 super(canvas.gl);
+		 this.glCanvas = canvas;
+		 this.program  = canvas.program;
+         //throw "GlSurface constructor: unknown context";
+      }
       this.vao = this.gl.createVertexArray();
    }
    init(){}
@@ -224,8 +248,10 @@ class GlCanvas
    get canvas   () { return this.#canvasObj;  }
    get programs () { return this.#programMap; }
    //default context and default program
-   get program  () { return this.programs.get("___DEFAULT_PROGRAM___"); }
-   getProgram   (progName) { return this.programs.get(progName); }
+   get glProgram  () { return this.programs.get("___DEFAULT_PROGRAM___"); }
+   get program    () { return this.glProgram.program; }
+   getGlProgram   (progName) { return this.programs.get (progName); }
+   getProgram     (progName) { return this.getGlProgram (progName).program; }
 
 }
 
