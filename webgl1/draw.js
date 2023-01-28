@@ -10,7 +10,7 @@ let func = () =>
    gl.clear (gl.COLOR_BUFFER_BIT);
 
    let vertices = [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
-                    0.0, -0.5,    0.8, 0.4,   -0.4,  0.5];
+                    0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ];
 
    // Create a new buffer object
    let vertex_buffer = gl.createBuffer();

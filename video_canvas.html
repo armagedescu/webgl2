@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video test page</title>
+    <style>
+      #c2 {
+        background-image: url(video/foo.png);
+        background-repeat: no-repeat;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <video
+        id="video"
+        src="video/FirefoxGuy.mp4"
+        controls="true"
+        crossorigin="anonymous" />
+    </div>
+    <div>
+      <canvas id="c1" width="160" height="96"></canvas>
+      <canvas id="c2" width="160" height="96"></canvas>
+    </div>
+    <script src="./texture/processor.js"></script>
+  </body>
+</html>

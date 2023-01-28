@@ -18,16 +18,11 @@ class TriangleFan extends GlVAObject
    {
       for (let i = 0, ix = 3,iy = 4,iz = 5; i <= this.#ns; i++, ix += 3,iy += 3,iz += 3)
       {
-          this.#verts   [ix]    =   this.#dr * Math.cos(2 * Math.PI * i / this.#ns);
-          this.#verts   [iy]    =   this.#dr * Math.sin(2 * Math.PI * i / this.#ns);
-          this.#verts   [iz]    =   -1;//<-- tip of the cone
-
-          this.#norms[ix] = 0;//verts[ix];
-          this.#norms[iy] = 1;//verts[iy];
-          this.#norms[iz] = 1;//verts[iz];
+          [this.#verts [ix], this.#verts [iy], this.#verts [iz]] = [this.#dr * Math.cos(2 * Math.PI * i / this.#ns),   this.#dr * Math.sin(2 * Math.PI * i / this.#ns),   -1];
+          [this.#norms [ix], this.#norms [iy], this.#norms [iz]] = [0, 1, 1];
       }
-
    }
+
    init ()
    {
       this.bindVertexArray();

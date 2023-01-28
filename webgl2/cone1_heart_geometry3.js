@@ -12,8 +12,8 @@ function buildGeometry (sectors, revealInvisible)
    for (let i = 0, fi = 0; i <= sec2; i++, fi += dfi)
    {
       //Calculate and normalize geometry: Resize all 0..PI to 0..1
-      base[i]  = mul3v([               fi * Math.cos(fi),                    fi * Math.sin(fi),   0.0], [1.0 / Math.PI, 1.0 / Math.PI,  1.0          ]);
-      norms[i] = mul3v([Math.sin(fi) + fi * Math.cos(fi),   -(Math.cos(fi) - fi * Math.sin(fi)),   fi], [1.0          , 1.0          ,  1.0 / Math.PI]);
+      base[i]  = mulv([               fi * Math.cos(fi),                    fi * Math.sin(fi),   0.0], [1.0 / Math.PI, 1.0 / Math.PI,  1.0          ]);
+      norms[i] = mulv([Math.sin(fi) + fi * Math.cos(fi),   -(Math.cos(fi) - fi * Math.sin(fi)),   fi], [1.0          , 1.0          ,  1.0 / Math.PI]);
    }
    if(revealInvisible) base[0] = [0.5, 0.0, 0];
 

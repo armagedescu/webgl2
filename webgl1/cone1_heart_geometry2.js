@@ -37,15 +37,14 @@ let func = () =>
 
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- next radius
-         
-         ps = [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
-               {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)},
-               {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)}];
-         let crz = cross3v(ps[0], ps[1], ps[2]);
 
-         cr = [{x : 0,   y :0,   z : 0},
-               {x : (Math.sin(fi1) + fi1 * Math.cos(fi1)),   y : -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   z : 1 + fi1},
-               {x : (Math.sin(fi2) + fi2 * Math.cos(fi2)),   y : -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   z : 1 + fi2}];
+         ps = [[0.0,                  0.0,                  (1.0)], //<--points in direction of us
+               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)],
+               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)]];
+
+         cr = [[0,   0,   0],
+               [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   1 + fi1],
+               [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   1 + fi2]];
 
       } else
       {
@@ -59,33 +58,21 @@ let func = () =>
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- radius
          
-         ps =     [{x:0.0,                  y:0.0,                  z:(1.0)}, //<--points in direction of us
-                   {x:r2 * Math.cos(fi2),   y:r2 * Math.sin(fi2),   z:(1 - D_H)},
-                   {x:r1 * Math.cos(fi1),   y:r1 * Math.sin(fi1),   z:(1 - D_H)}];
+         ps =     [[0.0,                  0.0,                  (1.0)], //<--points to us
+                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)],
+                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)]];
 
-         cr = [{x: 0, y: 0, z: 0},
-               {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z: 1 + fi2},
-               {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z: 1 + fi1}];
+         cr = [[ 0,  0,  0],
+               [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), 1 + fi2],
+               [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), 1 + fi1]];
       }
-      verts[ix]     =  ps[0].x;
-      verts[iy]     =  ps[0].y;
-      verts[iz]     =  ps[0].z;
-      verts[ix + 3] =  ps[1].x;
-      verts[iy + 3] =  ps[1].y;
-      verts[iz + 3] =  ps[1].z;
-      verts[ix + 6] =  ps[2].x;
-      verts[iy + 6] =  ps[2].y;
-      verts[iz + 6] =  ps[2].z;
+      [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
+      [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
+      [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[2];
 
-      norms[ix]     =  cr[0].x;
-      norms[iy]     =  cr[0].y;
-      norms[iz]     =  cr[0].z;
-      norms[ix + 3] =  cr[1].x;
-      norms[iy + 3] =  cr[1].y;
-      norms[iz + 3] =  cr[1].z;
-      norms[ix + 6] =  cr[2].x;
-      norms[iy + 6] =  cr[2].y;
-      norms[iz + 6] =  cr[2].z;
+      [norms[ix],     norms[iy],     norms[iz]]     = cr[0];
+      [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr[1];
+      [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr[2];
    }
 
    //1 triangle = 3 points * 3 coordinates
@@ -109,20 +96,15 @@ let func = () =>
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [{x: r11 * Math.cos(fi1),  y: r11 * Math.sin(fi1),  z: 1 - h1n},  // <-- points [1] []    [1]   [4]
-                  {x: r12 * Math.cos(fi2),  y: r12 * Math.sin(fi2),  z: 1 - h1n},  // <-- points [ ] []    [ ]   [6]
-                  {x: r21 * Math.cos(fi1),  y: r21 * Math.sin(fi1),  z: 1 - h2n},  // <-- points [3] []    [2]   [ ]
-                  {x: r22 * Math.cos(fi2),  y: r22 * Math.sin(fi2),  z: 1 - h2n}]; // <-- points [2] []    [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1] []    [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ] []    [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [3] []    [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [2] []    [3]   [5]
 
-            //let cr = cross3v(ps[0], ps[2], ps[3]);
-            //cr = [cross3v(ps[0], ps[2], ps[3])];
-
-            cr = [{x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-                  {x:(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:-(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:-(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
+            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
+                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
                  ];
          } else
          {
@@ -139,66 +121,35 @@ let func = () =>
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [{x: r11 * Math.cos(fi1),  y: r11 * Math.sin(fi1),  z: 1 - h1n},  // <-- points [1]   [4]
-                  {x: r12 * Math.cos(fi2),  y: r12 * Math.sin(fi2),  z: 1 - h1n},  // <-- points [ ]   [6]
-                  {x: r21 * Math.cos(fi1),  y: r21 * Math.sin(fi1),  z: 1 - h2n},  // <-- points [2]   [ ]
-                  {x: r22 * Math.cos(fi2),  y: r22 * Math.sin(fi2),  z: 1 - h2n}]; // <-- points [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [3]   [5]
 
-            //let cr = cross3v(ps[0], ps[2], ps[3]);
-            //cr = [cross3v(ps[0], ps[2], ps[3])];
-
-            cr = [{x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
-                  {x:-(Math.sin(fi1) + fi1 * Math.cos(fi1)), y:(Math.cos(fi1) - fi1 * Math.sin(fi1)), z:1+fi1}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi1)), y:wrap(1/Math.sin(fi1)), z:2},
-                  {x:-(Math.sin(fi2) + fi2 * Math.cos(fi2)), y:(Math.cos(fi2) - fi2 * Math.sin(fi2)), z:1+fi2}, //{x:wrap(1/Math.cos(fi2)), y:wrap(1/Math.sin(fi2)), z:2},
+            cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
+                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
                  ];
          }
 
+         [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
+         [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[2];
+         [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[3];
 
-         verts[ix]     =  ps[0].x;
-         verts[iy]     =  ps[0].y;
-         verts[iz]     =  ps[0].z;
-         verts[ix + 3] =  ps[2].x;
-         verts[iy + 3] =  ps[2].y;
-         verts[iz + 3] =  ps[2].z;
-         verts[ix + 6] =  ps[3].x;
-         verts[iy + 6] =  ps[3].y;
-         verts[iz + 6] =  ps[3].z;
-
-         norms[ix]     =  cr[0].x;
-         norms[iy]     =  cr[0].y;
-         norms[iz]     =  cr[0].z;
-         norms[ix + 3] =  cr[1].x;
-         norms[iy + 3] =  cr[1].y;
-         norms[iz + 3] =  cr[1].z;
-         norms[ix + 6] =  cr[2].x;
-         norms[iy + 6] =  cr[2].y;
-         norms[iz + 6] =  cr[2].z;
+         [norms[ix],     norms[iy],     norms[iz]]     = cr[0];
+         [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr[2];
+         [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr[3];
 
          ix += 9;iy += 9;iz += 9;
-         //cr = [cross3v(ps[0], ps[3], ps[1])];
 
-         verts[ix]     =  ps[0].x;
-         verts[iy]     =  ps[0].y;
-         verts[iz]     =  ps[0].z;
-         verts[ix + 3] =  ps[1].x;
-         verts[iy + 3] =  ps[1].y;
-         verts[iz + 3] =  ps[1].z;
-         verts[ix + 6] =  ps[3].x;
-         verts[iy + 6] =  ps[3].y;
-         verts[iz + 6] =  ps[3].z;
+         [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
+         [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
+         [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[3];
 
-         norms[ix]     =  cr[3].x;
-         norms[iy]     =  cr[3].y;
-         norms[iz]     =  cr[3].z;
-         norms[ix + 3] =  cr[4].x;
-         norms[iy + 3] =  cr[4].y;
-         norms[iz + 3] =  cr[4].z;
-         norms[ix + 6] =  cr[5].x;
-         norms[iy + 6] =  cr[5].y;
-         norms[iz + 6] =  cr[5].z;
+         [norms[ix],     norms[iy],     norms[iz]]     = cr[0];
+         [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr[1];
+         [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr[3];
 
       }
    }

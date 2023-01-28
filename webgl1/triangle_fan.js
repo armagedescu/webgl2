@@ -17,13 +17,8 @@ let func = () =>
    let norms    = [0.0, 0.0, 1.0];
    for (let i = 0, ix = 3,iy = 4,iz = 5; i <= ns; i++, ix += 3,iy += 3,iz += 3)
    {
-       verts   [ix]    =   dr * Math.cos(2 * Math.PI * i / ns);
-       verts   [iy]    =   dr * Math.sin(2 * Math.PI * i / ns);
-       verts   [iz]    =   -1;//<-- tip of the cone
-
-       norms[ix] = 0;//verts[ix];
-       norms[iy] = 1;//verts[iy];
-       norms[iz] = 1;//verts[iz];
+       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   -1];
+       [norms [ix], norms [iy], norms [iz]] = [0, 1, 1];
    }
 
 

@@ -1,75 +1,9 @@
 "use strict";
 
-var fVertexShaderSource = `#version 300 es
-
-// an attribute is an input (in) to a vertex shader.
-// It will receive data from a buffer
-in vec4 a_position;
-in vec4 a_color;
-
-// A matrix to transform the positions by
-uniform mat4 u_matrix;
-
-// a varying the color to the fragment shader
-out vec4 v_color;
-
-// all shaders have a main function
-void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
-
-  // Pass the color to the fragment shader.
-  v_color = a_color;
-}
-`;
-
-var fFragmentShaderSource = `#version 300 es
-
-precision highp float;
-
-// the varied color passed from the vertex shader
-in vec4 v_color;
-
-// we need to declare an output for the fragment shader
-out vec4 outColor;
-
-void main() {
-  outColor = v_color;
-}
-`;
-
-var textVertexShaderSource = `#version 300 es
-in vec4 a_position;
-in vec2 a_texcoord;
-
-uniform mat4 u_matrix;
-
-out vec2 v_texcoord;
-
-void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
-
-  // Pass the texcoord to the fragment shader.
-  v_texcoord = a_texcoord;
-}
-`;
-
-var textFragmentShaderSource = `#version 300 es
-precision highp float;
-
-// Passed in from the vertex shader.
-in vec2 v_texcoord;
-
-uniform sampler2D u_texture;
-
-out vec4 outColor;
-
-void main() {
-   outColor = texture(u_texture, v_texcoord);
-}
-`;
-
+/*
+  var image = new Image();
+  mage.src = "./texture/f-texture.png";
+  document.body.appendChild(image); //*/
 // make a 2d canvas for making text textures.
 var textCtx = document.createElement("canvas").getContext("2d");
 
@@ -92,14 +26,13 @@ function main() {
   let canvas = document.getElementById("canvas");
   let glCanvas = new GlCanvas(canvas);
   let gl = glCanvas.gl;
-  if (!gl) {
-    return;
-  }
+
   let fvao = new GlVAObject (glCanvas);
   let tvao = new GlVAObject (glCanvas.getGlProgram("texture"));
 
   // create text texture.
   let textCanvas = makeTextCanvas("Hello!", 100, 26);
+  document.body.appendChild(textCanvas);
   let textWidth  = textCanvas.width;
   let textHeight = textCanvas.height;
   let textTex = gl.createTexture();
@@ -112,7 +45,7 @@ function main() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
 
-  let fUniforms = { u_matrix:  fvao.uniformMatrix4fv("u_matrix")};
+  let fUniforms    = { u_matrix:  fvao.uniformMatrix4fv("u_matrix")};
   let textUniforms = { u_matrix:  tvao.uniformMatrix4fv("u_matrix"), u_texture: textTex};
 
 
@@ -220,8 +153,7 @@ function main() {
       let viewY = pos[1] - fromEye[1] * amountToMoveTowardEye;
       let viewZ = pos[2] - fromEye[2] * amountToMoveTowardEye;
 
-      let textMatrix = m4.translate(projectionMatrix,
-          viewX, viewY, viewZ);
+      let textMatrix = m4.translate(projectionMatrix, viewX, viewY, viewZ);
       // scale the F to the size we need it.
       textMatrix = m4.scale(textMatrix, textWidth, textHeight, 1);
 
@@ -233,7 +165,9 @@ function main() {
 	  tvao.bindVertexArray();
 
       m4.copy(textMatrix, textUniforms.u_matrix);
-      twgl.setUniforms(textProgramInfo, textUniforms);
+	  //console.log(JSON.stringify(textUniforms.u_matrix));
+      //twgl.setUniforms(textProgramInfo, textUniforms);
+	  gl.uniform4fv(textUniforms.u_matrix, textMatrix);
 
       // Draw the text.
       //twgl.drawBufferInfo(gl, textBufferInfo);

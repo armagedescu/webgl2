@@ -20,33 +20,22 @@ class Cone1Geometry extends GlVAObject
       this.#ns = ns;
       this.#verts    = [];
       this.#norms    = [];
-	  let  dr = 1.0;
+      let  dr = 1.0;
 
       for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < this.#ns; i++,     ix += 9,iy += 9,iz += 9)
       {
-         let ps = [{x:0.0,                                            y:0.0,                                          z:(1.0)}, //<--points in direction of us
-                   {x:(dr/nh) * Math.cos(2 * Math.PI *      i / this.#ns ), y:(dr/this.#nh) * Math.sin(2 * Math.PI *     i / this.#ns), z:(1 - 1/this.#nh)},
-                   {x:(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / this.#ns ), y:(dr/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:(1 - 1/this.#nh)}];
-         let cr = cross3v(ps[0], ps[1], ps[2]);
-         this.#verts[ix]     =  ps[0].x;
-         this.#verts[iy]     =  ps[0].y;
-         this.#verts[iz]     =  ps[0].z;
-         this.#verts[ix + 3] =  ps[1].x;
-         this.#verts[iy + 3] =  ps[1].y;
-         this.#verts[iz + 3] =  ps[1].z;
-         this.#verts[ix + 6] =  ps[2].x;
-         this.#verts[iy + 6] =  ps[2].y;
-         this.#verts[iz + 6] =  ps[2].z;
+         let ps = [[0.0,                                            0.0,                                          (1.0)], //<--points in direction of us
+                   [(dr/nh) * Math.cos(2 * Math.PI *      i / ns ), (dr/nh) * Math.sin(2 * Math.PI *     i / ns), (1 - 1/nh)],
+                   [(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)]];
+         let cr = cross3p (ps[0], ps[1], ps[2]);
 
-         this.#norms[ix]     =  cr.x;
-         this.#norms[iy]     =  cr.y;
-         this.#norms[iz]     =  cr.z;
-         this.#norms[ix + 3] =  cr.x;
-         this.#norms[iy + 3] =  cr.y;
-         this.#norms[iz + 3] =  cr.z;
-         this.#norms[ix + 6] =  cr.x;
-         this.#norms[iy + 6] =  cr.y;
-         this.#norms[iz + 6] =  cr.z;
+         [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+         [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
+         [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[2];
+
+         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+         [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+         [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
       }
       
       //1 triangle = 3 points * 3 coordinates
@@ -54,56 +43,31 @@ class Cone1Geometry extends GlVAObject
       {
          for (let i = 0;    i < this.#ns; i++,       ix += 9,iy += 9,iz += 9)
          {
-             let ps = [{x:     (h*dr/this.#nh) * Math.cos(2 * Math.PI *     i/this.#ns), y:    (h*dr/this.#nh) * Math.sin(2 * Math.PI *     i / this.#ns), z:1 -     h*1/this.#nh},  // 1  4
-                       {x:     (h*dr/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:    (h*dr/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 -     h*1/this.#nh},  //    6
-                       {x: ((h+1)*dr/this.#nh) * Math.cos(2 * Math.PI *     i/this.#ns), y:((h+1)*dr/this.#nh) * Math.sin(2 * Math.PI *     i / this.#ns), z:1 - (h+1)*1/this.#nh},  // 2
-                       {x: ((h+1)*dr/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:((h+1)*dr/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 - (h+1)*1/this.#nh}]; // 3  5
+            let ps = [[     (h*dr/nh) * Math.cos(2 * Math.PI *     i/ns),     (h*dr/nh) * Math.sin(2 * Math.PI *     i / ns), 1 -     h*1/nh],  // 1  4
+                      [     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 -     h*1/nh],  //    6
+                      [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI *     i/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI *     i / ns), 1 - (h+1)*1/nh],  // 2
+                      [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 - (h+1)*1/nh]]; // 3  5
 
-             let cr = cross3v(ps[0], ps[2], ps[3]);
+            let cr = cross3p (ps[0], ps[2], ps[3]);
 
-             this.#verts[ix]     =  ps[0].x;
-             this.#verts[iy]     =  ps[0].y;
-             this.#verts[iz]     =  ps[0].z;
-             this.#verts[ix + 3] =  ps[2].x;
-             this.#verts[iy + 3] =  ps[2].y;
-             this.#verts[iz + 3] =  ps[2].z;
-             this.#verts[ix + 6] =  ps[3].x;
-             this.#verts[iy + 6] =  ps[3].y;
-             this.#verts[iz + 6] =  ps[3].z;
+            [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+            [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[2];
+            [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[3];
 
-             this.#norms[ix]     =  cr.x;
-             this.#norms[iy]     =  cr.y;
-             this.#norms[iz]     =  cr.z;
-             this.#norms[ix + 3] =  cr.x;
-             this.#norms[iy + 3] =  cr.y;
-             this.#norms[iz + 3] =  cr.z;
-             this.#norms[ix + 6] =  cr.x;
-             this.#norms[iy + 6] =  cr.y;
-             this.#norms[iz + 6] =  cr.z;
+            [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+            [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+            [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
 
-             ix += 9;iy += 9;iz += 9;
-             cr = cross3v(ps[0], ps[3], ps[1]);
+            ix += 9;iy += 9;iz += 9;
+            cr = cross3p (ps[0], ps[3], ps[1]);
 
-             this.#verts[ix]     =  ps[0].x;
-             this.#verts[iy]     =  ps[0].y;
-             this.#verts[iz]     =  ps[0].z;
-             this.#verts[ix + 3] =  ps[1].x;
-             this.#verts[iy + 3] =  ps[1].y;
-             this.#verts[iz + 3] =  ps[1].z;
-             this.#verts[ix + 6] =  ps[3].x;
-             this.#verts[iy + 6] =  ps[3].y;
-             this.#verts[iz + 6] =  ps[3].z;
+            [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+            [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
+            [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[3];
 
-             this.#norms[ix]     =  cr.x;
-             this.#norms[iy]     =  cr.y;
-             this.#norms[iz]     =  cr.z;
-             this.#norms[ix + 3] =  cr.x;
-             this.#norms[iy + 3] =  cr.y;
-             this.#norms[iz + 3] =  cr.z;
-             this.#norms[ix + 6] =  cr.x;
-             this.#norms[iy + 6] =  cr.y;
-             this.#norms[iz + 6] =  cr.z;
-
+            [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+            [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+            [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
          }
       }
 
@@ -123,7 +87,6 @@ class Cone1Geometry extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-	  //gl.drawArrays(gl.TRIANGLES, 0,     ns * 3 +       ns * 6 *       (nh - 1));
       gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3 + this.#ns * 6 * (this.#nh - 1));
    }
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 const RADGRAD    = Math.PI / 180;
 const C2PI       = 2 * Math.PI;
 function wrap(x)
@@ -7,28 +9,35 @@ function wrap(x)
     if (x == Number.NEGATIVE_INFINITY) return Number.MIN_VALUE;
     return 0.0;
 }
-function delta3v(p1, p2)
+
+function cross3p (p1, p2, p3) //3D cross between 3 points
 {
-   return {x:(p2.x - p1.x), y:(p2.y - p1.y), z:(p2.z - p1.z)};
-}
-function cross3v(p1, p2, p3)
-{
-    let v1 = delta3v(p1, p2);
-    let v2 = delta3v(p1, p3);
-    return {x:(v1.y * v2.z - v1.z * v2.y), y:(v1.z * v2.x - v1.x * v2.z), z: (v1.x * v2.y - v1.y * v2.x)};
+   let v1 = deltav (p1, p2);
+   let v2 = deltav (p1, p3);
+   return [(v1[1] * v2[2] - v1[2] * v2[1]), (v1[2]* v2[0] - v1[0] * v2[2]), (v1[0] * v2[1] - v1[1] * v2[0])];
 }
 
-function mul3v(v, f)
+function deltav  (p1, p2) { return p2.map ( (a, i) => a - p1[i] );}
+function mulv    (v,  f)  { return v.map  ( (a, i) => a * f[i] ); }
+function dotv    (v,  f)  { return mulv   (v, f).reduce((a, b) => a + b, 0); }
+
+function normv   (norm)   { let len = Math.hypot ( ... norm); return norm.map(a => a / len); }
+
+function offset  (r, ... ts) { return ts.map (a => a + r); }
+function resize  (r, ... ts) { return ts.map (a => a * r); }
+function shrink  (r, ... ts) { return ts.map (a => a / r); }
+
+function offsetv (p1, p2) { return p2.map( (a, i) => p1[i] + a  ); }
+function shrinkv (p1, p2) { return p2.map( (a, i) => p1[i] / a  ); }
+function resizev (p1, p2) { return p2.map( (a, i) => p1[i] * a  ); }
+
+function norm3nz (x1, y1, z1, x2, y2, z2, rs = 1)
 {
-    return [v[0] * f[0],     v[1] * f[1],     v[2] * f[2]];
-}
-function dot3v(v, f)
-{
-    let m = mul3v(v, f);
-    return m[0]   +   m[1]   +   m[2];
-}
-function normalize3v(norm)
-{
-    let len = Math.hypot (norm[0], norm[1], norm[2]);
-    return [norm[0] / len, norm[1] / len, norm[2] / len];
-}
+   let vec = normv ([x1, y1, z1], [x2, y2, z2]);
+   let h   = Math.hypot (... vec);
+   vec     = shrink (h,  ... vec);
+   return  resize   (rs, ... vec);
+};
+
+function deg(r) { return r * 180 / Math.PI; }
+function rad(d) { return d * Math.PI / 180; }

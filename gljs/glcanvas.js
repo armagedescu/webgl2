@@ -1,7 +1,12 @@
+"use strict";
+
 class GlShader
 {
+   //type supported values
+   //this lib recommended values          "vertex-shader",     "fragment-shader"
+   //external twgl compatibility values   "x-shader/x-vertex", "x-shader/x-fragment"
    #glType = null;
-   constructor (gl, obj, type) //type ="vertex-shader"/"fragment-shader"
+   constructor (gl, obj, type)
    {
       this.source = "";
       this.gl     = gl;
@@ -31,9 +36,18 @@ class GlShader
    }
    #setScriptElement(obj)
    {
+      this.script = obj;
       let type = obj.getAttribute("data-gl-type");
       if (type) { if (type.length > 0) this.type = type; }
       this.#setString(obj.innerText);
+   }
+   #showResult ()
+   {
+      let shader = this.shader, gl = this.gl;  //shortcut
+      //	let gl = this.gl;          //shortcut
+      if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return;
+      let msg = gl.getShaderInfoLog(shader);
+      console.log("SHADER ERROR: " + msg);
    }
 
    //public:
@@ -45,8 +59,12 @@ class GlShader
       if (typeof str == "string")
          switch (str)
          {
-         case "vertex-shader":   this.#glType = this.gl.VERTEX_SHADER;   break;
-         case "fragment-shader": this.#glType = this.gl.FRAGMENT_SHADER; break;
+         //this lib shader
+         case "vertex-shader":       this.#glType = this.gl.VERTEX_SHADER;   break;
+         case "fragment-shader":     this.#glType = this.gl.FRAGMENT_SHADER; break;
+         //compatibility external types
+         case "x-shader/x-vertex":   case "x-vertex":   this.#glType = this.gl.VERTEX_SHADER;   break;
+         case "x-shader/x-fragment": case "x-fragment": this.#glType = this.gl.FRAGMENT_SHADER; break;
          default: throw "Unknown shader type: " + str;
          }
       else
@@ -55,8 +73,7 @@ class GlShader
    compileShader()
    {
       this.gl.compileShader (this.shader);
-      let msg = this.gl.getShaderInfoLog(this.shader);
-      console.log("shader compile result: " + msg);
+      this.#showResult();
    }
    deleteShader() { this.gl.deleteShader(this.shader); this.#glType = null; this.source = ""; this.shader = null;}
 }
@@ -89,7 +106,6 @@ class GlBuffer
       this.gl.enableVertexAttribArray (id);
       return id;
    }
-
 }
 class GlApi
 {
@@ -115,7 +131,7 @@ class GlApi
       //this.bindBuffer();
       let id = this.gl.getUniformLocation (this.program, name);
       //this.gl.uniformMatrix4fv     (id, size, transpose, value);
-      //this.gl.enableVertexAttribArray (id);
+      this.gl.enableVertexAttribArray (id);
       return id;
    }
 }
@@ -139,11 +155,24 @@ class GlProgram extends GlApi
       else if (shader instanceof Element)     this.#shaders.push(new GlShader(this.gl, shader, type));
       else if (typeof shader == "string")     this.#shaders.push(new GlShader(this.gl, shader, type));
    }
-   linkProgram()
+   #showResult ()
    {
-      for (let shader of this.#shaders) this.gl.attachShader (this.program, shader.shader);
-      this.gl.linkProgram(this.program);
-      console.log("Compile program result:  " + name + ": " + this.gl.getProgramInfoLog(this.program));
+      let program = this.program; //shortcut
+      let gl = this.gl;           //shortcut
+      if (gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+      let msg = gl.getProgramInfoLog(program);
+      if (this.name)
+         console.log("PROGRAM ERROR [" + this.name + "]: " + msg);
+      else
+         console.log("CPROGRAM ERROR: " + msg);
+   }
+   linkProgram ()
+   {
+      let program = this.program;
+      let gl = this.gl; //shortcut
+      for (let shader of this.#shaders) gl.attachShader (program, shader.shader);
+      gl.linkProgram(program);
+      this.#showResult(program);
       for (let shader of this.#shaders) shader.deleteShader();
    }
    useProgram(){this.gl.useProgram(this.program);}
@@ -171,10 +200,11 @@ class GlVAObject extends GlApi
       }
       else
       {
-         let canvas  = new GlCanvas(context);
-		 super(canvas.gl);
-		 this.glCanvas = canvas;
-		 this.program  = canvas.program;
+         let shaders = program;
+         let canvas  = new GlCanvas(context, shaders);
+         super(canvas.gl);
+         this.glCanvas = canvas;
+         this.program  = canvas.program;
          //throw "GlSurface constructor: unknown context";
       }
       this.vao = this.gl.createVertexArray();
@@ -192,44 +222,66 @@ class GlVAObject extends GlApi
       this.drawVao();
    }
 }
+
 class GlCanvas
 {
-   #glObj       = null;
-   #canvasObj   = null;
-   #programMap  = new Map();
+   #glObj                = null;
+   #canvasObj            = null;
+   #defaultProgramName   = "___DEFAULT_PROGRAM___";
+   #programMap           = new Map();
 
-   constructor (canvasVar)
+   constructor (canvasVar, elementVars)
    {
       this.#canvas = canvasVar;
+      this.#programMap.set (this.#defaultProgramName, new GlProgram(this.gl));
       this.#extractShaderCodes();
+      this.#extractElementCodes(elementVars);
       for (let program of this.programs)
          program[1].linkProgram();
    }
    
-
+   #prepareElement (el)
+   {
+      if (typeof el == "string") el = document.getElementById(el);
+      if (el.getAttribute("type") && (el.getAttribute("type") != "text/glsl-shader")  )
+      {
+         if (!el.hasAttribute("data-gl-type"))
+              el.setAttribute("data-gl-type", el.getAttribute("type"));
+         else return null;
+      }
+      return el;
+   }
    #extractProgramInfo (el)
    {
-      if(el.getAttribute("type") != "text/glsl-shader")
-         return null;
-      let programName = "___DEFAULT_PROGRAM___";
+      el = this.#prepareElement (el);
+      let programName = this.#defaultProgramName;
       if (el.hasAttribute("data-gl-program"))
-         programName = el.getAttribute("data-gl-program");
+          programName = el.getAttribute("data-gl-program");
 
       return {id: programName, shader: new GlShader(this.gl, el)};
    }
+   #addScriptShader(el)
+   {
+      let info = this.#extractProgramInfo(el);
+      if (! this.programs.has (info.id) )
+            this.programs.set (info.id, new GlProgram(this.gl));
+      this.programs.get(info.id).add(info.shader);
+   }
    
+   #extractElementCodes (elementVars)
+   {
+      if (!elementVars) return;
+      for (let el of elementVars)
+         this.#addScriptShader(el);
+   }
    #extractShaderCodes ()
    {
-      let scripts = this.canvas.getElementsByTagName("script");
       const shaderElements = document.evaluate("./script[@type='text/glsl-shader']", this.canvas);
-      
+      //const shaderElements = document.evaluate("./script[@type='text/glsl-shader']", this.canvas); //Add one more condition, for external script
+
       for (let el = shaderElements.iterateNext(); el; el = shaderElements.iterateNext())
-      {
-          let info = this.#extractProgramInfo(el);
-          if (! this.programs.has(info.id) )
-             this.programs.set (info.id, new GlProgram(this.gl));
-          this.programs.get(info.id).add(info.shader);
-      }
+         this.#addScriptShader(el);
+
    }
 
    set #gl (glObj){this.#glObj = glObj;}
@@ -248,7 +300,7 @@ class GlCanvas
    get canvas   () { return this.#canvasObj;  }
    get programs () { return this.#programMap; }
    //default context and default program
-   get glProgram  () { return this.programs.get("___DEFAULT_PROGRAM___"); }
+   get glProgram  () { return this.programs.get(this.#defaultProgramName); }
    get program    () { return this.glProgram.program; }
    getGlProgram   (progName) { return this.programs.get (progName); }
    getProgram     (progName) { return this.getGlProgram (progName).program; }

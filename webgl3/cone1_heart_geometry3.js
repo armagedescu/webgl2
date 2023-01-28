@@ -11,9 +11,9 @@ function buildGeometry (sectors, revealInvisible)
    for (let i = 0, fi = 0; i <= sec2; i++, fi += dfi)
    {
       //Calculate and normalize geometry: Resize all 0..PI to 0..1
-      base[i]  = mul3v([               fi * Math.cos(fi),                    fi * Math.sin(fi),   0.0], [1.0 / Math.PI, 1.0 / Math.PI,  1.0          ]);
-      norms[i] = mul3v([Math.sin(fi) + fi * Math.cos(fi),   -(Math.cos(fi) - fi * Math.sin(fi)),   fi], [1.0          , 1.0          ,  1.0 / Math.PI]);
-      norms[i] = normalize3v(norms[i]);
+      base[i]  = mulv([               fi * Math.cos(fi),                    fi * Math.sin(fi),   0.0], [1.0 / Math.PI, 1.0 / Math.PI,  1.0          ]);
+      norms[i] = mulv([Math.sin(fi) + fi * Math.cos(fi),   -(Math.cos(fi) - fi * Math.sin(fi)),   fi], [1.0          , 1.0          ,  1.0 / Math.PI]);
+      norms[i] = normv(norms[i]);
    }
    if(revealInvisible) base[0] = [0.5, 0.0, 0];
 
@@ -99,12 +99,6 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 3] =  s22[3];
             verts_norms[i1 + 3] =  s22[4];
             verts_norms[i2 + 3] =  s22[5];
-            //nverts [n0 + 6]     =  s22[0];
-            //nverts [n1 + 6]     =  s22[1];
-            //nverts [n2 + 6]     = -s22[2];
-            //nverts [n0 + 9]     =  s22[0] + s22[3] / nv;
-            //nverts [n1 + 9]     =  s22[1] + s22[4] / nv;
-            //nverts [n2 + 9]     =  s22[2] - s22[5] / nv;
 			
             verts [i0 + 6]      =  s11[0];
             verts [i1 + 6]      =  s11[1];
@@ -112,12 +106,6 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 6] =  s11[3];
             verts_norms[i1 + 6] =  s11[4];
             verts_norms[i2 + 6] =  s11[5];
-            //nverts [n0 + 12]    =  s11[0];
-            //nverts [n1 + 12]    =  s11[1];
-            //nverts [n2 + 12]    = -s11[2];
-            //nverts [n0 + 15]    =  s11[0] + s11[3] / nv;
-            //nverts [n1 + 15]    =  s11[1] + s11[4] / nv;
-            //nverts [n2 + 15]    =  s11[2] - s11[5] / nv;
 
             i0 += 9;  i1 += 9;  i2 += 9;
             n0 += 18; n1 += 18; n2 += 18;
@@ -134,13 +122,6 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0] =  s22[3];
             verts_norms[i1] =  s22[4];
             verts_norms[i2] =  s22[5];
-			console.log ("x:" +verts [i0]+" y:" +verts [i1] + " z:" + verts [i2] + " x:" + verts_norms[i0] + " y:" + verts_norms[i2] + " z:" + verts_norms[i2]);
-            //nverts [n0]     =  s22[0];
-            //nverts [n1]     =  s22[1];
-            //nverts [n2]     = -s22[2];
-            //nverts [n0 + 3] =  s22[0] + s22[3] / nv;
-            //nverts [n1 + 3] =  s22[1] + s22[4] / nv;
-            //nverts [n2 + 3] =  s22[2] - s22[5] / nv;
 			
             verts [i0 + 3]      =  s12[0];
             verts [i1 + 3]      =  s12[1];
@@ -148,13 +129,6 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 3] =  s12[3];
             verts_norms[i1 + 3] =  s12[4];
             verts_norms[i2 + 3] =  s12[5];
-            //nverts [n0 + 6]     =  s12[0];
-            //nverts [n1 + 6]     =  s12[1];
-            //nverts [n2 + 6]     = -s12[2];
-            //nverts [n0 + 9]     =  s12[0] + s12[3] / nv;
-            //nverts [n1 + 9]     =  s12[1] + s12[4] / nv;
-            //nverts [n2 + 9]     =  s12[2] - s12[5] / nv;
-			console.log ("x:" +verts [i0 + 3]+" y:" +verts [i1 + 3] + " z:" + verts [i2 + 3] + " x:" + verts_norms[i0 + 3] + " y:" + verts_norms[i2 + 3] + " z:" + verts_norms[i2 + 3]);
 			
             verts [i0 + 6]      =  s11[0];
             verts [i1 + 6]      =  s11[1];
@@ -162,13 +136,6 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             verts_norms[i0 + 6] =  s11[3];
             verts_norms[i1 + 6] =  s11[4];
             verts_norms[i2 + 6] =  s11[5];
-            //nverts [n0 + 12]    =  s11[0];
-            //nverts [n1 + 12]    =  s11[1];
-            //nverts [n2 + 12]    = -s11[2];
-            //nverts [n0 + 15]    =  s11[0] + s11[3] / nv;
-            //nverts [n1 + 15]    =  s11[1] + s11[4] / nv;
-            //nverts [n2 + 15]    =  s11[2] - s11[5] / nv;
-			console.log ("x:" +verts [i0 + 6]+" y:" +verts [i1 + 6] + " z:" + verts [i2 + 6] + " x:" + verts_norms[i0 + 6] + " y:" + verts_norms[i2 + 6] + " z:" + verts_norms[i2 + 6]);
 
             }
             i0 += 9;  i1 += 9;  i2 += 9;

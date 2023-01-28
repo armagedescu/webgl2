@@ -15,7 +15,7 @@ class HeartGeometry1 extends GlVAObject
    }
    initGeometry(nh, ns)
    {
-      if(ns & 1) ns++;
+      if (ns & 1) ns++;
       this.#nh = nh;
       this.#ns = ns;
       this.#verts    = [];
@@ -29,29 +29,18 @@ class HeartGeometry1 extends GlVAObject
          let drd =  2 * (i + 1) * (1/this.#ns); // <-- increase from 0 to 2 (PI)
          if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
          if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
-         let ps = [{x:0.0,                                             y:0.0,                                           z:(1.0)}, //<--points in direction of us
-                   {x:(dr /this.#nh) * Math.cos(2 * Math.PI *   i    / this.#ns ), y:(dr /this.#nh) * Math.sin(2 * Math.PI *  i    / this.#ns), z:(1 - 1/this.#nh)},
-                   {x:(drd/this.#nh) * Math.cos(2 * Math.PI *  (i+1) / this.#ns ), y:(drd/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:(1 - 1/this.#nh)}];
-         let cr = cross3v(ps[0], ps[1], ps[2]);
-         this.#verts[ix]     =  ps[0].x;
-         this.#verts[iy]     =  ps[0].y;
-         this.#verts[iz]     =  ps[0].z;
-         this.#verts[ix + 3] =  ps[1].x;
-         this.#verts[iy + 3] =  ps[1].y;
-         this.#verts[iz + 3] =  ps[1].z;
-         this.#verts[ix + 6] =  ps[2].x;
-         this.#verts[iy + 6] =  ps[2].y;
-         this.#verts[iz + 6] =  ps[2].z;
+         let ps = [[0.0,                                             0.0,                                           (1.0)], //<--points in direction of us
+                   [(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), (dr /nh) * Math.sin(2 * Math.PI *  i    / ns), (1 - 1/nh)],
+                   [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)]];
+         let cr = cross3p (ps[0], ps[1], ps[2]);
+         [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+         [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
+         [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[2];
 
-         this.#norms[ix]     =  cr.x;
-         this.#norms[iy]     =  cr.y;
-         this.#norms[iz]     =  cr.z;
-         this.#norms[ix + 3] =  cr.x;
-         this.#norms[iy + 3] =  cr.y;
-         this.#norms[iz + 3] =  cr.z;
-         this.#norms[ix + 6] =  cr.x;
-         this.#norms[iy + 6] =  cr.y;
-         this.#norms[iz + 6] =  cr.z;
+         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+         [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+         [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
+
       }
 
       //1 triangle = 3 points * 3 coordinates
@@ -59,60 +48,36 @@ class HeartGeometry1 extends GlVAObject
       {
          for (let i = 0;    i < ns; i++,       ix += 9,iy += 9,iz += 9)
          {
-             dr      =  2 *  i      * (1/this.#ns);
-             let drd =  2 * (i + 1) * (1/this.#ns);
-             if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
-             if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
+            dr      =  2 *  i      * (1/this.#ns);
+            let drd =  2 * (i + 1) * (1/this.#ns);
+            if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
+            if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
 
-             let ps = [{x: ( h   *dr /this.#nh) * Math.cos(2 * Math.PI *  i   /this.#ns), y:( h   *dr /this.#nh) * Math.sin(2 * Math.PI *  i    / this.#ns), z:1 -  h   *1/this.#nh},  // 1  4
-                       {x: ( h   *drd/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:( h   *drd/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 -  h   *1/this.#nh},  //    6
-                       {x: ((h+1)*dr /this.#nh) * Math.cos(2 * Math.PI *  i   /this.#ns), y:((h+1)*dr /this.#nh) * Math.sin(2 * Math.PI *  i    / this.#ns), z:1 - (h+1)*1/this.#nh},  // 2
-                       {x: ((h+1)*drd/this.#nh) * Math.cos(2 * Math.PI * (i+1)/this.#ns), y:((h+1)*drd/this.#nh) * Math.sin(2 * Math.PI * (i+1) / this.#ns), z:1 - (h+1)*1/this.#nh}]; // 3  5
+            let ps = [[( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), 1 -  h   *1/nh],  // 1  4
+                      [( h   *drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ( h   *drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 -  h   *1/nh],  //    6
+                      [((h+1)*dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ((h+1)*dr /nh) * Math.sin(2 * Math.PI *  i    / ns), 1 - (h+1)*1/nh],  // 2
+                      [((h+1)*drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 - (h+1)*1/nh]]; // 3  5
 
-             let cr = cross3v(ps[0], ps[2], ps[3]);
+            let cr = cross3p (ps[0], ps[2], ps[3]);
 
-             this.#verts[ix]     =  ps[0].x;
-             this.#verts[iy]     =  ps[0].y;
-             this.#verts[iz]     =  ps[0].z;
-             this.#verts[ix + 3] =  ps[2].x;
-             this.#verts[iy + 3] =  ps[2].y;
-             this.#verts[iz + 3] =  ps[2].z;
-             this.#verts[ix + 6] =  ps[3].x;
-             this.#verts[iy + 6] =  ps[3].y;
-             this.#verts[iz + 6] =  ps[3].z;
+            [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+            [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[2];
+            [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[3];
 
-             this.#norms[ix]     =  cr.x;
-             this.#norms[iy]     =  cr.y;
-             this.#norms[iz]     =  cr.z;
-             this.#norms[ix + 3] =  cr.x;
-             this.#norms[iy + 3] =  cr.y;
-             this.#norms[iz + 3] =  cr.z;
-             this.#norms[ix + 6] =  cr.x;
-             this.#norms[iy + 6] =  cr.y;
-             this.#norms[iz + 6] =  cr.z;
+            [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+            [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+            [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
 
-             ix += 9;iy += 9;iz += 9;
-             cr = cross3v(ps[0], ps[3], ps[1]);
+            ix += 9;iy += 9;iz += 9;
+            cr = cross3p (ps[0], ps[3], ps[1]);
 
-             this.#verts[ix]     =  ps[0].x;
-             this.#verts[iy]     =  ps[0].y;
-             this.#verts[iz]     =  ps[0].z;
-             this.#verts[ix + 3] =  ps[1].x;
-             this.#verts[iy + 3] =  ps[1].y;
-             this.#verts[iz + 3] =  ps[1].z;
-             this.#verts[ix + 6] =  ps[3].x;
-             this.#verts[iy + 6] =  ps[3].y;
-             this.#verts[iz + 6] =  ps[3].z;
+            [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
+            [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
+            [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[3];
 
-             this.#norms[ix]     =  cr.x;
-             this.#norms[iy]     =  cr.y;
-             this.#norms[iz]     =  cr.z;
-             this.#norms[ix + 3] =  cr.x;
-             this.#norms[iy + 3] =  cr.y;
-             this.#norms[iz + 3] =  cr.z;
-             this.#norms[ix + 6] =  cr.x;
-             this.#norms[iy + 6] =  cr.y;
-             this.#norms[iz + 6] =  cr.z;
+            [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+            [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
+            [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
 
          }
       }

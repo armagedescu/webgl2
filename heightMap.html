@@ -1,0 +1,66 @@
+<html>
+<head>
+   <title>Height map 1, basic</title>
+</head>
+<body>
+   <canvas id="HeightMapButuceni" width="400" height = "300">
+      <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+         #version 300 es
+         layout (location = 0) in vec3 vert;
+         layout (location = 1) in vec3 norm;
+         layout (location = 2) in vec4 vertColor;
+         
+         out vec4 terrainColor;
+         out vec3 terrainNormal;
+         out vec3 lightDirection;
+         
+         uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+         uniform mat4 view;       //moves world space objects around based on camera
+         uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+         
+         void main()
+         {
+            gl_Position = projection * view * model * vec4(vert, 1.0);
+            terrainColor  = vertColor;
+            terrainNormal = norm;
+            lightDirection = vec3(0.f, -1., 0.);
+         }
+      </script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+         #version 300 es
+         precision mediump float;
+         in vec4 terrainColor;
+         in vec3 terrainNormal;
+         in vec3 lightDirection;
+		 out vec4 FragColor;
+         void main()
+         {
+             float strength = dot(normalize(-lightDirection), normalize(terrainNormal));
+             FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+         }
+      </script>
+   </canvas><br/>
+   <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
+   <video id="video1" height="90" width="160" autoplay muted loop>
+      <script>document.getElementById('video1').play();</script>
+      <source src="./video/flower.mp4" type="video/mp4">
+   </video><br/>
+        <!-- crossorigin="anonymous" -->
+   base:<br/><img id="imgBasic" style="display:none"  src="./texture/f-texture.png" /><br/>
+   Tipova:<!-- br/><img id="imgTipova" src="./heightmap/tipova.png" /><br/ -->
+   <a href="https://webglfundamentals.org/webgl/lessons/webgl-3d-textures.html">texture 1, manual</a>
+   <!--
+   for most samples webgl-utils only provides shader compiling/linking and
+   canvas resizing because why clutter the examples with code that's the same in every sample.
+   See https://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
+   and https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
+   for webgl-utils, m3, m4, and webgl-lessons-ui.
+   -->
+   <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
+   <script src="https://webglfundamentals.org/webgl/resources/m4.js"></script>
+   <script src="./gljs/api.js"></script>
+   <script src="./gljs/glmath.js"></script>
+   <script src="./gljs/glcanvas.js"></script>
+   <script src="./texture/heightMap.js"></script>
+</body>
+</html>
