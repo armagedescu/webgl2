@@ -10,34 +10,73 @@
 
 async function readImgHeightMap (src, crossOrigin)
 {
-   let imgData = await readImg (src, crossOrigin);
-   let heightmap = [[]];
-
-   for (let j = 0, j0 = 0; j < imgData.height; j++, j0 = j * imgData.width * 4)
+   return new Promise ((resolve, reject) =>
    {
-      heightmap[j] = [];
-      for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
-         heightmap[j][i] = imgData.data[j0 + i0];
-   }
-   //console.log("read imgData: src=" + src + ": {" + imgData.width + ":" + imgData.height + "}");
-   return new Promise( (resolve, reject) => {resolve({data:heightmap, height:imgData.height, width:imgData.width});});
+      readImg (src, crossOrigin).then ((imgData) =>
+      {
+         let heightmap = [];
+         let [minh, maxh] = [Number.MAX_VALUE, Number.MIN_VALUE];
+
+         for (let j = 0, j0 = 0; j < imgData.height; j++, j0 += imgData.width * 4)
+         {
+            heightmap[j] = [];
+            for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
+            {
+               let num = imgData.data[j0 + i0];
+               [minh, maxh] = [Math.min(num, minh), Math.max(num, maxh)];
+               heightmap[j][i] = num;
+            }
+         }
+         //console.log ("min: " + minh + "; max: " + maxh);
+         for (let j = 0; j < imgData.height; j++)
+         {
+            for (let i = 0; i < imgData.width; i++)
+               heightmap[j][i] -= minh;
+         }
+         maxh -= minh;
+         //console.log ("min: " + minh + "; max: " + maxh);
+
+		 resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
+	  });
+   });
+
 }
+
 async function readImg (src, crossOrigin)
 {
-   let canvas = await makeCanvasFromImg (src, crossOrigin);
-   let ctx     = canvas.getContext("2d");
-   let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
-   return new Promise( (resolve, reject) => {resolve(imgData);});
+   return new Promise  ( (resolve, reject) => 
+   {
+      makeOffscreenFromImg (src, crossOrigin).then((canvas) =>
+      {
+         let ctx     = canvas.getContext("2d");
+         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
+         resolve(imgData);
+      });
+   });
+}
+
+async function makeOffscreenFromImg (src, crossOrigin)
+{
+   let img  = makeImg(src, crossOrigin);
+   return new Promise((resolve, reject) =>
+   {
+      img.addEventListener('load',  () =>
+      {
+         let cnv = new OffscreenCanvas(img.width, img.height);
+         cnv.getContext("2d").drawImage(img, 0, 0);
+         resolve(cnv);
+      });
+      img.addEventListener('error', (event) => { console.log(event); reject (event); } );
+   });
 }
 async function makeCanvasFromImg (src, crossOrigin)
 {
    let image  = makeImg(src, crossOrigin);
    return new Promise((resolve, reject) =>
-      {
-          image.addEventListener('load',  () => { resolve(copyImgCanvas (image)); } );
-          image.addEventListener('error', (event) => { console.log(event); reject (event); } );
-          //image.onerror = (event) => { };
-      });
+   {
+      image.addEventListener('load',  () => { resolve( makeImgCanvas (image)); } );
+      image.addEventListener('error', (event) => { console.log(event); reject (event); } );
+   });
 }
 
 // Puts text in center of canvas.
@@ -55,7 +94,7 @@ function makeTextCanvas(text, width, height)
    ctx.fillText(text, width / 2, height / 2);
    return canvas;
 }
-function copyImgCanvas(imgref)
+function makeImgCanvas (imgref)
 {
    let image  = decodeElement (imgref);
    let canvas = document.createElement("canvas");
@@ -65,12 +104,13 @@ function copyImgCanvas(imgref)
    return canvas;
 }
 
-function decodeElement(elm)
+function decodeElement (elm)
 {
    if (elm instanceof Element) return elm;
+   if (elm instanceof OffscreenCanvas) return elm;
    return  document.getElementById(elm);
 }
-function duplicateCanvas(srcc)
+function duplicateCanvas (srcc)
 {
    let tgCanvas = document.createElement("canvas");
    let srcCanvas = decodeElement (srcc);

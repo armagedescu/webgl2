@@ -119,7 +119,7 @@ async function makeExperiments()
    readImg ("./heightmap/tipova.png");
    readImg ("./texture/f-texture.png");
    document.body.appendChild(document.createElement("br") );
-   document.body.appendChild(duplicateCanvas(copyImgCanvas("imgBasic")));    //Show a duplicate of invisible image canvas
+   document.body.appendChild(duplicateCanvas(makeImgCanvas("imgBasic")));    //Show a duplicate of invisible image canvas
    document.body.appendChild(await makeCanvasFromImg ("./texture/f-texture.png"));
    //makeCanvasFromImg ("./texture/f-texture.png").then( (canvas) => { document.body.appendChild(canvas);});
    document.body.appendChild(document.createElement("br") );
@@ -132,7 +132,6 @@ function main()
 {
    makeExperiments();
    
-   //let vao = new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
    let a = x => x * x;
 
    let fVaObject = new FVaObject ("FSimpleObjectWidhTexture");
