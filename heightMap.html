@@ -39,7 +39,7 @@
          void main()
          {
              ///float strength = dot(normalize(-lightDirection), normalize(-lightDirection));
-             float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.0;//* 0.75;//1.0;//0.75;//
+             float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
              FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
              //FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
              //FragColor = vec4(1, 0, 0, 1);

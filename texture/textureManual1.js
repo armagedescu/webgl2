@@ -126,6 +126,11 @@ async function makeExperiments()
    document.body.appendChild(makeTextCanvas ("./texture/f-texture.png", 100, 26) ); //Show text danvas "textu[re/f-text]ure.png"
    document.body.appendChild(document.createElement("br"));
    document.body.appendChild(duplicateCanvas(makeTextCanvas ("hello", 100, 26))); //Show a duplicate of invisible text canvas
+
+   let img  = makeImg("./texture/f-texture.png");
+   document.body.appendChild(document.createElement("br"));
+   makeOffscreenFromImg ("./texture/f-texture.png").then ( (cnv) => {document.body.appendChild (duplicateCanvas (cnv));});
+   makeCanvasFromImg ("./texture/f-texture.png").then ( (cnv) => {document.body.appendChild (cnv);});
 }
 
 function main()

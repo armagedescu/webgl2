@@ -146,11 +146,74 @@ class test
       console.log("testing");
    }
 }
-var stop = true;
-function switchStop()
+
+var controls = 
 {
-   stop = stop ? false : true;
+   timer:{  stop : true, switchStop(){this.stop = this.stop ? false : true;}  }, 
+   camera:
+   {
+      // rotation matrix
+      // x                             %  y                             %  z
+      // |   1    0    0|  | 1  0  0|  %  | cos    0  sin|  | 0  0  1|  %  | cos -sin    0|  | 0 -1  0|
+      // |   0  cos -sin|  | 0  0 -1|  %  |   0    1    0|  | 0  1  0|  %  | sin  cos    0|  | 1  0  0|
+      // |   0  sin  cos|  | 0  1  0|  %  |-sin    0  cos|  |-1  0  0|  %  |   0    0    1|  | 0  0  1|
+      ysensibility: 0.05,
+      xsensibility: 0.05,
+      pos    : [0,                    0,   0],
+      up     : [0,                    1,   0],
+      target : [0, -Math.sin(Math.PI/8),  -1],
+      zoom   : 1,
+      decodeDelta(delta){if (delta > 0) return -1; else if (delta < 0) return 1; return 0;},
+      set ypos (delta)
+      {
+         this.pos[1]    +=   this.ysensibility * this.decodeDelta(delta) * Math.PI;
+         this.target[1] +=   this.ysensibility * this.decodeDelta(delta) * Math.PI;
+      },
+      set xpos (delta)
+      {
+        this.pos[0]    +=  -this.xsensibility * this.decodeDelta(delta) * Math.PI;
+        this.target[0] +=  -this.xsensibility * this.decodeDelta(delta) * Math.PI;
+      },
+      set ytg  (delta) {  this.target[1] +=  -this.ysensibility * this.decodeDelta(delta) * Math.PI; },
+      set xtg  (delta) {  this.target[0] +=   this.xsensibility * this.decodeDelta(delta) * Math.PI; },
+      get matrix()
+      {
+         let cameraMatrix = m4.lookAt(this.pos, this.target, this.up);
+         //let cameraMatrix = m4.lookAt(cameraPosition, target, up);
+         let viewMatrix = m4.inverse(cameraMatrix);
+         //return m4.identity();
+         return viewMatrix;
+      }
+   },
+   model :
+   {
+      timeenable     : [false,    true, false],
+      timesensitivity : [0.4,       0.4,   0.4],
+      axes            : [0,         0,     0  ], //[Math.PI/8,   0,     0],
+      set deltat (delta)
+      {
+		 delta *= Math.PI;
+         if (this.timeenable [0]) this.axes [0] += this.timesensitivity [0] * delta; // x rotation disabled
+         if (this.timeenable [1]) this.axes [1] += this.timesensitivity [1] * delta; // y rotation enabled
+         if (this.timeenable [2]) this.axes [2] += this.timesensitivity [2] * delta; // z rotation disabled
+         //console.log("set deltat to: " + delta);
+      },
+      get matrix()
+      {
+         let mtx =  m4.xRotate(m4.identity (), this.axes [0]);
+         mtx     =  m4.yRotate(mtx,            this.axes [1]);
+         mtx     =  m4.zRotate(mtx,            this.axes [2]);
+         //console.log("got matrix: " + JSON.stringify(mtx));
+         //return m4.identity();
+         return mtx;
+
+      }
+   }
 }
+//function switchStop()
+//{
+//   controls.timer.stop = controls.timer.stop ? false : true;
+//}
 //window.onmousemove = function (e) {
 //  if (!e) e = window.event;
 //  if (e.shiftKey) {/*shift is down*/}
@@ -162,18 +225,7 @@ function switchStop()
 async function main()
 {
    //let cnv = new OffscreenCanvas();
-   let img  = makeImg("./texture/f-texture.png");
-   new Promise((resolve, reject) =>
-      {
-         img.addEventListener('load',  () =>
-            {
-               let cnv = new OffscreenCanvas(img.width, img.height);
-               cnv.getContext("2d").drawImage(img, 0, 0);
-               resolve(cnv);
-            }
-         );
-         img.addEventListener('error', (event) => { console.log(event); reject (event); } );
-      }).then ( (cnv) => {document.body.appendChild (duplicateCanvas (cnv));});
+
    let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png");
    //let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
    //let vao =  new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
@@ -181,20 +233,32 @@ async function main()
    let gl = vao.gl;
    console.log(gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
    vao.useProgram();
-
+   gl.canvas.addEventListener ("click",     (event) => {controls.timer.switchStop();});
+   gl.canvas.addEventListener( "mousemove", (event) =>
+   {
+      if (event.shiftKey)
+      {
+          [controls.camera.ypos, controls.camera.xpos] = [event.movementY, event.movementX];
+      }                                                 
+      if (event.ctrlKey)                                
+      {                                                 
+          [controls.camera.ytg,  controls.camera.xtg]  = [event.movementY, event.movementX];
+      }
+   });
+   gl.canvas.addEventListener("wheel", (event) =>
+   {
+       console.log("wheel: " + event.deltaX + ":" + event.deltaY + ":" + event.deltaZ + ":" + event.deltaMode);
+       if (event.ctrlKey)
+       {
+          //console.log("prevent whole window from resizing");
+          event.preventDefault();
+       }
+   });
 
    let fieldOfViewRadians    = rad (60);
-   let modelXRotationRadians = Math.PI/8; //rad (0);
-   let modelYRotationRadians = 0; //rad (0);
 
 
    requestAnimationFrame(drawScene);
-
-// rotation matrix
-// x                             %  y                             %  z
-// |   1    0    0|  | 1  0  0|  %  | cos    0  sin|  | 0  0  1|  %  | cos -sin    0|  | 0 -1  0|
-// |   0  cos -sin|  | 0  0 -1|  %  |   0    1    0|  | 0  1  0|  %  | sin  cos    0|  | 1  0  0|
-// |   0  sin  cos|  | 0  1  0|  %  |-sin    0  cos|  |-1  0  0|  %  |   0    0    1|  | 0  0  1|
 
    // Draw the scene.
    let then = 0;
@@ -204,12 +268,12 @@ async function main()
       time *= 0.001;
       let deltaTime = time - then;
       then = time;
-      if (stop)
+      if (controls.timer.stop)
          deltaTime = 0;
 
       vao.useProgram();
       gl.enable   (gl.CULL_FACE);
-      gl.enable   (gl.DEPTH_TEST);
+      //gl.enable   (gl.DEPTH_TEST);
 
       gl.clearColor (0., 0., 1., 1.0);
       gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
@@ -222,44 +286,18 @@ async function main()
          // Compute the projection matrix
          let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
          let projectionMatrix = m4.perspective (fieldOfViewRadians, aspect, 1, 2000);
-         
-         let cameraPosition = [0, 0,     2]; ///0.3]; //2];//
-         let up             = [0, 1,     0];
-         let target         = [0, 0,     0];
-         
-         // Compute the camera's matrix using look at.
-         let cameraMatrix = m4.lookAt(cameraPosition, target, up);
-         
-         // Make a view matrix from the camera matrix.
-         let viewMatrix = m4.inverse(cameraMatrix);
-         
-         let viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+
+         let viewProjectionMatrix = m4.multiply(projectionMatrix, controls.camera.matrix);
+
          // Animate the rotation
-         modelXRotationRadians +=   0.4 * deltaTime;
-         modelYRotationRadians +=   0.4 * deltaTime;
-         let matrix = m4.xRotate(viewProjectionMatrix, modelXRotationRadians);
-         matrix = m4.yRotate(matrix, modelYRotationRadians);
-         
-         
-         let model       = m4.identity();
-         let view        = cameraMatrix; //m4.inverse(cameraMatrix);
+         controls.model.deltat = deltaTime;
          let projection  = projectionMatrix;
-         
-         let buz = m4.identity();
 
-         model      = m4.identity();
-         view       = m4.identity();
          projection = m4.identity();
-         //view = viewMatrix; //m4.yRotate(model, Math.PI * modelYRotationRadians);; //m4.axisRotate (model, [1,0,0] Math.PI/6);
-         //model = m4.xRotate(m4.identity(), modelXRotationRadians);; //m4.axisRotate (model, [1,0,0] Math.PI/6);
-         model =  m4.xRotate(model, Math.PI / 8);; //m4.axisRotate (model, [1,0,0] Math.PI/6);
-         model =  m4.yRotate(model, Math.PI * modelYRotationRadians);; //m4.axisRotate (model, [1,0,0] Math.PI/6);
-         //model = m4.yRotate(model, Math.PI * modelYRotationRadians);; //m4.axisRotate (model, [1,0,0] Math.PI/6);
 
-         
+         vao.model      = controls.model.matrix; //model;                  //m4.identity();
+         vao.view       = controls.camera.matrix; //m4.identity();
          vao.projection = projection;
-         vao.model      = view;
-         vao.view       = model;
          
            //glm::mat4 model = glm::translate(glm::mat4(1.0), pos);
            //model = glm::rotate(model, lastFrame, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -289,4 +327,3 @@ async function main()
 }
 
 main();
-document.addEventListener ("click", switchStop);
