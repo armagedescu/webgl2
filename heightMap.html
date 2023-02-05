@@ -21,11 +21,8 @@
          void main()
          {
             gl_Position = projection * view * model * vec4(vert, 1.0);
-            //gl_Position = vec4(vert, 1.0);
-            //terrainColor  =  vec4(1, 0, 0, 1);
             terrainColor  = vertColor;
             terrainNormal = norm;
-            //terrainNormal  = vec3(0.f,  1., 0.);
             lightDirection = vec3(0.f, -1., 0.);
          }
       </script>
@@ -38,13 +35,9 @@
 		 out vec4 FragColor;
          void main()
          {
-             ///float strength = dot(normalize(-lightDirection), normalize(-lightDirection));
              float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
              FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
-             //FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
-             //FragColor = vec4(1, 0, 0, 1);
-             //FragColor = terrainColor; //vec4(1, 0, 0, 1);
-         }//
+         }
       </script>
    </canvas><br/>
    <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
