@@ -36,8 +36,42 @@ async function readImgHeightMap (src, crossOrigin)
          maxh -= minh;
          //console.log ("min: " + minh + "; max: " + maxh);
 
-		 resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
-	  });
+         resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
+      });
+   });
+
+}
+
+async function readImgHeightMapOffscreen (src, crossOrigin)
+{
+   return new Promise ((resolve, reject) =>
+   {
+      readImgOffscreen (src, crossOrigin).then ((imgData) =>
+      {
+         let heightmap = [];
+         let [minh, maxh] = [Number.MAX_VALUE, Number.MIN_VALUE];
+
+         for (let j = 0, j0 = 0; j < imgData.height; j++, j0 += imgData.width * 4)
+         {
+            heightmap[j] = [];
+            for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
+            {
+               let num = imgData.data[j0 + i0];
+               [minh, maxh] = [Math.min(num, minh), Math.max(num, maxh)];
+               heightmap[j][i] = num;
+            }
+         }
+         //console.log ("min: " + minh + "; max: " + maxh);
+         for (let j = 0; j < imgData.height; j++)
+         {
+            for (let i = 0; i < imgData.width; i++)
+               heightmap[j][i] -= minh;
+         }
+         maxh -= minh;
+         //console.log ("min: " + minh + "; max: " + maxh);
+
+         resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
+      });
    });
 
 }
@@ -46,7 +80,20 @@ async function readImg (src, crossOrigin)
 {
    return new Promise  ( (resolve, reject) => 
    {
-      makeOffscreenFromImg (src, crossOrigin).then((canvas) =>
+      makeCanvasFromImg (src, crossOrigin).then((canvas) =>
+      {
+         let ctx     = canvas.getContext("2d");
+         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
+         resolve(imgData);
+      });
+   });
+}
+
+async function readImgOffscreen (src, crossOrigin)
+{
+   return new Promise  ( (resolve, reject) => 
+   {
+      makeOffscreenFromBlob (src, crossOrigin).then((canvas) =>
       {
          let ctx     = canvas.getContext("2d");
          let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
@@ -69,6 +116,41 @@ async function makeOffscreenFromImg (src, crossOrigin)
       img.addEventListener('error', (event) => { console.log(event); reject (event); } );
    });
 }
+async function makeOffscreenFromBlob (src, options)
+{
+    return new Promise((resolve, reject) =>
+	{
+        const resp = fetch (src, options)
+		.then( (res)  => { return res.blob(); } )
+		.then( (blob) => { return createImageBitmap(blob); } )
+        .then( (bmp)  =>
+        {
+            const { width, height } = bmp;
+            const cnv = new OffscreenCanvas(width, height);
+            const ctx = cnv.getContext("2d");
+            ctx.drawImage(bmp, 0, 0);
+            bmp.close();
+            resolve(cnv);
+        } );
+    } );
+}
+
+//async function makeOffscreenImg ()
+//{
+//   const resp = await fetch("./heightmap/craterArizona.png");
+//   if (!resp.ok) {
+//     throw "network error";
+//   }
+//   const blob = await resp.blob();
+//   const bmp = await createImageBitmap(blob);
+//   const { width, height } = bmp;
+//   const cnv = new OffscreenCanvas(width, height);
+//   const ctx = cnv.getContext("2d");
+//   ctx.drawImage(bmp, 0, 0);
+//   bmp.close();
+//   const imgData = ctx.getImageData(0, 0, width, height);
+//}
+
 async function makeCanvasFromImg (src, crossOrigin)
 {
    let image  = makeImg(src, crossOrigin);

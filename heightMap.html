@@ -4,7 +4,8 @@
 </head>
 <body>
    <canvas id="HeightMapButuceni" width="400" height = "300">
-      <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+      <link id="buzz" rel="import" href="./gljs/api.js" />
+      <!-- script  type="text/glsl-shader"   data-gl-type="vertex-shader">
          #version 300 es
          layout (location = 0) in vec3 vert;
          layout (location = 1) in vec3 norm;
@@ -32,7 +33,42 @@
          in vec4 terrainColor;
          in vec3 terrainNormal;
          in vec3 lightDirection;
-		 out vec4 FragColor;
+         out vec4 FragColor;
+         void main()
+         {
+             float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
+             FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+         }
+      </script -->
+	  <script  type="text/glsl-shader"   data-gl-type="vertex-shader" data-gl-src="/texture/height-map.vs" >
+         #version 300 es
+         layout (location = 0) in vec3 vert;
+         layout (location = 1) in vec3 norm;
+         layout (location = 2) in vec4 vertColor;
+         
+         out vec4 terrainColor;
+         out vec3 terrainNormal;
+         out vec3 lightDirection;
+         
+         uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+         uniform mat4 view;       //moves world space objects around based on camera
+         uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+         
+         void main()
+         {
+            gl_Position = projection * view * model * vec4(vert, 1.0);
+            terrainColor  = vertColor;
+            terrainNormal = norm;
+            lightDirection = vec3(0.f, -1., 0.);
+         }
+      </script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="/texture/height-map.fs" >
+         #version 300 es
+         precision mediump float;
+         in vec4 terrainColor;
+         in vec3 terrainNormal;
+         in vec3 lightDirection;
+         out vec4 FragColor;
          void main()
          {
              float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
@@ -40,6 +76,26 @@
          }
       </script>
    </canvas><br/>
+
+   <br/>
+   <script language="javascript">
+   document.getElementById("buzz").onload = () => {console.log("salut");console.log(document.getElementById("buzz").innerHTML);}
+      console.log ("buzz event added");
+      function reqListener(event){
+        console.log( this.responseText );
+      }
+      
+      var req = new XMLHttpRequest();
+	  //data-gl-src=
+      //req.addEventListener("load", reqListener);//(event) => {console.log( this.responseText );});
+      req.addEventListener("load", (event) => 
+	  {
+	     console.log( event.target.getAllResponseHeaders() );
+	     //console.log( event.target.responseText );
+	  });
+      req.open("GET", "./gljs/api.js");
+      req.send();
+   </script>
    <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
    <video id="video1" height="90" width="160" autoplay muted loop>
       <script>document.getElementById('video1').play();</script>
@@ -56,12 +112,65 @@
    and https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
    for webgl-utils, m3, m4, and webgl-lessons-ui.
    -->
+   <a href="https://trezy.com/blog/loading-images-with-web-workers">Load Image With Web Workers</a>
    <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
    <script src="https://webglfundamentals.org/webgl/resources/m4.js"></script>
    <!-- script src="https://twgljs.org/dist/3.x/twgl-full.min.js"></script -->
-   <script src="./gljs/api.js"></script>
-   <script src="./gljs/glmath.js"></script>
-   <script src="./gljs/glcanvas.js"></script>
-   <script src="./texture/heightMap.js"></script>
+   <script src="/gljs/api.js"></script>
+   <script src="/gljs/glmath.js"></script>
+   <script src="/gljs/glcanvas.js"></script>
+   <script src="/texture/heightMap.js"></script>
+
+   <script  type="text/text" data-type="transfer canvas to webworker sample">
+       const canvasA = document.getElementById("main");
+       const ctxA = canvasA.getContext("2d");
+       const canvasWidth  = ctxA.width;
+       const canvasHeight = ctxA.height;
+       let counter = 0;
+       setInterval(() => {redrawCanvasA();counter++;}, 100);
+       
+       function redrawCanvasA() {
+         ctxA.clearRect(0, 0, canvasA.width, canvasA.height);
+         ctxA.font = "24px Verdana";
+         ctxA.textAlign = "center";
+         ctxA.fillText(counter, canvasA.width / 2, canvasA.height / 2);
+       }
+       function fibonacci(num) { if (num <= 1) return 1; return fibonacci(num - 1) + fibonacci(num - 2);}
+       function slowMainThread() { fibonacci(42); }
+       
+       const worker = new Worker("worker.js");
+       const canvasWorker = document.getElementById("worker").transferControlToOffscreen();
+       worker.postMessage({ canvas: canvasWorker }, [canvasWorker]);
+       function slowdownWorker() { worker.postMessage("slowDown"); }
+       
+       ////////////////////////////////////////////////////////////////////////////////////////////
+       
+       let canvasB = null;
+       let ctxWorker = null;
+       //self.addEventListener('message', event => {
+       //  console.log('Worker received:', event.data)
+       //})
+       self.onmessage = (event) => {
+         if (event.data === "slowDown") { fibonacci(42); }
+         else {
+           canvasB = event.data.canvas;
+           ctxWorker = canvasB.getContext("2d");
+           startCounting();
+         }
+       };
+       
+       function fibonacci(num) { if (num <= 1)    return 1; return fibonacci(num - 1) + fibonacci(num - 2); }
+       
+       let counter = 0;
+       function startCounting() {   setInterval(() => { redrawCanvasB(); counter++; }, 100);  }
+       
+       function redrawCanvasB() {
+         ctxWorker.clearRect(0, 0, canvasB.width, canvasB.height);
+         ctxWorker.font = "24px Verdana";
+         ctxWorker.textAlign = "center";
+         ctxWorker.fillText(counter, canvasB.width / 2, canvasB.height / 2);
+       }
+   </script>
+
 </body>
 </html>

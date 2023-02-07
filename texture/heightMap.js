@@ -10,7 +10,8 @@ class HeightMap extends GlVAObject
       super (context);
       return new Promise ( (resolve, reject) =>
          {
-            readImgHeightMap (src).then ((heightmap) =>
+            //readImgHeightMap (src).then ((heightmap) =>
+            readImgHeightMapOffscreen (src).then ((heightmap) =>
                {
                   this.heightmap = heightmap;
                   this.buildGeometry ();
@@ -224,6 +225,20 @@ var controls =
 //function main()
 async function main()
 {
+   //const resp = await fetch("./heightmap/craterArizona.png");
+   //if (!resp.ok) {
+   //  throw "network error";
+   //}
+   //const blob = await resp.blob();
+   //const bmp = await createImageBitmap(blob);
+   //const { width, height } = bmp;
+   //const cnv = new OffscreenCanvas(width, height);
+   //const ctx = cnv.getContext("2d");
+   //ctx.drawImage(bmp, 0, 0);
+   //bmp.close();
+   //const imgData = ctx.getImageData(0, 0, width, height);
+   ////document.body.appendChild(duplicateCanvas (cnv)  );
+
    //let cnv = new OffscreenCanvas();
 
    let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png");

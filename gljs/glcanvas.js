@@ -2,6 +2,30 @@
 
 class GlShader
 {
+   static acceptedTypes = ["vertex-shader", "fragment-shader"];
+   static translateType (str)
+   {
+      if (GlShader.acceptedTypes.includes(str)) return str;
+      switch (str)
+      {
+      //compatibility external types
+      case "x-shader/x-vertex":   case "x-vertex":   return "vertex-shader";
+      case "x-shader/x-fragment": case "x-fragment": return "fragment-shader";
+      }
+      return null;
+   }
+   #translateGlType (str)
+   {
+      if (typeof str != "string") return str; //if is gl type VERTEX_SHADER/VERTEX_SHADER
+      switch ( GlShader.translateType (str) )
+      {
+      //this lib shader
+      case "vertex-shader":       return this.gl.VERTEX_SHADER;
+      case "fragment-shader":     return this.gl.FRAGMENT_SHADER;
+      }
+      throw "Unknown shader type: " + str;
+   }
+   isAsynk = false;
    //type supported values
    //this lib recommended values          "vertex-shader",     "fragment-shader"
    //external twgl compatibility values   "x-shader/x-vertex", "x-shader/x-fragment"
@@ -37,14 +61,17 @@ class GlShader
    #setScriptElement(obj)
    {
       this.script = obj;
-      let type = obj.getAttribute("data-gl-type");
+      let type = obj.dataset.glType; //same as getAttribute("data-gl-type");
       if (type) { if (type.length > 0) this.type = type; }
-      this.#setString(obj.innerText);
+	  let text = obj.innerText;
+	  if (!text) text = "";
+	  text = text.trimStart();
+      this.#setString (text);
    }
    #showResult ()
    {
       let shader = this.shader, gl = this.gl;  //shortcut
-      //	let gl = this.gl;          //shortcut
+      //    let gl = this.gl;          //shortcut
       if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return;
       let msg = gl.getShaderInfoLog(shader);
       console.log("SHADER ERROR: " + msg);
@@ -56,19 +83,7 @@ class GlShader
    get type() { return this.#glType; }
    set type(str) //type ="vertex-shader"/"fragment-shader" or gl VERTEX_SHADER/FRAGMENT_SHADER
    {
-      if (typeof str == "string")
-         switch (str)
-         {
-         //this lib shader
-         case "vertex-shader":       this.#glType = this.gl.VERTEX_SHADER;   break;
-         case "fragment-shader":     this.#glType = this.gl.FRAGMENT_SHADER; break;
-         //compatibility external types
-         case "x-shader/x-vertex":   case "x-vertex":   this.#glType = this.gl.VERTEX_SHADER;   break;
-         case "x-shader/x-fragment": case "x-fragment": this.#glType = this.gl.FRAGMENT_SHADER; break;
-         default: throw "Unknown shader type: " + str;
-         }
-      else
-         this.#glType = str; //if is gl type VERTEX_SHADER/VERTEX_SHADER
+      this.#glType = this.#translateGlType(str); //if is gl type VERTEX_SHADER/VERTEX_SHADER
    }
    compileShader()
    {
@@ -229,6 +244,7 @@ class GlCanvas
    #canvasObj            = null;
    #defaultProgramName   = "___DEFAULT_PROGRAM___";
    #programMap           = new Map();
+   #asyncShaders         = [];
 
    constructor (canvasVar, elementVars)
    {
@@ -236,20 +252,22 @@ class GlCanvas
       this.#programMap.set (this.#defaultProgramName, new GlProgram(this.gl));
       this.#extractShaderCodes();
       this.#extractElementCodes(elementVars);
-      for (let program of this.programs)
-         program[1].linkProgram();
+	  if (this.#asyncShaders.length == 0) //ready to link
+         for (let program of this.programs)
+            program[1].linkProgram();
    }
    
    #prepareElement (el)
    {
       if (typeof el == "string") el = document.getElementById(el);
-      if (el.getAttribute("type") && (el.getAttribute("type") != "text/glsl-shader")  )
-      {
-         if (!el.hasAttribute("data-gl-type"))
-              el.setAttribute("data-gl-type", el.getAttribute("type"));
-         else return null;
-      }
-      return el;
+      if (!el.hasAttribute("data-gl-type"))
+         if (el.hasAttribute("type") && (el.getAttribute("type") != "text/glsl-shader")  )
+         {
+            let type = GlShader.translateType(el.getAttribute("type"));
+            if (type) el.setAttribute("data-gl-type", type);
+         }
+      if (el.hasAttribute("data-gl-type")) return el;
+      return null; //since now a recognisable attribute "data-gl-type" is a must, otherwise it is not gl shader
    }
    #extractProgramInfo (el)
    {
@@ -257,7 +275,6 @@ class GlCanvas
       let programName = this.#defaultProgramName;
       if (el.hasAttribute("data-gl-program"))
           programName = el.getAttribute("data-gl-program");
-
       return {id: programName, shader: new GlShader(this.gl, el)};
    }
    #addScriptShader(el)
@@ -265,7 +282,8 @@ class GlCanvas
       let info = this.#extractProgramInfo(el);
       if (! this.programs.has (info.id) )
             this.programs.set (info.id, new GlProgram(this.gl));
-      this.programs.get(info.id).add(info.shader);
+	  if (info.shader)
+		  this.programs.get(info.id).add(info.shader);
    }
    
    #extractElementCodes (elementVars)
@@ -307,3 +325,15 @@ class GlCanvas
 
 }
 
+/*
+      var req = new XMLHttpRequest();
+	  //data-gl-src=
+      //req.addEventListener("load", reqListener);//(event) => {console.log( this.responseText );});
+      req.addEventListener("load", (event) => 
+	  {
+	     console.log( event.target.getAllResponseHeaders() );
+	     //console.log( event.target.responseText );
+	  });
+      req.open("GET", "./gljs/api.js");
+      req.send();
+	  */
