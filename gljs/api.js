@@ -10,103 +10,66 @@
 
 async function readImgHeightMap (src, crossOrigin)
 {
-   return new Promise ((resolve, reject) =>
+   return readImg (src, crossOrigin).then ((imgData) =>
    {
-      readImg (src, crossOrigin).then ((imgData) =>
-      {
-         let heightmap = [];
-         let [minh, maxh] = [Number.MAX_VALUE, Number.MIN_VALUE];
-
-         for (let j = 0, j0 = 0; j < imgData.height; j++, j0 += imgData.width * 4)
-         {
-            heightmap[j] = [];
-            for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
-            {
-               let num = imgData.data[j0 + i0];
-               [minh, maxh] = [Math.min(num, minh), Math.max(num, maxh)];
-               heightmap[j][i] = num;
-            }
-         }
-         //console.log ("min: " + minh + "; max: " + maxh);
-         for (let j = 0; j < imgData.height; j++)
-         {
-            for (let i = 0; i < imgData.width; i++)
-               heightmap[j][i] -= minh;
-         }
-         maxh -= minh;
-         //console.log ("min: " + minh + "; max: " + maxh);
-
-         resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
-      });
-   });
-
+      return buildImgHeightMap (imgData);
+   } );
 }
 
 async function readImgHeightMapOffscreen (src, crossOrigin)
 {
-   return new Promise ((resolve, reject) =>
+   return readImgOffscreen (src, crossOrigin).then ((imgData) =>
    {
-      readImgOffscreen (src, crossOrigin).then ((imgData) =>
-      {
-         let heightmap = [];
-         let [minh, maxh] = [Number.MAX_VALUE, Number.MIN_VALUE];
-
-         for (let j = 0, j0 = 0; j < imgData.height; j++, j0 += imgData.width * 4)
-         {
-            heightmap[j] = [];
-            for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
-            {
-               let num = imgData.data[j0 + i0];
-               [minh, maxh] = [Math.min(num, minh), Math.max(num, maxh)];
-               heightmap[j][i] = num;
-            }
-         }
-         //console.log ("min: " + minh + "; max: " + maxh);
-         for (let j = 0; j < imgData.height; j++)
-         {
-            for (let i = 0; i < imgData.width; i++)
-               heightmap[j][i] -= minh;
-         }
-         maxh -= minh;
-         //console.log ("min: " + minh + "; max: " + maxh);
-
-         resolve( {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh} );
-      });
-   });
-
+      return buildImgHeightMap (imgData);
+   } );
 }
 
+function buildImgHeightMap (imgData)
+{
+   let heightmap = [];
+   let [minh, maxh] = [Number.MAX_VALUE, Number.MIN_VALUE];
+
+   for (let j = 0, j0 = 0; j < imgData.height; j++, j0 += imgData.width * 4)
+   {
+      heightmap[j] = [];
+      for (let i = 0, i0 = 0; i < imgData.width; i++, i0 += 4)
+      {
+         let num = imgData.data[j0 + i0];
+         [minh, maxh] = [Math.min(num, minh), Math.max(num, maxh)];
+         heightmap[j][i] = num;
+      }
+   }
+   for (let j = 0; j < imgData.height; j++)
+      for (let i = 0; i < imgData.width; i++)
+         heightmap[j][i] -= minh;
+
+   return {data:heightmap, height:imgData.height, width:imgData.width, maxh: maxh - minh};
+}
 async function readImg (src, crossOrigin)
 {
-   return new Promise  ( (resolve, reject) => 
+   return makeCanvasFromImg (src, crossOrigin).then((canvas) =>
    {
-      makeCanvasFromImg (src, crossOrigin).then((canvas) =>
-      {
-         let ctx     = canvas.getContext("2d");
-         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
-         resolve(imgData);
-      });
+      let ctx     = canvas.getContext("2d");
+      let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
+      return imgData;
    });
 }
 
 async function readImgOffscreen (src, crossOrigin)
 {
-   return new Promise  ( (resolve, reject) => 
+   return makeOffscreenFromBlob (src, crossOrigin).then((canvas) =>
    {
-      makeOffscreenFromBlob (src, crossOrigin).then((canvas) =>
-      {
-         let ctx     = canvas.getContext("2d");
-         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
-         resolve(imgData);
-      });
+      let ctx     = canvas.getContext("2d");
+      let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: "srgb" });
+      return imgData;
    });
 }
 
 async function makeOffscreenFromImg (src, crossOrigin)
 {
-   let img  = makeImg(src, crossOrigin);
    return new Promise((resolve, reject) =>
    {
+      let img  = makeImg(src, crossOrigin);
       img.addEventListener('load',  () =>
       {
          let cnv = new OffscreenCanvas(img.width, img.height);
@@ -118,38 +81,19 @@ async function makeOffscreenFromImg (src, crossOrigin)
 }
 async function makeOffscreenFromBlob (src, options)
 {
-    return new Promise((resolve, reject) =>
-	{
-        const resp = fetch (src, options)
-		.then( (res)  => { return res.blob(); } )
-		.then( (blob) => { return createImageBitmap(blob); } )
-        .then( (bmp)  =>
-        {
-            const { width, height } = bmp;
-            const cnv = new OffscreenCanvas(width, height);
-            const ctx = cnv.getContext("2d");
-            ctx.drawImage(bmp, 0, 0);
-            bmp.close();
-            resolve(cnv);
-        } );
+    return fetch (src, options)
+    .then( (res)  => { return res.blob(); } )
+    .then( (blob) => { return createImageBitmap(blob); } )
+    .then( (bmp)  =>
+    {
+       const { width, height } = bmp;
+       const cnv = new OffscreenCanvas(width, height);
+       const ctx = cnv.getContext("2d");
+       ctx.drawImage(bmp, 0, 0);
+       bmp.close();
+       return cnv;
     } );
 }
-
-//async function makeOffscreenImg ()
-//{
-//   const resp = await fetch("./heightmap/craterArizona.png");
-//   if (!resp.ok) {
-//     throw "network error";
-//   }
-//   const blob = await resp.blob();
-//   const bmp = await createImageBitmap(blob);
-//   const { width, height } = bmp;
-//   const cnv = new OffscreenCanvas(width, height);
-//   const ctx = cnv.getContext("2d");
-//   ctx.drawImage(bmp, 0, 0);
-//   bmp.close();
-//   const imgData = ctx.getImageData(0, 0, width, height);
-//}
 
 async function makeCanvasFromImg (src, crossOrigin)
 {
@@ -188,8 +132,8 @@ function makeImgCanvas (imgref)
 
 function decodeElement (elm)
 {
-   if (elm instanceof Element) return elm;
    if (elm instanceof OffscreenCanvas) return elm;
+   if (elm instanceof Element) return elm;
    return  document.getElementById(elm);
 }
 function duplicateCanvas (srcc)

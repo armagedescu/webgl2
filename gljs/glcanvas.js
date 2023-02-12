@@ -63,9 +63,9 @@ class GlShader
       this.script = obj;
       let type = obj.dataset.glType; //same as getAttribute("data-gl-type");
       if (type) { if (type.length > 0) this.type = type; }
-	  let text = obj.innerText;
-	  if (!text) text = "";
-	  text = text.trimStart();
+      let text = obj.innerText;
+      if (!text) text = "";
+      text = text.trimStart();
       this.#setString (text);
    }
    #showResult ()
@@ -192,6 +192,7 @@ class GlProgram extends GlApi
    }
    useProgram(){this.gl.useProgram(this.program);}
 }
+
 class GlVAObject extends GlApi
 {
    //program WebGLProgram gl WebGL2RenderingContext
@@ -244,19 +245,19 @@ class GlCanvas
    #canvasObj            = null;
    #defaultProgramName   = "___DEFAULT_PROGRAM___";
    #programMap           = new Map();
-   #asyncShaders         = [];
 
    constructor (canvasVar, elementVars)
    {
       this.#canvas = canvasVar;
       this.#programMap.set (this.#defaultProgramName, new GlProgram(this.gl));
+      if (canvasVar instanceof  GlInfo) throw "GlInfo to be handled by offscrfeen";
       this.#extractShaderCodes();
       this.#extractElementCodes(elementVars);
-	  if (this.#asyncShaders.length == 0) //ready to link
-         for (let program of this.programs)
-            program[1].linkProgram();
+      
+      for (let program of this.programs)
+         program[1].linkProgram();
    }
-   
+
    #prepareElement (el)
    {
       if (typeof el == "string") el = document.getElementById(el);
@@ -282,8 +283,8 @@ class GlCanvas
       let info = this.#extractProgramInfo(el);
       if (! this.programs.has (info.id) )
             this.programs.set (info.id, new GlProgram(this.gl));
-	  if (info.shader)
-		  this.programs.get(info.id).add(info.shader);
+      if (info.shader)
+          this.programs.get(info.id).add(info.shader);
    }
    
    #extractElementCodes (elementVars)
@@ -296,10 +297,10 @@ class GlCanvas
    {
       const shaderElements = document.evaluate("./script[@type='text/glsl-shader']", this.canvas);
       //const shaderElements = document.evaluate("./script[@type='text/glsl-shader']", this.canvas); //Add one more condition, for external script
-
+   
       for (let el = shaderElements.iterateNext(); el; el = shaderElements.iterateNext())
          this.#addScriptShader(el);
-
+   
    }
 
    set #gl (glObj){this.#glObj = glObj;}
@@ -325,15 +326,198 @@ class GlCanvas
 
 }
 
-/*
+
+class GlVAObjectAsync extends GlApi
+{
+   #p = null;
+   constructor(context, program)
+   {
+      super (context.canvas.getContext('webgl2'));
+      this.#p = new GlCanvasAsync (context)._e_then ( (ref) =>
+      {
+         this.vao = this.gl.createVertexArray();
+         this.program  = ref.program;
+         return this;
+      } );
+   }
+   async _e_then (func) //external then, must return value returned by func
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         return func (ths);
+      });
+   }
+   async _then (func) //internal then, return this
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         func (ths);
+         return ths;
+      });
+   }
+
+   init(){}
+   drawVao(){}
+   bindVertexArray()
+   {
+      this.useProgram();
+      this.gl.bindVertexArray(this.vao);
+   }
+   draw ()
+   {
+      this.bindVertexArray();
+      this.drawVao();
+   }
+}
+
+class GlCanvasAsync
+{
+   #glObj                = null;
+   #canvasObj            = null;
+   #defaultProgramName   = "___DEFAULT_PROGRAM___";
+   #programMap           = new Map();
+   #context = null;
+   #downloadable = []; //shaders by URL
+   #bysource     = []; //shaders by Source
+   #p = null;
+   constructor (context)
+   {
+      this.#canvas = context.canvas;
+      this.#programMap.set (this.#defaultProgramName, new GlProgram(this.gl));
+      this.#context = context;
+      this.#bysourceShaders ();
+      this.#downloadShaders ();
+      this.#p = Promise.all(this.#downloadable).then( (values) =>
+      {
+         for (let val of [... values, ...this.#bysource] )
+         {
+            if (! this.programs.has (val.program) )
+               this.programs.set (val.program, new GlProgram(this.gl));
+            this.programs.get(val.program).add(new GlShader(this.gl, val.text, val.type));
+         }
+         for (let program of this.programs)
+            program[1].linkProgram();
+         return this; //goes to GlVAObjectAsync
+      });
+   }
+   async _e_then (func) //external then, must return value returned by func
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         return func (ths);
+      });
+   }
+   async _then (func) //internal then, must return this
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         func (ths);
+         return ths;
+      });
+   }
+   #downloadShaders ()
+   {
+      for (let info of this.#context.byUrl)
+      {
+         let progInfo =
+             {
+                program : this.#defaultProgramName,
+                type    : GlShader.translateType(info.type),
+                text    : null,
+             };
+         if (info.program) progInfo.program = info.program;
+         this.#downloadable.push
+         (
+            fetch(info.href, {cache: "no-store"}).then ((resp) =>
+            {
+               return resp.text();
+            }).then( (text) =>
+            {
+               progInfo.text = text;
+               return progInfo;
+            })
+         );
+      }
+      /*
       var req = new XMLHttpRequest();
-	  //data-gl-src=
-      //req.addEventListener("load", reqListener);//(event) => {console.log( this.responseText );});
       req.addEventListener("load", (event) => 
-	  {
-	     console.log( event.target.getAllResponseHeaders() );
-	     //console.log( event.target.responseText );
-	  });
+      {
+         console.log( event.target.getAllResponseHeaders() );
+      });
       req.open("GET", "./gljs/api.js");
       req.send();
-	  */
+      //*/
+   }
+   #bysourceShaders ()
+   {//{program: glProgramName, type: glType,            src: src}
+      for (let info of this.#context.bySrc)
+      {
+         let progInfo =
+             {
+                program : this.#defaultProgramName,
+                type    : GlShader.translateType(info.type),
+                text    : info.src,
+             };
+         if (info.program) progInfo.program = info.program;
+		 this.#downloadable.push (progInfo);
+      }
+   }
+
+   set #gl (glObj){this.#glObj = glObj;}
+   set #canvas (canvasVar)
+   {
+      if (typeof canvasVar == "string")
+          this.#canvasObj = document.getElementById(canvasVar);
+      else if (typeof canvasVar == "object")
+          this.#canvasObj = canvasVar;
+      this.#gl = this.canvas.getContext('webgl2');
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+   }
+
+   //publig getter private setter
+   get gl (){return this.#glObj;}
+   get canvas   () { return this.#canvasObj;  }
+   get programs () { return this.#programMap; }
+   //default context and default program
+   get glProgram  () { return this.programs.get(this.#defaultProgramName); }
+   get program    () { return this.glProgram.program; }
+   getGlProgram   (progName) { return this.programs.get (progName); }
+   getProgram     (progName) { return this.getGlProgram (progName).program; }
+}
+
+
+class GlInfo
+{
+   byUrl  = []; //{program: glProgramName, type: glType, href: href}
+   bySrc  = []; //{program: glProgramName, type: glType,            src: src}
+   canvas = null;
+}
+class GlInfoGrabber
+{
+   glinfo = new GlInfo();
+   constructor (canvas)
+   {
+      this.url = window.location;
+      this.currentdir = new URL(this.url.pathname.replace( /\/[^\/]*$/, ''), this.url.origin);
+      if (canvas) this.grabInfo(canvas);
+   }
+   grabInfo (canvas)
+   {
+      let elements = document.evaluate ("./script[@type='text/glsl-shader' and @data-gl-src]", canvas);
+      for (let el = elements.iterateNext(); el; el = elements.iterateNext())
+         this.glinfo.byUrl.push({program: el.dataset.glProgram, type: el.dataset.glType, href:  this.buildUrl(el.dataset.glSrc)  } );
+      elements = document.evaluate ("./script[@type='text/glsl-shader' and not (@data-gl-src)]", canvas);
+      for (let el = elements.iterateNext(); el; el = elements.iterateNext())
+         this.glinfo.bySrc.push({program: el.dataset.glProgram, type: el.dataset.glType, src: el.innerText.trim()});
+
+   }
+   buildUrl (ref)
+   {
+      return new URL(ref, this.currentdir).href;
+   }
+   
+}

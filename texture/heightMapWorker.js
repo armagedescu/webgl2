@@ -1,34 +1,44 @@
 "use strict";
+importScripts('../gljs/glcanvas.js');
+importScripts('../gljs/glmath.js');
+importScripts('../gljs/api.js');
+importScripts('../gljs/glcontroller.js');
+importScripts('../3rdparty/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
 
-{
-let canvas = document.currentScript.parentElement;
-class HeightMap extends GlVAObject
+class HeightMap extends GlVAObjectAsync
 {
    #vertices = [];
    #norms    = [];
    #indices  = [];
-   #p = null;
+   #then     = null;
+   #p        = null;
    constructor (context, src, crossOrigin)
    {
-      super (context);
-      this.#p = readImgHeightMap  (src, crossOrigin).then ( (heightmap) =>
+      super (context); //GlVAObjectAsync
+      this.#p = super._e_then ( (o) =>
+      {
+         return readImgHeightMapOffscreen (src, crossOrigin);
+      } )
+      .then ( (heightmap) =>
       {
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
          return this;
-      });
+      } );
    }
-   async _then (func)
+   async _then (func) //internal then, must return this
    {
       return this.#p.then ( (ths) =>
       {
          this.#p = null;
-         return func (ths);
+         func (ths);
+         return ths;
       });
    }
    init()
    {
+      console.log("vao async init");
       this.bindVertexArray();
       let gl = this.gl;
 
@@ -53,25 +63,8 @@ class HeightMap extends GlVAObject
    set color      (vec4) {this.gl.vertexAttrib4fv  (this.vertColorLocation,         vec4) ;}
    buildGeometry()
    {
+      console.log("vao async buildGeometry");
       let heightmap = this.heightmap;
-
-      //heightmap =
-      //   {
-      //      height:4,width:4,maxh:1.5,
-      //      data:
-      //      [
-      //         [0.5, 0.5, 0.5, 0.0],
-      //         [0.5, 1.5, 0.5, 0.0],
-      //         [0.5, 0.5, 0.5, 0.0],
-      //         [0.0, 0.0, 0.0, 0.0]
-      //         ///[]
-      //      ]
-      //   };
-      //heightmap =
-      //   {
-      //      height:50,width:50,
-      //      data: this.heightmap.data
-      //   };
 
       //const bottom = -0.7, maxheight = 0.2;
       const bottom = -0.7, maxheight = 0.2/heightmap.maxh; //0.2;
@@ -106,8 +99,6 @@ class HeightMap extends GlVAObject
             viter += 3;
          }
       }
-      //console.log (this.#vertices);
-      //console.log (this.#norms);
       let iiter = 0;   //index iterator
       for (let j = 0; j < length - 1; j++)
       {
@@ -128,47 +119,72 @@ class HeightMap extends GlVAObject
       let gl = this.gl;
       this.color      = new Float32Array([1, 0, 0, 1]);
       gl.drawElements (gl.TRIANGLES, this.#indices.length, gl.UNSIGNED_INT, 0);
-      //this.color      = new Float32Array([0, 0, 0, 1]);
-      //for (let i = 0; i < this.#indices.length; i+= 3)
-      //   gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_INT, i * 4);
-      //gl.drawElements (gl.LINES, this.#indices.length, gl.UNSIGNED_INT, 0);
    }
 }
 
-function addUIListeners (elm, controller)
+
+let controller = new glcontroller ();
+
+async function onMouseEvent(event)
 {
-   elm.addEventListener ( "click",     (event) => {controller.timer.switchStop();});
-   elm.addEventListener ( "mousemove", (event) =>
+   switch (event.type)
    {
+   case "click":     controller.timer.switchStop(); return "event.type";
+   case "mousemove":
       if (event.shiftKey)
           [controller.camera.ypos, controller.camera.xpos] = [event.movementY, event.movementX];
       if (event.ctrlKey)                                
           [controller.camera.ytg,  controller.camera.xtg]  = [event.movementY, event.movementX];
-   } );
-   elm.addEventListener ( "wheel", (event) =>
-   {
+      return "event.type";
+   case "wheel":
        console.log("wheel: " + event.deltaX + ":" + event.deltaY + ":" + event.deltaZ + ":" + event.deltaMode);
-       event.preventDefault();
        //if (event.ctrlKey)
-       //   console.log("prevent whole window from resizing");
-   } );
+       return event.type;
+   }
+   return null;
 }
-
 
 async function main()
 {
-   //new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./heightmap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
-}
+   let craterArizonaUrl;
+   postMessage("getInfo");
 
+   let glinfo = null;
+   onmessage = async (msg) =>
+   {
+      if (msg.data.byUrl)
+      {
+         //console.log("msg.data instanceof GlInfoG");
+         glinfo = Object.assign(new GlInfo (), msg.data);
+         postMessage("getArizona");
+      } else if (msg.data.arizona)
+      {
+         craterArizonaUrl = msg.data.arizona;
+         postMessage("getCanvas");
+      } else if (msg.data instanceof OffscreenCanvas)
+      {
+         glinfo.canvas  = msg.data;
+         //console.log ("onmessage OffscreenCanvas");
+         //let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png");
+         //let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
+         //let vao =  new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
+         new HeightMap (glinfo, craterArizonaUrl)._then( (vao) =>  { heightMapDraw (vao);} );
+      } else //if (msg.data instanceof OffscreenCanvas)
+      {
+         switch (msg.data.type)
+         {
+         case "mousemove": case "wheel": case "click":
+            onMouseEvent(msg.data);
+            break;
+         }
+      }
+   }
+}
 async function heightMapDraw (vao)
 {
+   console.log ("start: async function heightMapDraw (vao)");
+
    let gl = vao.gl;
-   let controller = new glcontroller ();
-
-   addUIListeners (gl.canvas, controller);
-
    console.log(gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
    vao.useProgram();
 
@@ -178,6 +194,7 @@ async function heightMapDraw (vao)
    requestAnimationFrame(drawScene);
 
    // Draw the scene.
+   //controller.timer.switchStop();
    let then = 0;
    function drawScene(time)
    {
@@ -244,4 +261,3 @@ async function heightMapDraw (vao)
 }
 
 main();
-}

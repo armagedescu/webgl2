@@ -7,12 +7,22 @@ class HeartGeometry2 extends GlVAObject
    #norms    = [];
    #nh = null;
    #ns = null;
+   #p  = null;
    constructor(context, nh = 2, ns = 40)
    {
       super(context);
       this.initGeometry(nh, ns);
       this.init();
-      return new Promise (   (resolve, reject) => { setTimeout( resolve, 10000, this ); }   );
+      this.#p = new Promise (   (resolve, reject) => { setTimeout( resolve, 10000, this ); }   );
+   }
+   async _then (func)
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         if (func) func (ths);
+		 return this;
+      });
    }
    initGeometry(nh, ns)
    {
@@ -176,18 +186,47 @@ class HeartGeometry2 extends GlVAObject
    }
 }
 
+class basetest 
+{
+   #p  = null;
+   constructor (){this.#p = Promise.resolve(this);}
+   async _then (func)
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         if (func) func (ths);
+		 return this;
+      });
+   }
+   doHello(a) {console.log("hello: " + a);}
+}
+class test extends basetest 
+{
+   constructor(context)
+   {
+      super(context);
+	  this.msg = "test: ";
+   }
+   doTest(a) {console.log(this.msg + a);}
+}
 let func = async () =>
 {
-   let heartGeometry2 = await new HeartGeometry2(canvas); //nh = 2, ns = 40;
-   let gl = heartGeometry2.gl;
-   heartGeometry2.useProgram ();
+   (await new test()._then()).doHello("await"); //invoking synchronously
+   (new test())._then(a => {a.doHello("then"); a.doTest("then");} ); //invoking asynchronously
+   //let heartGeometry2 = await new HeartGeometry2(canvas); //nh = 2, ns = 40;
+   new HeartGeometry2(canvas)._then(vao =>
+   {
+	  //vao = await new HeartGeometry2(canvas)._then();
+      let gl = vao.gl;
+      vao.useProgram ();
 
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   //gl.enable(gl.CULL_FACE);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-   heartGeometry2.draw();
-
+      gl.clearColor(0.5, 0.5, 0.5, 0.9);
+      gl.enable(gl.DEPTH_TEST);
+      //gl.enable(gl.CULL_FACE);
+      gl.clear (gl.COLOR_BUFFER_BIT);
+      vao.draw();
+   } );
 };
 document.addEventListener('DOMContentLoaded', func);
 }
