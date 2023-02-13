@@ -502,7 +502,7 @@ class GlInfoGrabber
    constructor (canvas)
    {
       this.url = window.location;
-      this.currentdir = new URL(this.url.pathname.replace( /\/[^\/]*$/, ''), this.url.origin);
+      this.currentdir = new URL(this.url.pathname.replace( /\/[^\/]*$/, '/'), this.url.origin);
       if (canvas) this.grabInfo(canvas);
    }
    grabInfo (canvas)
