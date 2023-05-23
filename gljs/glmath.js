@@ -16,6 +16,10 @@ function cross3p (p1, p2, p3) //3D cross between three 3D points
    let v2 = deltav (p1, p3);
    return [(v1[1] * v2[2] - v1[2] * v2[1]), (v1[2]* v2[0] - v1[0] * v2[2]), (v1[0] * v2[1] - v1[1] * v2[0])];
 }
+function cross3pn (p1, p2, p3) //3D cross between three 3D points
+{
+   return normv(cross3p (p1, p2, p3));
+}
 function cross3 (v1, v2) //3D cross between two 3d vectors
 {
    return [(v1[1] * v2[2] - v1[2] * v2[1]), (v1[2]* v2[0] - v1[0] * v2[2]), (v1[0] * v2[1] - v1[1] * v2[0])];
