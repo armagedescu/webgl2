@@ -22,25 +22,24 @@ let func = () =>
    let translation = gl.getUniformLocation(glProgram.program, 'translation');
 
    let time_old = 0;
-   let animate = (time) =>
+   let animateMain = (time) =>
    {
       let dt = time - time_old;
 
+      gl.useProgram (glProgram.program);
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
 
-      gl.useProgram (glProgram.program);
 	  let t = [0.5 *  Math.cos(dt * 0.005),  0.5 *  Math.sin(dt * 0.005),  0.5 *  Math.sin(dt * 0.005)]
-
       gl.uniform3f(translation, ... t);
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-      window.requestAnimationFrame(animate);
+      window.requestAnimationFrame(animateMain);
    }
-   animate(0);
+   animateMain(0);
 };
 document.addEventListener('DOMContentLoaded', func);
 }

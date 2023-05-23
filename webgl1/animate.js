@@ -7,11 +7,11 @@ let func = () =>
    let gl = glProgram.gl;
    glProgram.useProgram ();
 
-
    let vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
                     0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
 
    let vertex_buffer = gl.createBuffer();
+
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -22,23 +22,24 @@ let func = () =>
    let translation = gl.getUniformLocation(glProgram.program, 'translation');
 
    let time_old = 0;
-   let animate = (time) =>
+   let animateMain = (time) =>
    {
       let dt = time - time_old;
 
       gl.useProgram (glProgram.program);
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
-	  
-	  let t = [0.5 *  Math.cos(dt * 0.005),  0.5 *  Math.sin(dt * 0.005),  0.5 *  Math.sin(dt * 0.005), 0.0];
+
+	  let fi = dt * 0.005;
+	  let t = [0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi), 0.0];
       gl.uniform4f(translation, ... t);
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-      window.requestAnimationFrame(animate);
+      window.requestAnimationFrame(animateMain);
    }
-   animate(0);
+   animateMain(0);
 };
 document.addEventListener('DOMContentLoaded', func);
 }

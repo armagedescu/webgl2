@@ -25,16 +25,18 @@ let func = () =>
       if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
       let ps = [[0.0,                                             0.0,                                           (1.0)], //<--points in direction of us
                 [(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), (dr /nh) * Math.sin(2 * Math.PI *  i    / ns), (1 - 1/nh)],
-                [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)]];
-      let cr = cross3p (ps[0], ps[1], ps[2]);
+                [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)],
+                [(drd/nh) * Math.cos(2 * Math.PI *  (i+2) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+2) / ns), (1 - 1/nh)]];
+      let cr =  cross3p (ps[0], ps[1], ps[2]);
+      let cr1 = cross3p (ps[0], ps[2], ps[3]);
       
       [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
       [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
       [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[2];
 
-      [norms[ix],     norms[iy],     norms[iz]]     = cr;
+      [norms[ix],     norms[iy],     norms[iz]]     = [0, 0, 0];
       [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr;
-      [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr;
+      [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr1;
    }
 
    //1 triangle = 3 points * 3 coordinates
