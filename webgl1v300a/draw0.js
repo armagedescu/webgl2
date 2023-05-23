@@ -51,7 +51,6 @@ let func = () =>
    gl.useProgram(program);
    gl.bindVertexArray(vao);
    gl.drawArrays(gl.TRIANGLES, 0, 6);
-   // gl.POINTS gl.TRIANGLE_STRIP gl.LINE_STRIP gl.LINE_LOOP gl.TRIANGLE_FAN
 
 };
 document.addEventListener('DOMContentLoaded', func);

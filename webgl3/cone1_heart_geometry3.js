@@ -92,14 +92,14 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
             nverts [n0 + 3] =  s21[0] + s21[3] / nv;
             nverts [n1 + 3] =  s21[1] + s21[4] / nv;
             nverts [n2 + 3] =  s21[2] - s21[5] / nv;
-			
+
             verts [i0 + 3]      =  s22[0];
             verts [i1 + 3]      =  s22[1];
             verts [i2 + 3]      =  s22[2];
             verts_norms[i0 + 3] =  s22[3];
             verts_norms[i1 + 3] =  s22[4];
             verts_norms[i2 + 3] =  s22[5];
-			
+
             verts [i0 + 6]      =  s11[0];
             verts [i1 + 6]      =  s11[1];
             verts [i2 + 6]      =  s11[2];
@@ -113,23 +113,23 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
 
             // because this is the tip of the cone
             if (j == 0) continue;
-			//if(0)
+            //if(0)
             //if( i & 1 == 1)
-			{
+            {
             verts [i0]      =  s22[0];
             verts [i1]      =  s22[1];
             verts [i2]      =  s22[2];
             verts_norms[i0] =  s22[3];
             verts_norms[i1] =  s22[4];
             verts_norms[i2] =  s22[5];
-			
+
             verts [i0 + 3]      =  s12[0];
             verts [i1 + 3]      =  s12[1];
             verts [i2 + 3]      =  s12[2];
             verts_norms[i0 + 3] =  s12[3];
             verts_norms[i1 + 3] =  s12[4];
             verts_norms[i2 + 3] =  s12[5];
-			
+
             verts [i0 + 6]      =  s11[0];
             verts [i1 + 6]      =  s11[1];
             verts [i2 + 6]      =  s11[2];
