@@ -9,6 +9,30 @@
 <body>
    <div class="sample">
       Simple draw:<br/>
+      <canvas id = "draw0"  width = "120" height = "120" class="blue">
+         <script src="./webgl1v300a/draw0.js"></script>
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
+            #version 300 es
+            in vec2 coordinates; //layout (location = 10) in vec2 coordinates
+            void main(void)
+            {
+               gl_Position = vec4(coordinates, 0.0, 1.0);
+               //gl_PointSize = 10.0;\n' +
+            }
+         </script>
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            out vec4 buzzColor;
+            void main(void)
+            {
+               buzzColor = vec4(0.0, 0.0, 0.0, 0.1);
+            }
+         </script>
+      </canvas>
+   </div>
+   <div class="sample">
+      Simple draw:<br/>
       <canvas id = "draw"  width = "120" height = "120" class="blue">
          <script src="./webgl1v300a/draw.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
