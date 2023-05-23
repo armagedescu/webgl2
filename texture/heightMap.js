@@ -190,7 +190,7 @@ async function heightMapDraw (vao)
 
       vao.useProgram();
       gl.enable   (gl.CULL_FACE);
-      //gl.enable   (gl.DEPTH_TEST);
+      gl.enable   (gl.DEPTH_TEST);
 
       gl.clearColor (0., 0., 1., 1.0);
       gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
