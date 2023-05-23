@@ -1,0 +1,110 @@
+<html>
+<head>
+   <title>Render To Texture + Height Map</title>
+</head>
+<body>
+   <script src="./3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+
+   <script src="./gljs/api.js"></script>
+   <script src="./gljs/glmath.js"></script>
+   <script src="./gljs/glcanvas.js"></script>
+   <script src="./gljs/glcontroller.js"></script>
+
+   <canvas id="HeightMapButuceni" width="400" height = "300">
+      <script  type="text/glsl-shader"   data-gl-type="vertex-shader"  data-gl-program="texture">
+         #version 300 es
+         layout (location = 0) in vec4 a_position; //a_texcoord
+         layout (location = 1) in vec2 a_texcoord;
+         uniform mat4 u_matrix;
+         out vec2 v_texcoord;
+         void main()
+         {
+           gl_Position = u_matrix * a_position;
+           v_texcoord  = a_texcoord;
+         }
+      </script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader"  data-gl-program="texture">
+         #version 300 es
+         precision mediump float;
+         in vec2 v_texcoord; // Passed in from the vertex shader.
+         uniform sampler2D u_texture; // The texture.
+         out vec4 fragColor;
+         void main()
+         {
+            fragColor = texture(u_texture, v_texcoord);
+         }
+      </script>
+      <script type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-program="sampleDrawIndexed">
+         #version 300 es
+         layout (location = 0) in vec2 coordinates;
+         void main(void)
+         {
+            gl_Position = vec4(coordinates, 0.0, 1.0);
+            //gl_PointSize = 10.0;\n' +
+         }
+      </script>
+      <script type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-program="sampleDrawIndexed">
+         #version 300 es
+         precision mediump float;
+         out vec4 fragColor;
+         void main(void)
+         {
+            fragColor = vec4(1.0, 0.0, 1.0, 0.5);
+         }
+      </script>
+      <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+         #version 300 es
+         layout (location = 0) in vec3 vert;
+         layout (location = 1) in vec3 norm;
+         layout (location = 2) in vec4 vertColor;
+            
+         out vec4 terrainColor;
+         out vec3 terrainNormal;
+         out vec3 lightDirection;
+         
+         uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+         uniform mat4 view;       //moves world space objects around based on camera
+         uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+         
+         void main()
+         {
+            gl_Position = projection * view * model * vec4(vert, 1.0);
+            terrainColor  = vertColor;
+            terrainNormal = norm;
+            lightDirection = vec3(0.f, -1., 0.);
+         }
+      </script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+         #version 300 es
+         precision mediump float;
+         in vec4 terrainColor;
+         in vec3 terrainNormal;
+         in vec3 lightDirection;
+         out vec4 fragColor;
+         void main()
+         {
+            float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
+            fragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+         }
+      </script>
+	  <script src="./texture/renderToTexture.js"></script>
+   </canvas><br/>
+   <canvas id="HeightMapButuceniOffscreen" width="400" height = "300">
+      <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./texture/height-map.vs" ></script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./texture/height-map.fs" ></script>
+      <script src="./texture/renderToTexture.uiproxy.js"></script>
+
+   </canvas><!-- br/ -->
+
+   <br/>
+   <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
+   <video id="video1" height="90" width="160" autoplay muted loop>
+      <script>document.getElementById('video1').play();</script>
+      <source src="./video/flower.mp4" type="video/mp4">
+   </video><br/>
+        <!-- crossorigin="anonymous" -->
+   base:<br/><img id="imgBasic" style="display:none"  src="./texture/f-texture.png" /><br/>
+   Tipova:<!-- br/><img id="imgTipova" src="./heightmap/tipova.png" /><br/ -->
+   <a href="./tutorials.html">Tutorials</a>
+</body>
+</html>
