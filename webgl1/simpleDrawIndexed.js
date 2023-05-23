@@ -10,7 +10,9 @@ let func = () =>
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let vertices  = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
+   let vertices  = [ 0.5, -0.5,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
+   ////to be changed to
+   //let vertices  = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
    let indices   = [0, 1, 2, 0, 2, 3];
 
    // Create a new buffer object
