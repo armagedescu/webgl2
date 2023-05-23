@@ -1,36 +1,36 @@
 {
 let canvas = document.currentScript.parentElement;
 
-class Cone1 extends GlVAObject
+class Cone extends GlVAObject
 {
    #verts    = [];
    #norms    = [];
-   #nh = null;
    #ns = null;
    #dt = 0;
-   constructor(context, nh = 1, ns = 20)
+
+   constructor(context, ns = 20, smooth = true)
    {
       super(context);
-      this.initGeometry(nh, ns);
+      this.initGeometry(ns, smooth);
       this.init();
    }
-   initGeometry(nh, ns)
+   initGeometry(ns, smooth)
    {
-      this.#nh = nh;
       this.#ns = ns;
       this.#verts    = [];
       this.#norms    = [];
-      let  dr = 0.6;
+      let  dr = 1.0;
+      let  sm = smooth ? 3 : 6;
 
       for (let i = 0, ix = 0,iy = 1,iz = 2; i < this.#ns; i++, ix += 9,iy += 9,iz += 9)
       {
          [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = [0.0, 0.0, 0.7] ;//<-- tip of the cone, points to us
-         [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = [dr * Math.cos(2 * Math.PI * i / this.#ns),       dr * Math.sin(2 * Math.PI * i / this.#ns),      0] ;
+         [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = [dr * Math.cos(2 * Math.PI *  i    / this.#ns),   dr * Math.sin(2 * Math.PI *  i    / this.#ns),  0] ;
          [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = [dr * Math.cos(2 * Math.PI * (i+1) / this.#ns),   dr * Math.sin(2 * Math.PI * (i+1) / this.#ns),  0] ;
 
-         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = [this.#verts[ix + 3],   this.#verts[iy + 3],  0.7] ;//<-- tip of the cone, points to us
-         [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = [this.#verts[ix + 3],   this.#verts[iy + 3],  0.7] ;
-         [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = [this.#verts[ix + 6],   this.#verts[iy + 6],  0.7] ;
+         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = [0, 0, 0]; //<-- tip of the cone, points to us
+         [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = [this.#verts[ix + sm],   this.#verts[iy + sm],  0.7] ;
+         [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = [this.#verts[ix +  6],   this.#verts[iy +  6],  0.7] ;
       }
 
    }
@@ -55,14 +55,14 @@ class Cone1 extends GlVAObject
 
 let func = () =>
 {
-   let cone1 = new Cone1(canvas);
-   let gl = cone1.gl;
-   cone1.useProgram ();
+   let cone = new Cone(canvas, 20);//, 123);
+   let gl = cone.gl;
+   cone.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
-   cone1.draw();
+   cone.draw();
 
 };
 document.addEventListener('DOMContentLoaded', func);

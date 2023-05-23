@@ -1,13 +1,13 @@
 {
 let canvas = document.currentScript.parentElement;
 
-class Cone1Geometry extends GlVAObject
+class Cone extends GlVAObject
 {
    #verts    = [];
    #norms    = [];
    #nh = null;
    #ns = null;
-   constructor(context, nh = 2, ns = 40)
+   constructor(context, nh = 2, ns = 40, smooth = true)
    {
       super(context);
 
@@ -21,6 +21,7 @@ class Cone1Geometry extends GlVAObject
       this.#verts    = [];
       this.#norms    = [];
       let  dr = 1.0;
+      //let  sm = smooth ? 3 : 6;
 
       for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < this.#ns; i++,     ix += 9,iy += 9,iz += 9)
       {
@@ -33,7 +34,7 @@ class Cone1Geometry extends GlVAObject
          [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
          [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = ps[2];
 
-         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = cr;
+         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = [0, 0, 0];
          [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = cr;
          [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = cr;
       }
@@ -93,14 +94,14 @@ class Cone1Geometry extends GlVAObject
 
 let func = () =>
 {
-   let cone1Geometry = new Cone1Geometry (canvas);
-   let gl = cone1Geometry.gl;
-   cone1Geometry.useProgram   ();
+   let cone = new Cone (canvas);
+   let gl = cone.gl;
+   cone.useProgram   ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
-   cone1Geometry.draw   ();
+   cone.draw   ();
 
 
 };

@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-class Animate2 extends GlVAObject
+class Animate extends GlVAObject
 {
    #vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
                  0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
@@ -29,34 +29,32 @@ class Animate2 extends GlVAObject
    {
       let gl = this.gl;
 
-      let Tx = 0.5 *  Math.cos(this.#dt * 0.005);
-      let Ty = 0.5 *  Math.sin(this.#dt * 0.005);
-      let Tz = 0.5 *  Math.sin(this.#dt * 0.005);
+      let fi = this.#dt * 0.005;
+	  let t = [0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi)];
 
-      gl.uniform3f(this.translation, Tx, Ty, Tz);
-
+      gl.uniform3f(this.translation, ... t);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
    }
 }
 
 let func = () =>
 {
-   let animate2 = new Animate2(canvas);
-   let gl = animate2.gl;
+   let animate = new Animate(canvas);
+   let gl = animate.gl;
 
-   let animate = (time) =>
+   let animateMain = (time) =>
    {
-      animate2.useProgram ();
-	  gl.clearColor(0.5, 0.5, 0.5, 0.9);
+      animate.useProgram ();
+      gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      animate2.t = time;
-	  animate2.draw();
+      animate.t = time;
+	  animate.draw();
 
-      window.requestAnimationFrame(animate);
+      window.requestAnimationFrame(animateMain);
    }
-   animate(0);
+   animateMain(0);
 };
 document.addEventListener('DOMContentLoaded', func);
 }
