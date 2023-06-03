@@ -3,9 +3,8 @@ let canvas = document.currentScript.parentElement;
 let func = () =>
 {
    let glCanvas = new GlCanvas('draw0');
-   let glProgram = glCanvas.glProgram;
-   let gl = glProgram.gl;
-   glProgram.useProgram ();
+   let gl = glCanvas.gl;
+   glCanvas.useProgram ();
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
@@ -19,7 +18,7 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (glProgram.program, "coordinates");
+   let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
    gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0); //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
 
