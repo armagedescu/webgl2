@@ -319,10 +319,13 @@ class GlCanvas
    get canvas   () { return this.#canvasObj;  }
    get programs () { return this.#programMap; }
    //default context and default program
-   get glProgram  () { return this.programs.get(this.#defaultProgramName); }
+
+   #ProgName (progName) {if (progName) return progName; return this.#defaultProgramName;}
+   get glProgram  () { return this.programs.get( this.#ProgName () ); }
    get program    () { return this.glProgram.program; }
-   getGlProgram   (progName) { return this.programs.get (progName); }
-   getProgram     (progName) { return this.getGlProgram (progName).program; }
+   getGlProgram   (progName) { return this.programs.get (this.#ProgName (progName)); } //defaults to
+   getProgram     (progName) { return this.getGlProgram (progName).program; } //defaults to
+   useProgram     (progName) { this.getGlProgram (progName).useProgram(); } //defaults to
 
 }
 
