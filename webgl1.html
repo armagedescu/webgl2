@@ -28,7 +28,7 @@
       </canvas>
    </div>
    <div class="sample">
-      Simple draw:<br/>
+      Simple draw indexed:<br/>
       <canvas id = "simpleDrawIndexed"  width = "120" height = "120" class="blue">
          <script src="./webgl1/simpleDrawIndexed.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
@@ -36,7 +36,6 @@
             void main(void)
             {
                gl_Position = vec4(coordinates, 0.0, 1.0);
-               //gl_PointSize = 10.0;\n' +
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
@@ -65,10 +64,11 @@
             }
          </script>
       </canvas>
-   </div>
+   </div><br/>
+   <!-- Go big for screen snippets -->
    <div class="sample">
       Translate animate 1:<br/>
-      <canvas id = "animate"  width = "120" height = "120" class="cyan">
+      <canvas id = "animate"  width = "360" height = "360" class="cyan">
          <script src="./webgl1/animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -88,7 +88,7 @@
    </div>
    <div class="sample">
       Translate animate 2:<br/>
-      <canvas id = "animate second instance" width = "120" height = "120" class="magenta">
+      <canvas id = "animate second instance" width = "360" height = "360" class="magenta">
           <script src="./webgl1/animate2.js"></script>
           <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -105,7 +105,7 @@
             }
          </script>
       </canvas>
-   </div>
+   </div></br>
    <div class="sample">
       Normals:<br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
@@ -185,13 +185,13 @@
             }
          </script>
       </canvas>
-   </div>
+   </div><br/>
    <div class="sample">
       Cone TRIANGLES (correct), <br/>
       Normals simple, smooth gradient<br/>
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
-      <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
+      <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
          <script src="./webgl1/cone1_animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -228,7 +228,7 @@
       Normals simple, no gradient, <br/>
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
-      <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
+      <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
          <script src="./webgl1/cone1_animate2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -256,7 +256,7 @@
             }
          </script>
       </canvas>
-   </div>
+   </div><br/>
    <br/>
    <div class="sample">
       </br>

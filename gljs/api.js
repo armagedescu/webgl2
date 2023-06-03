@@ -82,24 +82,24 @@ async function makeOffscreenFromImg (src, crossOrigin)
 async function makeOffscreenFromBlob (src, options)
 {
     return fetch (src, options)                            //fetch javascript browser api
-    .then( (res)  => { return res.blob(); } )              //as blob javascript browser api
-    .then( (blob) => { return createImageBitmap(blob); } ) //createImageBitmap javascript browser api
-    .then( (bmp)  =>
-    {
-       const { width, height } = bmp;
-       const cnv = new OffscreenCanvas(width, height);
-       const ctx = cnv.getContext("2d");
-       ctx.drawImage(bmp, 0, 0);
-       bmp.close();
-       return cnv;
-    } );
+              .then( (res)  => { return res.blob(); } )              //as blob javascript browser api
+              .then( (blob) => { return createImageBitmap(blob); } ) //createImageBitmap javascript browser api
+              .then( (bmp)  =>
+              {
+                 const { width, height } = bmp;
+                 const cnv = new OffscreenCanvas(width, height);
+                 const ctx = cnv.getContext("2d");
+                 ctx.drawImage(bmp, 0, 0);
+                 bmp.close();
+                 return cnv;
+              } );
 }
 
 async function makeOffscreenText (src, options)
 {
     return fetch (src, options)
-    .then( (res)  => { return res.text(); } )
-    .then( (txt)  => { return txt;} ); // { console.log(txt); return txt;} );
+              .then( (res)  => { return res.text(); } )
+              .then( (txt)  => { return txt;} ); // { console.log(txt); return txt;} );
 }
 
 async function makeCanvasFromImg (src, crossOrigin)
