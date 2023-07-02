@@ -40,7 +40,7 @@ class glcontroller
    }; //,
    model =
    {
-      timeenable     : [false,    true, false],
+      timeenable      : [false,    true, false],
       timesensitivity : [0.4,       0.4,   0.4],
       axes            : [0,         0,     0  ], //[Math.PI/8,   0,     0],
       set deltat (delta)

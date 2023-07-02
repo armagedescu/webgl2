@@ -10,6 +10,7 @@
 
 async function readImgHeightMap (src, crossOrigin)
 {
+   //TODO: review, +await
    return readImg (src, crossOrigin).then ((imgData) =>
    {
       return buildImgHeightMap (imgData);
@@ -18,6 +19,7 @@ async function readImgHeightMap (src, crossOrigin)
 
 async function readImgHeightMapOffscreen (src, crossOrigin)
 {
+   //TODO: review, +await
    return readImgOffscreen (src, crossOrigin).then ((imgData) =>
    {
       return buildImgHeightMap (imgData);
@@ -47,6 +49,7 @@ function buildImgHeightMap (imgData)
 }
 async function readImg (src, crossOrigin)
 {
+   //TODO: review, await
    return makeCanvasFromImg (src, crossOrigin).then((canvas) =>
    {
       let ctx     = canvas.getContext("2d");
@@ -153,14 +156,53 @@ function duplicateCanvas (srcc)
    tgCanvas.getContext("2d").putImageData(imageData, 0, 0);
    return tgCanvas;
 }
+
+
 function makeImg (src, crossOrigin)
 {
    let image  = new Image ();
-   let canvas = document.createElement("canvas");
    if (crossOrigin) image.crossOrigin  =  crossOrigin;
    image.src  =  src;
    return image;
 }
+
+async function loadImg (src, crossOrigin)
+{
+   let image  = makeImg (src, crossOrigin);
+   return new Promise((resolve, reject) =>
+   {
+      image.addEventListener('load',  (event) => { resolve(image); } );
+      image.addEventListener('error', (event) => { console.log(event); reject (event); } );
+   });
+}
+
+function makeVideo (src, crossOrigin)
+{
+   let video  = document.createElement("video");
+   if (crossOrigin) video.crossOrigin  =  crossOrigin;
+   video.src             =  src;
+   video.autoplay    = true;
+   video.playsInline = true;
+   video.muted       = true;
+   video.loop        = true;
+   return video;
+}
+
+async function loadVideo (src, crossOrigin)
+{
+   let video  = makeVideo (src, crossOrigin);
+   video.play();
+
+   return await Promise.allSettled
+      ([
+         new Promise ( (resolve, reject) => {video.addEventListener('playing',     (event) => {resolve(1);}, {once:true, capture: true} )}   ),
+         new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve(1);}, {once:true, capture: true} )}   )
+      ])
+      .then((values) => video);
+
+}
+
+
 function makeEmptyCanvas(width, height)
 {
    let canvas = document.createElement("canvas");

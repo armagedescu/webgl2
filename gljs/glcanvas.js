@@ -466,7 +466,7 @@ class GlCanvasAsync
                 text    : info.src,
              };
          if (info.program) progInfo.program = info.program;
-		 this.#downloadable.push (progInfo);
+         this.#downloadable.push (progInfo);
       }
    }
 
@@ -523,4 +523,90 @@ class GlInfoGrabber
       return new URL(ref, this.currentdir).href;
    }
    
+}
+
+
+class GlTexture2D
+{
+   #p = null;
+   constructor(gl, dataPromise)
+   {
+      this.gl = gl;
+      this.texture = gl.createTexture ();
+      this.type = gl.TEXTURE_2D;
+      this.init ();
+      this.#p = dataPromise.then( (img) =>
+      {
+         this.image = img;
+         this.bindTexture ();
+         this.texImage2D();
+         this.gl.generateMipmap (this.type);
+         return this;
+      });
+   }
+   init (){}
+   async _then (func)
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         return func (ths);
+      });
+   }
+   texImage2D()
+   {
+      let gl = this.gl;
+      gl.texImage2D     (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
+   }
+   bindTexture(){this.gl.bindTexture(this.type, this.texture);}
+}
+
+
+class GlVideoTexture2D
+{
+   #p = null;
+   constructor(gl, dataPromise)
+   {
+      this.gl = gl;
+      this.texture = gl.createTexture ();
+      this.type = gl.TEXTURE_2D;
+      this.init ();
+      this.#p = dataPromise.then( (vd) =>
+      {
+         this.video = vd;
+         this.texImage2DInit();
+         this.gl.generateMipmap (this.type);
+         return this;
+      });
+   }
+   init (){}
+   async _then (func)
+   {
+      return this.#p.then ( (ths) =>
+      {
+         this.#p = null;
+         return func (ths);
+      });
+   }
+   texImage2DInit()
+   {
+      this.bindTexture ();
+      let gl = this.gl;
+      gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+   }
+   texImage2DUpdate()
+   {
+      this.bindTexture();
+      let gl = this.gl;
+      gl.texImage2D     (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.video);
+   }
+   bindTexture(){this.gl.bindTexture(this.type, this.texture);}
+   update()
+   {
+      this.texImage2DUpdate();
+   }
 }

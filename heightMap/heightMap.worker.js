@@ -165,9 +165,9 @@ async function main()
       {
          glinfo.canvas  = msg.data;
          //console.log ("onmessage OffscreenCanvas");
-         //let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png");
-         //let vao = await new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
-         //let vao =  new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png");
+         //let vao = await new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png");
+         //let vao = await new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
+         //let vao =  new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
          new HeightMap (glinfo, craterArizonaUrl)._then( (vao) =>  { heightMapDraw (vao);} );
       } else //if (msg.data instanceof OffscreenCanvas)
       {

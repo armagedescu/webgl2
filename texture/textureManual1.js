@@ -4,22 +4,22 @@ class FVaObject extends GlVAObject
 {
    #vertices  = null;
    #texCoords = new Float32Array([ //this is 2D
-           0, 0,  0, 1,  1, 0,    0, 1,  1, 1,  1, 0, // left column front
-           0, 0,  0, 1,  1, 0,    0, 1,  1, 1,  1, 0, // top rung front
-           0, 0,  0, 1,  1, 0,    0, 1,  1, 1,  1, 0, // middle rung front
-           0, 0,  1, 0,  0, 1,    0, 1,  1, 0,  1, 1, // left column back
-           0, 0,  1, 0,  0, 1,    0, 1,  1, 0,  1, 1, // top rung back
-           0, 0,  1, 0,  0, 1,    0, 1,  1, 0,  1, 1, // middle rung back
-           0, 0,  1, 0,  1, 1,    0, 0,  1, 1,  0, 1, // top
-           0, 0,  1, 0,  1, 1,    0, 0,  1, 1,  0, 1, // top rung right
-           0, 0,  0, 1,  1, 1,    0, 0,  1, 1,  1, 0, // under top rung
-           0, 0,  1, 1,  0, 1,    0, 0,  1, 0,  1, 1, // between top rung and middle
-           0, 0,  1, 1,  0, 1,    0, 0,  1, 0,  1, 1, // top of middle rung
-           0, 0,  1, 1,  0, 1,    0, 0,  1, 0,  1, 1, // right of middle rung
-           0, 0,  0, 1,  1, 1,    0, 0,  1, 1,  1, 0, // bottom of middle rung.        
-           0, 0,  1, 1,  0, 1,    0, 0,  1, 0,  1, 1, // right of bottom
-           0, 0,  0, 1,  1, 1,    0, 0,  1, 1,  1, 0, // bottom
-           0, 0,  0, 1,  1, 1,    0, 0,  1, 1,  1, 0  // left side
+           0, 0,   0, 1,   1, 0,       0, 1,   1, 1,   1, 0, // left column front
+           0, 0,   0, 1,   1, 0,       0, 1,   1, 1,   1, 0, // top rung front
+           0, 0,   0, 1,   1, 0,       0, 1,   1, 1,   1, 0, // middle rung front
+           0, 0,   1, 0,   0, 1,       0, 1,   1, 0,   1, 1, // left column back
+           0, 0,   1, 0,   0, 1,       0, 1,   1, 0,   1, 1, // top rung back
+           0, 0,   1, 0,   0, 1,       0, 1,   1, 0,   1, 1, // middle rung back
+           0, 0,   1, 0,   1, 1,       0, 0,   1, 1,   0, 1, // top
+           0, 0,   1, 0,   1, 1,       0, 0,   1, 1,   0, 1, // top rung right
+           0, 0,   0, 1,   1, 1,       0, 0,   1, 1,   1, 0, // under top rung
+           0, 0,   1, 1,   0, 1,       0, 0,   1, 0,   1, 1, // between top rung and middle
+           0, 0,   1, 1,   0, 1,       0, 0,   1, 0,   1, 1, // top of middle rung
+           0, 0,   1, 1,   0, 1,       0, 0,   1, 0,   1, 1, // right of middle rung
+           0, 0,   0, 1,   1, 1,       0, 0,   1, 1,   1, 0, // bottom of middle rung.        
+           0, 0,   1, 1,   0, 1,       0, 0,   1, 0,   1, 1, // right of bottom
+           0, 0,   0, 1,   1, 1,       0, 0,   1, 1,   1, 0, // bottom
+           0, 0,   0, 1,   1, 1,       0, 0,   1, 1,   1, 0  // left side
          ]);
    #positions = [ //this is 3D
          //0    1   2      3    4   5      6    7   8        9   10  11     12   13  14     15   16  17
@@ -115,8 +115,8 @@ class GlImageTexture2D
 
 async function makeExperiments()
 {
-   readImg ("./heightmap/butuceni.png");
-   readImg ("./heightmap/tipova.png");
+   readImg ("./heightMap/butuceni.png");
+   readImg ("./heightMap/tipova.png");
    readImg ("./texture/f-texture.png");
    document.body.appendChild(document.createElement("br") );
    document.body.appendChild(duplicateCanvas(makeImgCanvas("imgBasic")));    //Show a duplicate of invisible image canvas

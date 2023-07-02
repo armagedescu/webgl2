@@ -159,15 +159,15 @@ async function main()
 {
    let objtext = await makeOffscreenText ("./3rdparty/obj/chair.obj");
    let  objfile = new OBJFile(objtext);
-   let  obj = objfile.obj;
+   let  obj = objfile.result;
 
    let trebujeniText = await makeOffscreenText ("./3rdparty/obj/3D-Trebujeni.obj");
    let trebujeniFile = new OBJFile(trebujeniText);
-   let trebujeniObj = trebujeniFile.obj;
+   let trebujeniObj = trebujeniFile.result;
    return;
-   //new HeightMap ("HeightMapButuceni", "./heightmap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./heightmap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./heightmap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
 }
 
 async function heightMapDraw (vao)

@@ -34,7 +34,7 @@ class OBJFile
       this.#reset();
       this.fileContents     = fileContents;
       this.defaultModelName = (defaultModelName || 'untitled');
-	  this.obj              = this.#parse();
+	  this.#parse();
    }
 
    #reset()
@@ -174,7 +174,7 @@ class OBJFile
 
       const line = [];
 
-      for (let i = 0; i < totalVertices; i += 1)
+      for (let i = 0; i < totalVertices; i++)
       {
          const vertexString = lineItems[i + 1];
          const vertexValues = vertexString.split('/');
@@ -204,7 +204,7 @@ class OBJFile
          vertices       : []
       };
 
-      for (let i = 0; i < totalVertices; i += 1)
+      for (let i = 0; i < totalVertices; i++)
       {
          const vertexString = lineItems[i + 1];
          const vertexValues = vertexString.split('/');
