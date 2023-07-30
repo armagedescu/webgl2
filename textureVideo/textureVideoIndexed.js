@@ -60,7 +60,7 @@ let func = async () =>
    let gl = simpleDrawIndexed.gl;
 
    let texture = new GlVideoTexture2D (gl, loadVideo ("./video/flower.mp4"));
-   texture._then ((tex) =>
+   texture.ready().then ((tex) =>
    {
 	   render (0);
    });

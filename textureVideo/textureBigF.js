@@ -83,36 +83,6 @@ class FVaObject extends GlVAObject
    }
 }
 
-class GlImageTexture2D
-{
-   constructor(gl, data)
-   {
-      this.gl = gl;
-      this.data = data;
-      this.texture = gl.createTexture ();
-      this.type = gl.TEXTURE_2D;
-      this.bindTexture ();
-      this.init ();
-   }
-   init ()
-   {
-      this.image = makeImg (this.data);
-      this.bindTexture ();
-      this.image.addEventListener('load', () =>
-         {
-            this.bindTexture ();
-            this.texImage2D();
-            this.gl.generateMipmap (this.type);
-         });
-   }
-   texImage2D()
-   {
-      let gl = this.gl;
-      gl.texImage2D     (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
-   }
-   bindTexture(){this.gl.bindTexture(this.type, this.texture);}
-}
-
 function main()
 {
 
@@ -124,14 +94,17 @@ function main()
    let program = fVaObject.program;
    fVaObject.useProgram();
 
-   let texture = new GlImageTexture2D (gl, "./texture/f-texture.png");
 
    let fieldOfViewRadians    = rad (60);
    let modelXRotationRadians = rad (0);
    let modelYRotationRadians = rad (0);
 
 
-   requestAnimationFrame(drawScene);
+   let texture = new GlTexture2D (gl, loadImg ("./texture/f-texture.png"));
+   texture.ready().then ( () =>
+   {
+      requestAnimationFrame(drawScene);
+   });
 
    // Draw the scene.
    let then = 0;

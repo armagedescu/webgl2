@@ -50,7 +50,7 @@ let func = async () =>
    let gl = simpleDrawIndexed.gl;
 
    let texture = new GlTexture2D (gl, loadImg ("./texture/f-texture.png"));
-   texture._then ((tex) =>
+   texture.ready().then ((tex) =>
    {
       simpleDrawIndexed.useProgram();
       gl.enable   (gl.CULL_FACE);

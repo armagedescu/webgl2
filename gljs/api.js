@@ -190,7 +190,7 @@ function makeVideo (src, crossOrigin)
    return video;
 }
 
-//older
+//TODO: older
 async function loadVideo_old (src, crossOrigin)
 {
    let video  = makeVideo (src, crossOrigin);
@@ -201,7 +201,7 @@ async function loadVideo_old (src, crossOrigin)
          new Promise ( (resolve, reject) => {video.addEventListener('playing',     (event) => {resolve(1);}, {once:true, capture: true} )}   ),
          new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve(1);}, {once:true, capture: true} )}   )
       ])
-      .then((values) => video);
+      .then ((values) => video);
 
 }
 //much prettier as above

@@ -208,7 +208,7 @@ class GlVAObject extends GlApi
           super(context);
           if (program instanceof WebGLProgram) this.program = program;
       }
-	  else if (context instanceof GlCanvas)
+      else if (context instanceof GlCanvas)
       {
           super(context.gl);
           this.glCanvas  = context;
@@ -537,26 +537,22 @@ class GlTexture2D
    constructor(gl, dataPromise)
    {
       this.gl = gl;
+      this.#p = dataPromise;
       this.texture = gl.createTexture ();
       this.type = gl.TEXTURE_2D;
       this.init ();
-      this.#p = dataPromise.then( (img) =>
+   }
+   init (){}
+   async ready (func)
+   {
+      await this.#p.then( (img) =>
       {
          this.image = img;
          this.bindTexture ();
          this.texImage2D();
          this.gl.generateMipmap (this.type);
-         return this;
       });
-   }
-   init (){}
-   async _then (func)
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+	  return this;
    }
    texImage2D()
    {
@@ -573,25 +569,22 @@ class GlVideoTexture2D
    constructor(gl, dataPromise)
    {
       this.gl = gl;
+	  this.#p = dataPromise;
+
       this.texture = gl.createTexture ();
       this.type = gl.TEXTURE_2D;
       this.init ();
-      this.#p = dataPromise.then( (vd) =>
+   }
+   init (){}
+   async ready ()
+   {
+      await this.#p.then( (vd) =>
       {
          this.video = vd;
          this.texImage2DInit();
          this.gl.generateMipmap (this.type);
-         return this;
       });
-   }
-   init (){}
-   async _then (func)
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+      return this;
    }
    texImage2DInit()
    {
