@@ -351,15 +351,6 @@ class GlVAObjectAsync extends GlApi
          return func (ths);
       });
    }
-   async _then (func) //internal then, return this
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         func (ths);
-         return ths;
-      });
-   }
 
    init(){}
    drawVao(){}
@@ -413,15 +404,7 @@ class GlCanvasAsync
          return func (ths);
       });
    }
-   async _then (func) //internal then, must return this
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         func (ths);
-         return ths;
-      });
-   }
+
    #downloadShaders ()
    {
       for (let info of this.#context.byUrl)
