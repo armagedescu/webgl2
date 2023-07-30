@@ -15,26 +15,20 @@ class HeightMap extends GlVAObjectAsync
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
-      this.#p = super._e_then ( (o) =>
+      this.#p = super._then_e ( (o) =>
       {
          return readImgHeightMapOffscreen (src, crossOrigin);
-      } )
-      .then ( (heightmap) =>
+      } );
+   }
+   async ready()
+   {
+      await this.#p.then ( (heightmap) =>
       {
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
-         return this;
       } );
-   }
-   async _then (func) //internal then, must return this
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         func (ths);
-         return ths;
-      });
+      return this;
    }
    init()
    {
@@ -165,10 +159,9 @@ async function main()
       {
          glinfo.canvas  = msg.data;
          //console.log ("onmessage OffscreenCanvas");
-         //let vao = await new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png");
-         //let vao = await new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
-         //let vao =  new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
-         new HeightMap (glinfo, craterArizonaUrl)._then( (vao) =>  { heightMapDraw (vao);} );
+         //let vao = new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png");
+         //let vao = new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
+         new HeightMap (glinfo, craterArizonaUrl).ready().then( (vao) =>  { heightMapDraw (vao);} );
       } else //if (msg.data instanceof OffscreenCanvas)
       {
          switch (msg.data.type)
@@ -189,7 +182,6 @@ async function heightMapDraw (vao)
    vao.useProgram();
 
    let fieldOfViewRadians    = rad (60);
-
 
    requestAnimationFrame(drawScene);
 

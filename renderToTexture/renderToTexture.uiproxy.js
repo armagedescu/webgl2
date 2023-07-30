@@ -45,9 +45,6 @@ function addWorkerUIListeners (elm, worker)
 async function main()
 {
    webWorker ();
-
-   //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
 }
 
 main();

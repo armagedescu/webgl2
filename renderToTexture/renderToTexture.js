@@ -215,9 +215,9 @@ class SimpleDrawIndexed extends GlVAObject
 }
 async function main()
 {
-   //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png").ready().then( (v) =>  { heightMapDraw (v);} );
 }
 
 async function heightMapDraw (vao)

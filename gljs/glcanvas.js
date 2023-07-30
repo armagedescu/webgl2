@@ -341,14 +341,14 @@ class GlVAObjectAsync extends GlApi
    constructor(context, program)
    {
       super (context.canvas.getContext('webgl2'));
-      this.#p = new GlCanvasAsync (context)._e_then ( (ref) =>
+      this.#p = new GlCanvasAsync (context)._then_e ( (ref) =>
       {
          this.vao = this.gl.createVertexArray();
          this.program  = ref.program;
          return this;
       } );
    }
-   async _e_then (func) //external then, must return value returned by func
+   async _then_e (func) //external then, must return value returned by func
    {
       return this.#p.then ( (ths) =>
       {
@@ -410,7 +410,7 @@ class GlCanvasAsync
          return this; //goes to GlVAObjectAsync
       });
    }
-   async _e_then (func) //external then, must return value returned by func
+   async _then_e (func) //external then, must return value returned by func
    {
       return this.#p.then ( (ths) =>
       {

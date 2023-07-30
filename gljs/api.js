@@ -166,6 +166,7 @@ function makeImg (src, crossOrigin)
    return image;
 }
 
+//TODO: change to allSettled architecture, as in loadVideo
 async function loadImg (src, crossOrigin)
 {
    let image  = makeImg (src, crossOrigin);
