@@ -1,4 +1,4 @@
-"use strict";
+	"use strict";
 
 //prepare
 //<video width="320" height="240" autoplay loop muted>
@@ -176,6 +176,8 @@ async function loadImg (src, crossOrigin)
    });
 }
 
+
+//Video API
 function makeVideo (src, crossOrigin)
 {
    let video  = document.createElement("video");
@@ -188,7 +190,8 @@ function makeVideo (src, crossOrigin)
    return video;
 }
 
-async function loadVideo (src, crossOrigin)
+//older
+async function loadVideo_old (src, crossOrigin)
 {
    let video  = makeVideo (src, crossOrigin);
    video.play();
@@ -199,6 +202,20 @@ async function loadVideo (src, crossOrigin)
          new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve(1);}, {once:true, capture: true} )}   )
       ])
       .then((values) => video);
+
+}
+//much prettier as above
+async function loadVideo (src, crossOrigin)
+{
+   let video  = makeVideo (src, crossOrigin);
+   video.play();
+
+   await Promise.allSettled
+      ([
+         new Promise ( (resolve, reject) => {video.addEventListener('playing',     (event) => {resolve(1);}, {once:true, capture: true} )}   ),
+         new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve(1);}, {once:true, capture: true} )}   )
+      ]);
+   return video;
 
 }
 

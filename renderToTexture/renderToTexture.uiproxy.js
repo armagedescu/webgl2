@@ -4,7 +4,7 @@ let canvas = document.currentScript.parentElement;
 async function webWorker ()
 {
    //let canvas = document.getElementById  ("HeightMapButuceniOffscreen");
-   let worker = new Worker("./texture/renderToTexture.worker.js");
+   let worker = new Worker("./renderToTexture/renderToTexture.worker.js");
    let grabber = new GlInfoGrabber(canvas);
    worker.onmessage = (msg) => 
    {

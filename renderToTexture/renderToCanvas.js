@@ -104,59 +104,6 @@ class HeightMap extends GlVAObject
    }
 }
 
-class GlFrameBuffer
-{
-   constructor(gl, width = 256, height = 256)
-   {
-      this.gl = gl;
-      this.data    = null;
-      this.target  = gl.TEXTURE_2D;
-      this.level   = 0;
-	  this.internalFormat = gl.RGBA;
-	  this.width  = width;
-	  this.height = height;
-	  this.border = 0;
-	  this.format = gl.RGBA;
-	  this.type = gl.UNSIGNED_BYTE;
-
-      this.attachmentPoint = gl.COLOR_ATTACHMENT0;
-
-      this.init ();
-   }
-   init ()
-   {
-	  let gl = this.gl;
-      this.texture = gl.createTexture ();
-      this.bindTexture ();
-	  this.texImage2D();
-   }
-   texImage2D()
-   {
-      let gl = this.gl;
-	  //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D     (this.target, this.level, this.internalFormat,   this.width, this.height, this.border,  this.format,  this.type, this.data);
-	  //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      //gl.pixelStorei(gl.UNPACK_FLIP_X_WEBGL, true);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	  //TODO: review following two calls
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      //// Create and bind the framebuffer
-      this.fb = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.fb);
-
-      // attach the texture as the first color attachment
-      this.attachmentPoint = gl.COLOR_ATTACHMENT0;
-      gl.framebufferTexture2D( gl.FRAMEBUFFER, this.attachmentPoint, gl.TEXTURE_2D, this.texture, this.level);
-   }
-   bindTexture(){this.gl.bindTexture(this.target, this.texture);}
-   drawFrameBuffer () { this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, this.fb); }
-   bindFrameBuffer () { this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,      this.fb); }
-   readFrameBuffer () { this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fb); }
-
-   unbindFrameBuffer () { this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null); }
-}
-
 function addUIListeners (elm, controller)
 {
    elm.addEventListener ( "click",     (event) => {controller.timer.switchStop();});
@@ -177,45 +124,6 @@ function addUIListeners (elm, controller)
 }
 
 
-class SimpleDrawIndexed extends GlVAObject
-{
-   #verts     = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
-   #texCoords = [ 1,    1,      1,   0,      0,    0,     0,    1  ];
-
-   #indices   = [0, 1, 2, 0, 2, 3];
-
-   constructor(context, program)
-   {
-      super(context, program);
-      this.initGeometry();
-      this.init();
-   }
-   initGeometry() {}
-   init ()
-   {
-      this.bindVertexArray();
-      let gl = this.gl;
-
-      this.vertex_buffer = this.arrayBuffer(new Float32Array(this.#verts));
-      this.coord = this.vertex_buffer.attrib ("coordinates",  2, gl.FLOAT);
-
-      this.tex_buffer  = this.arrayBuffer(new Float32Array(this.#texCoords));
-      this.tex_coord = this.tex_buffer.attrib  ("a_texcoord", 2, gl.FLOAT);
-
-      this.textureLocation  = gl.getUniformLocation (this.program, "u_texture");
-
-      let idxBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.#indices), gl.STATIC_DRAW);
-   }
-   set u_texture (t)   {this.gl.uniform1i(this.textureLocation, t);}
-
-   drawVao()
-   {
-      let gl = this.gl;
-      gl.drawElements (gl.TRIANGLES, this.#indices.length, gl.UNSIGNED_INT, 0);
-   }
-}
 async function main()
 {
    //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
@@ -231,7 +139,6 @@ async function heightMapDraw (vao)
    //addUIListeners (gl.canvas, controller);
 
    console.log(gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
-   //vao.useProgram();
 
    let fieldOfViewRadians    = rad (60);
 
@@ -241,10 +148,6 @@ async function heightMapDraw (vao)
    // Draw the scene.
    let then = 0;
    
-   //let frameBuffer = new GlFrameBuffer(gl, 256, 256);
-   let frameBuffer = new GlFrameBuffer(gl, gl.canvas.width, gl.canvas.heigh);
-
-   let sd = new SimpleDrawIndexed (gl, vao.glCanvas.getProgram ("sampleDrawIndexed"));
 
    function drawScene(time)
    {
@@ -255,8 +158,6 @@ async function heightMapDraw (vao)
       if (controller.timer.stop)
          deltaTime = 0;
 
-	  frameBuffer.bindFrameBuffer();
-	  //frameBuffer.unbindFrameBuffer();
       vao.useProgram();
       gl.enable   (gl.CULL_FACE);
       gl.enable   (gl.DEPTH_TEST);
@@ -286,11 +187,6 @@ async function heightMapDraw (vao)
 
          vao.draw();
       }
-	  frameBuffer.unbindFrameBuffer();
-      //gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
-	  sd.useProgram ();
-      //gl.clearColor (0., 0., 1., 1.0);
-	  sd.draw ();
    
       requestAnimationFrame(drawScene);
    }

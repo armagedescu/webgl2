@@ -203,7 +203,12 @@ class GlVAObject extends GlApi
          super(context);
          this.program = program;
       }
-      else if (context instanceof GlCanvas)
+      else if (context instanceof WebGL2RenderingContext)
+      {
+          super(context);
+          if (program instanceof WebGLProgram) this.program = program;
+      }
+	  else if (context instanceof GlCanvas)
       {
           super(context.gl);
           this.glCanvas  = context;
