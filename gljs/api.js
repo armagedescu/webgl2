@@ -1,4 +1,4 @@
-	"use strict";
+"use strict";
 
 //prepare
 //<video width="320" height="240" autoplay loop muted>

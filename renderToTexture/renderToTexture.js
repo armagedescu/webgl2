@@ -11,21 +11,18 @@ class HeightMap extends GlVAObject
    constructor (context, src, crossOrigin)
    {
       super (context);
-      this.#p = readImgHeightMap  (src, crossOrigin).then ( (heightmap) =>
+      this.#p = readImgHeightMap  (src, crossOrigin);
+      //this.#p = readImgHeightMap  (src, crossOrigin);
+   }
+   async ready ()
+   {
+      await this.#p.then ( (heightmap) =>
       {
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
-         return this;
-      });
-   }
-   async _then (func)
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+      })
+      return this;
    }
    init()
    {
@@ -112,12 +109,12 @@ class GlFrameBuffer
       this.data    = null;
       this.target  = gl.TEXTURE_2D;
       this.level   = 0;
-	  this.internalFormat = gl.RGBA;
-	  this.width  = width;
-	  this.height = height;
-	  this.border = 0;
-	  this.format = gl.RGBA;
-	  this.type = gl.UNSIGNED_BYTE;
+      this.internalFormat = gl.RGBA;
+      this.width  = width;
+      this.height = height;
+      this.border = 0;
+      this.format = gl.RGBA;
+      this.type = gl.UNSIGNED_BYTE;
 
       this.attachmentPoint = gl.COLOR_ATTACHMENT0;
 
@@ -125,20 +122,20 @@ class GlFrameBuffer
    }
    init ()
    {
-	  let gl = this.gl;
+      let gl = this.gl;
       this.texture = gl.createTexture ();
       this.bindTexture ();
-	  this.texImage2D();
+      this.texImage2D();
    }
    texImage2D()
    {
       let gl = this.gl;
-	  //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       gl.texImage2D     (this.target, this.level, this.internalFormat,   this.width, this.height, this.border,  this.format,  this.type, this.data);
-	  //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       //gl.pixelStorei(gl.UNPACK_FLIP_X_WEBGL, true);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	  //TODO: review following two calls
+      //TODO: review following two calls
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       //// Create and bind the framebuffer
@@ -219,7 +216,7 @@ class SimpleDrawIndexed extends GlVAObject
 async function main()
 {
    //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
    //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
 }
 
@@ -255,8 +252,8 @@ async function heightMapDraw (vao)
       if (controller.timer.stop)
          deltaTime = 0;
 
-	  frameBuffer.bindFrameBuffer();
-	  //frameBuffer.unbindFrameBuffer();
+      frameBuffer.bindFrameBuffer();
+      //frameBuffer.unbindFrameBuffer();
       vao.useProgram();
       gl.enable   (gl.CULL_FACE);
       gl.enable   (gl.DEPTH_TEST);
@@ -286,11 +283,11 @@ async function heightMapDraw (vao)
 
          vao.draw();
       }
-	  frameBuffer.unbindFrameBuffer();
+      frameBuffer.unbindFrameBuffer();
       //gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
-	  sd.useProgram ();
+      sd.useProgram ();
       //gl.clearColor (0., 0., 1., 1.0);
-	  sd.draw ();
+      sd.draw ();
    
       requestAnimationFrame(drawScene);
    }

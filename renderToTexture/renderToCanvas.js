@@ -11,21 +11,17 @@ class HeightMap extends GlVAObject
    constructor (context, src, crossOrigin)
    {
       super (context);
-      this.#p = readImgHeightMap  (src, crossOrigin).then ( (heightmap) =>
+      this.#p = readImgHeightMap  (src, crossOrigin);
+   }
+   async ready()
+   {
+      await this.#p.then ( (heightmap) =>
       {
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
-         return this;
       });
-   }
-   async _then (func)
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+      return this;
    }
    init()
    {
@@ -127,7 +123,7 @@ function addUIListeners (elm, controller)
 async function main()
 {
    //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./heightMap/craterArizona.png")._then( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
    //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png")._then( (v) =>  { heightMapDraw (v);} );
 }
 
