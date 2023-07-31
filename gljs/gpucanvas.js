@@ -203,6 +203,11 @@ class GlVAObject extends GlApi
          super(context);
          this.program = program;
       }
+      else if (context instanceof WebGL2RenderingContext)
+      {
+          super(context);
+          if (program instanceof WebGLProgram) this.program = program;
+      }
       else if (context instanceof GlCanvas)
       {
           super(context.gl);
@@ -336,22 +341,18 @@ class GlVAObjectAsync extends GlApi
    constructor(context, program)
    {
       super (context.canvas.getContext('webgl2'));
-      this.#p = new GlCanvasAsync (context)._then_e ( (ref) =>
+      this.#p = new GlCanvasAsync (context);
+   }
+
+   async ready()
+   {
+      await this.#p.ready().then ( (ref) =>
       {
          this.vao = this.gl.createVertexArray();
          this.program  = ref.program;
-         return this;
       } );
+	  return this;
    }
-   async _then_e (func) //external then, must return value returned by func
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
-   }
-
    init(){}
    drawVao(){}
    bindVertexArray()
@@ -383,7 +384,12 @@ class GlCanvasAsync
       this.#context = context;
       this.#bysourceShaders ();
       this.#downloadShaders ();
-      this.#p = Promise.all(this.#downloadable).then( (values) =>
+      this.#p = Promise.all(this.#downloadable);
+      //this.#p = Promise.allSettled(this.#downloadable);
+   }
+   async ready()
+   {
+      await this.#p.then( (values) =>
       {
          for (let val of [... values, ...this.#bysource] )
          {
@@ -393,18 +399,9 @@ class GlCanvasAsync
          }
          for (let program of this.programs)
             program[1].linkProgram();
-         return this; //goes to GlVAObjectAsync
       });
+      return this;	  
    }
-   async _then_e (func) //external then, must return value returned by func
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
-   }
-
    #downloadShaders ()
    {
       for (let info of this.#context.byUrl)
@@ -449,7 +446,7 @@ class GlCanvasAsync
                 text    : info.src,
              };
          if (info.program) progInfo.program = info.program;
-		 this.#downloadable.push (progInfo);
+         this.#downloadable.push (progInfo);
       }
    }
 

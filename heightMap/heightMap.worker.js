@@ -15,10 +15,7 @@ class HeightMap extends GlVAObjectAsync
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
-      this.#p = super._then_e ( (o) =>
-      {
-         return readImgHeightMapOffscreen (src, crossOrigin);
-      } );
+      this.#p = super.ready().then( o => readImgHeightMapOffscreen (src, crossOrigin) );
    }
    async ready()
    {

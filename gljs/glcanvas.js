@@ -341,20 +341,17 @@ class GlVAObjectAsync extends GlApi
    constructor(context, program)
    {
       super (context.canvas.getContext('webgl2'));
-      this.#p = new GlCanvasAsync (context)._then_e ( (ref) =>
+      this.#p = new GlCanvasAsync (context);
+   }
+
+   async ready()
+   {
+      await this.#p.ready().then ( (ref) =>
       {
          this.vao = this.gl.createVertexArray();
          this.program  = ref.program;
-         return this;
       } );
-   }
-   async _then_e (func) //external then, must return value returned by func
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+      return this;
    }
    init(){}
    drawVao(){}
@@ -387,7 +384,12 @@ class GlCanvasAsync
       this.#context = context;
       this.#bysourceShaders ();
       this.#downloadShaders ();
-      this.#p = Promise.all(this.#downloadable).then( (values) =>
+      this.#p = Promise.all(this.#downloadable);
+      //this.#p = Promise.allSettled(this.#downloadable);
+   }
+   async ready()
+   {
+      await this.#p.then( (values) =>
       {
          for (let val of [... values, ...this.#bysource] )
          {
@@ -397,16 +399,8 @@ class GlCanvasAsync
          }
          for (let program of this.programs)
             program[1].linkProgram();
-         return this; //goes to GlVAObjectAsync
       });
-   }
-   async _then_e (func) //external then, must return value returned by func
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         return func (ths);
-      });
+      return this;
    }
    #downloadShaders ()
    {
@@ -533,7 +527,7 @@ class GlTexture2D
          this.texImage2D();
          this.gl.generateMipmap (this.type);
       });
-	  return this;
+      return this;
    }
    texImage2D()
    {
@@ -550,7 +544,7 @@ class GlVideoTexture2D
    constructor(gl, dataPromise)
    {
       this.gl = gl;
-	  this.#p = dataPromise;
+      this.#p = dataPromise;
 
       this.texture = gl.createTexture ();
       this.type = gl.TEXTURE_2D;
