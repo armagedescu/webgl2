@@ -199,8 +199,8 @@ async function loadVideo_old (src, crossOrigin)
 
    return await Promise.allSettled
       ([
-         new Promise ( (resolve, reject) => {video.addEventListener('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
-         new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
+         new Promise ( (resolve, reject) => {video.addEventListener ('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
+         new Promise ( (resolve, reject) => {video.addEventListener ('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
       ])
       .then ((values) => video);
 
@@ -213,8 +213,8 @@ async function loadVideo (src, crossOrigin)
 
    await Promise.allSettled
       ([
-         new Promise ( (resolve, reject) => {video.addEventListener('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
-         new Promise ( (resolve, reject) => {video.addEventListener('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
+         new Promise ( (resolve, reject) => {video.addEventListener ('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
+         new Promise ( (resolve, reject) => {video.addEventListener ('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
       ]);
    return video;
 
