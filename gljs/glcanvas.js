@@ -2,33 +2,33 @@
 
 class GlShader
 {
-   static acceptedTypes = ["vertex-shader", "fragment-shader"];
-   static translateType (str)
-   {
-      if (GlShader.acceptedTypes.includes (str)) return str;
-      switch (str)
-      {
-      //compatibility external types
-      case "x-shader/x-vertex":   case "x-vertex":   return "vertex-shader";
-      case "x-shader/x-fragment": case "x-fragment": return "fragment-shader";
-      }
-      return null;
-   }
-   #translateGlType (str)
-   {
-      if (typeof str != "string") return str; //if is gl type VERTEX_SHADER/VERTEX_SHADER
-      switch ( GlShader.translateType (str) )
-      {
-      //this lib shader
-      case "vertex-shader":       return this.gl.VERTEX_SHADER;
-      case "fragment-shader":     return this.gl.FRAGMENT_SHADER;
-      }
-      throw "Unknown shader type: " + str;
-   }
-   isAsynk = false;
    //type supported values
    //this lib recommended values          "vertex-shader",     "fragment-shader"
    //external twgl compatibility values   "x-shader/x-vertex", "x-shader/x-fragment"
+   static shaderMap = new Map(
+   [
+      ["vertex-shader",                        "vertex-shader"],
+      ["x-vertex",                             "vertex-shader"],
+      ["x-shader/x-vertex",                    "vertex-shader"],
+      ["fragment-shader",                      "fragment-shader"],
+      ["x-fragment",                           "fragment-shader"],
+      ["x-shader/x-fragment",                  "fragment-shader"]
+   ]);
+   
+   static translateType (str, gl)
+   {
+      if (typeof(str) != 'string' && (str == gl.VERTEX_SHADER || str == gl.FRAGMENT_SHADER))
+         return str;
+      if (!GlShader.shaderMap.has(str)) throw "Unknown shader type: " + str;
+      switch ( GlShader.shaderMap.get(str) )
+      {
+      case "vertex-shader":       return gl.VERTEX_SHADER;
+      case "fragment-shader":     return gl.FRAGMENT_SHADER;
+      }
+      throw "Unknown shader type: " + str;
+   }
+   //TODO: not used isAsynk
+   isAsynk = false;
    #glType = null;
    constructor (gl, obj, type)
    {
@@ -50,7 +50,7 @@ class GlShader
       this.compileShader();
    }
    //private:
-   #setString (str) //type ="vertex-shader"/"fragment-shader"
+   #setString (str) //type = go.VERTEX_SHADER/gl.VERTEX_SHADER
    {
       if (!str) {console.log ("no string for shader to compile"); return;}
       this.source = str.trimStart ();
@@ -70,8 +70,7 @@ class GlShader
    }
    #showResult ()
    {
-      let shader = this.shader, gl = this.gl;  //shortcut
-      //    let gl = this.gl;          //shortcut
+      let shader = this.shader, gl = this.gl;  //shortcuts
       if (gl.getShaderParameter (shader, gl.COMPILE_STATUS)) return;
       let msg = gl.getShaderInfoLog (shader);
       console.log ("SHADER ERROR: " + msg);
@@ -83,24 +82,31 @@ class GlShader
    get type () { return this.#glType; }
    set type (str) //type ="vertex-shader"/"fragment-shader" or gl VERTEX_SHADER/FRAGMENT_SHADER
    {
-      this.#glType = this.#translateGlType (str); //if is gl type VERTEX_SHADER/VERTEX_SHADER
+      this.#glType = GlShader.translateType (str, this.gl); //if is gl type VERTEX_SHADER/VERTEX_SHADER
    }
    compileShader ()
    {
       this.gl.compileShader (this.shader);
       this.#showResult ();
    }
-   deleteShader () { this.gl.deleteShader (this.shader); this.#glType = null; this.source = ""; this.shader = null;}
+   deleteShader ()
+   {
+      this.gl.deleteShader (this.shader);
+      this.#glType = null;
+      this.source = "";
+      this.shader = null;
+   }
 }
+
 class GlBuffer
 {
    constructor (gl, type, program, buffer, glDrawType)
    {
-      this.gl = gl;
-      this.type   = type;
-      this.program = program;
-      this.buffer = buffer;
-      this.id = gl.createBuffer ();
+      this.gl       = gl;
+      this.type     = type;
+      this.program  = program;
+      this.buffer   = buffer;
+      this.id       = gl.createBuffer ();
       if (buffer) this.arrayBuffer (buffer, glDrawType);
    }
    bindBuffer () { this.gl.bindBuffer(this.type, this.id); }
@@ -122,6 +128,9 @@ class GlBuffer
       return id;
    }
 }
+
+//TODO: review
+//base class for GlProgram, GlVAObject, GlVAObjectAsync
 class GlApi
 {
    constructor (gl){this.gl = gl;}
@@ -150,6 +159,7 @@ class GlApi
       return id;
    }
 }
+
 class GlProgram extends GlApi
 {
    #shaders = [];
@@ -269,7 +279,7 @@ class GlCanvas
       if (!el.hasAttribute ("data-gl-type"))
          if (el.hasAttribute ("type") && (el.getAttribute ("type") != "text/glsl-shader")  )
          {
-            let type = GlShader.translateType (el.getAttribute("type"));
+            let type = GlShader.translateType (el.getAttribute("type"), this.gl);
             if (type) el.setAttribute ("data-gl-type", type);
          }
       if (el.hasAttribute ("data-gl-type")) return el;
@@ -384,12 +394,12 @@ class GlCanvasAsync
       this.#context = context;
       this.#bysourceShaders ();
       this.#downloadShaders ();
-      this.#p = Promise.all (this.#downloadable);
-      //this.#p = Promise.allSettled(this.#downloadable);
+
    }
    async ready ()
    {
-      await this.#p.then( (values) =>
+      //await Promise.allSettled(this.#downloadable);
+      await Promise.all (this.#downloadable).then( (values) =>
       {
          for (let val of [... values, ...this.#bysource] )
          {
@@ -409,7 +419,7 @@ class GlCanvasAsync
          let progInfo =
              {
                 program : this.#defaultProgramName,
-                type    : GlShader.translateType (info.type),
+                type    : GlShader.translateType (info.type, this.gl),
                 text    : null,
              };
          if (info.program) progInfo.program = info.program;
@@ -442,7 +452,7 @@ class GlCanvasAsync
          let progInfo =
             {
                program : this.#defaultProgramName,
-               type    : GlShader.translateType (info.type),
+               type    : GlShader.translateType (info.type, this.gl),
                text    : info.src,
             };
          if (info.program) progInfo.program = info.program;

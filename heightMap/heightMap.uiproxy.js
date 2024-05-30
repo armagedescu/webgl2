@@ -36,7 +36,7 @@ function addWorkerUIListeners (elm, worker)
    elm.addEventListener ( "wheel",      (event) =>
    {
       worker.postMessage(  cloneMouseEvent(event) );
-	  event.preventDefault();
+      event.preventDefault();
       //if (event.ctrlKey)
       //   event.preventDefault();
    });
