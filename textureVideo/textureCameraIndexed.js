@@ -54,12 +54,13 @@ function makeExperiments()
 
 let func = async () =>
 {
-   makeExperiments();
+   //makeExperiments();
 
    let simpleDrawIndexed = new SimpleDrawIndexed (canvas);
    let gl = simpleDrawIndexed.gl;
 
-   let texture = new GlVideoTexture2D (gl, loadVideo ("./video/flower.mp4"));
+   //let texture = new GlVideoTexture2D (gl, loadVideo ("./video/flower.mp4"));
+   let texture = new GlVideoTexture2D (gl, loadCamera ());
    texture.ready().then ((tex) =>
    {
 	   render (0);

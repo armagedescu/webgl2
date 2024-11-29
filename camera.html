@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+   <!-- canvas width="100" height="100"><video autoplay></video></canvas -->
+    <script src="./gljs/api.js"></script>
+
+   <!-- video autoplay></video-->
+   <script>
+       loadCamera ().then(video => {
+              video.height = 180;
+            video.width = 320;
+            document.body.appendChild(video);
+           });
+      //document.appendChild(video);
+      //console.log ("salut");});
+      //var onFailSoHard =  (e) => { console.log ('Camera rejected!', e); };
+      //
+      //// Not showing vendor prefixes.
+      ////navigator.getUserMedia ({video: true, audio: true}, function (localMediaStream)
+      //navigator.getUserMedia ({video: true, audio: false}, (localMediaStream) =>
+      //   {
+      //      var video = document.querySelector ('video');
+      //      //video.src = window.URL.createObjectURL (localMediaStream);
+      //      //video.src = window.URL.createObjectURL (new Blob(localMediaStream));
+      //        video.srcObject = localMediaStream;//
+      //
+      //      // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+      //      // See crbug.com/110938.
+      //      video.onloadedmetadata = (e) => { console.log ("salut"); /* Ready to go. Do some stuff. */ };
+      //   }, onFailSoHard);
+   </script>
+</body>
+</html>

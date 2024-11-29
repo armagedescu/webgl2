@@ -183,7 +183,7 @@ function makeVideo (src, crossOrigin)
 {
    let video  = document.createElement ("video");
    if (crossOrigin) video.crossOrigin  =  crossOrigin;
-   video.src             =  src;
+   if (src)         video.src          =  src;
    video.autoplay    = true;
    video.playsInline = true;
    video.muted       = true;
@@ -191,26 +191,41 @@ function makeVideo (src, crossOrigin)
    return video;
 }
 
-//TODO: older
-async function loadVideo_old (src, crossOrigin)
-{
-   let video  = makeVideo (src, crossOrigin);
-   video.play();
-
-   return await Promise.allSettled
-      ([
-         new Promise ( (resolve, reject) => {video.addEventListener ('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
-         new Promise ( (resolve, reject) => {video.addEventListener ('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
-      ])
-      .then ((values) => video);
-
-}
 //much prettier as above
 async function loadVideo (src, crossOrigin)
 {
    let video  = makeVideo (src, crossOrigin);
    video.play ();
 
+	//TODO: not really needed
+   await Promise.allSettled
+      ([
+         new Promise ( (resolve, reject) => {video.addEventListener ('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),
+         new Promise ( (resolve, reject) => {video.addEventListener ('timeupdate',  (event) => {resolve (1);}, {once:true, capture: true} )}   )
+      ]);
+   return video;
+}
+
+
+async function loadCamera ()
+{
+   let video  = makeVideo ();
+
+   navigator.mediaDevices
+     //.getUserMedia(const constraints = {  audio: true,  video: { width: 1280, height: 720 },})
+     .getUserMedia( {  video: { width: 1280, height: 720 },})
+     .then((mediaStream) =>
+     {
+        video.srcObject = mediaStream;
+        //video.onloadedmetadata = () => { video.play(); };
+     })
+     .catch((err) => {
+       console.error(`${err.name}: ${err.message}`);
+     });
+   
+   video.play();
+	
+	//TODO: not really needed
    await Promise.allSettled
       ([
          new Promise ( (resolve, reject) => {video.addEventListener ('playing',     (event) => {resolve (1);}, {once:true, capture: true} )}   ),

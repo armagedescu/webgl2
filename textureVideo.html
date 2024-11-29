@@ -1,8 +1,7 @@
 <html>
 <head>
    <title>Texture Manual 1 a, basic</title>
-
-   <link rel="stylesheet" href="./css/default.css">   
+   <link rel="stylesheet" href="./css/default.css">
 </head>
 <body>
    <script src="./3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
@@ -31,7 +30,7 @@
             in vec2 v_texcoord; // Passed in from the vertex shader.
             uniform sampler2D u_texture; // The texture.
             out vec4 fragColor;
-      
+
             void main()
             {
                fragColor = texture (u_texture, v_texcoord);
@@ -97,6 +96,34 @@
       </canvas>
    </div>
    <div class="sample">
+      WebGL2 Texture with video <br/> 
+      <canvas id="videoDrawIndexedDrawTexture" width="200" height = "150">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in  vec2 coordinates;
+            layout (location = 1) in  vec2 a_texcoord;
+            out vec2 v_texcoord;
+            void main()
+            {
+              v_texcoord  = a_texcoord;
+              gl_Position = vec4(coordinates, 0.0, 1.0);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            out vec4 fragColor;
+            void main()
+            {
+               fragColor = texture (u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureVideo/textureCameraIndexed.js"></script>
+      </canvas>
+   </div>
+   <div class="sample">
       Mozilla Cube3D video sample<br/>
       <canvas id="simpleVideoSample" width="200" height = "150">
          <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
@@ -108,7 +135,7 @@
          <script src="./textureVideo/mozillaCube3DTextureVideoDrawIndexed.js"  type="module"></script>
       </canvas>
    </div><br/>
- 
+
    <!-- div>
       Video elements<br/>
       <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
