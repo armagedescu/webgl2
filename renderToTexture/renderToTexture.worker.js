@@ -10,21 +10,22 @@ class HeightMap extends GlVAObjectAsync
    #vertices = [];
    #norms    = [];
    #indices  = [];
-   #then     = null;
-   #p        = null;
+
+   #htmap = null;
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
-      this.#p = super.ready().then( o => readImgHeightMapOffscreen (src, crossOrigin) );
+      this.#htmap = readImgHeightMapOffscreen (src, crossOrigin);
    }
    async ready()
    {
-      await this.#p.then ( (heightmap) =>
-      {
-         this.heightmap = heightmap;
-         this.buildGeometry ();
-         this.init ();
-      } );
+      await super.ready().then( o => this.#htmap)
+		   .then ( (heightmap) =>
+         {
+            this.heightmap = heightmap;
+            this.buildGeometry ();
+            this.init ();
+         } );
       return this;
    }
    init()

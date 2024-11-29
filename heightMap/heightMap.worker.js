@@ -10,21 +10,24 @@ class HeightMap extends GlVAObjectAsync
    #vertices = [];
    #norms    = [];
    #indices  = [];
-   #then     = null;
-   #p        = null;
+
+   #htmap = null;
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
-      this.#p = super.ready().then( o => readImgHeightMapOffscreen (src, crossOrigin) );
+      this.#htmap = readImgHeightMapOffscreen (src, crossOrigin);
+
    }
    async ready()
    {
-      await this.#p.then ( (heightmap) =>
-      {
-         this.heightmap = heightmap;
-         this.buildGeometry ();
-         this.init ();
-      } );
+      await super.ready()
+         .then ( o => this.#htmap )
+         .then ( (heightmap) =>
+         {
+            this.heightmap = heightmap;
+            this.buildGeometry ();
+            this.init ();
+         } );
       return this;
    }
    init()
@@ -155,9 +158,6 @@ async function main()
       } else if (msg.data instanceof OffscreenCanvas)
       {
          glinfo.canvas  = msg.data;
-         //console.log ("onmessage OffscreenCanvas");
-         //let vao = new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png");
-         //let vao = new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png");
          new HeightMap (glinfo, craterArizonaUrl).ready().then( (vao) =>  { heightMapDraw (vao);} );
       } else //if (msg.data instanceof OffscreenCanvas)
       {
@@ -218,7 +218,7 @@ async function heightMapDraw (vao)
 
          projection = m4.identity();
 
-         vao.model      = controller.model.matrix; //model;                  //m4.identity();
+         vao.model      = controller.model.matrix;  //model;                  //m4.identity();
          vao.view       = controller.camera.matrix; //m4.identity();
          vao.projection = projection;
 

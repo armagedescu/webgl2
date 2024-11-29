@@ -4,25 +4,29 @@
 let canvas = document.currentScript.parentElement;
 class HeightMap extends GlVAObject
 {
-   #vertices = [];
-   #norms    = [];
-   #indices  = [];
-   #p = null;
+   #vertices    = [];
+   #norms       = [];
+   #indices     = [];
+   #htmap       = null;
    constructor (context, src, crossOrigin)
    {
       super (context);
-      this.#p = readImgHeightMap  (src, crossOrigin);
+      this.#htmap = readImgHeightMap  (src, crossOrigin);
    }
+
    async ready ()
    {
-      await this.#p.then ( (heightmap) =>
+      //console.log ("in ready");
+      await this.#htmap.then ( (heightmap) =>
       {
+         //console.log ("this.#p.then()");
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
       });
-	  return this;
+      return this;
    }
+
    init()
    {
       this.bindVertexArray();
@@ -153,9 +157,8 @@ function addUIListeners (elm, controller)
 
 async function main()
 {
-   //new HeightMap ("HeightMapButuceni", "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
    new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./heightMap/butuceni.png").ready().then( (v) =>  { heightMapDraw (v);} );
+
 }
 
 async function heightMapDraw (vao)
