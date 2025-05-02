@@ -300,6 +300,8 @@ class GlCanvas
             this.programs.set (info.id, new GlProgram (this.gl));
       if (info.shader)
           this.programs.get (info.id).add (info.shader);
+
+      //console.log(info.id + ": " + el.innerText);
    }
    
    #extractElementCodes (elementVars)

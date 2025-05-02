@@ -1,6 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
+
 function buildGeometry (sectors, revealInvisible)
 {
    let dfi = 2 * Math.PI / sectors;
@@ -41,8 +42,7 @@ function buildSides (geometry, slices, sectors)
    }
    return sides;
 }
-function buildShape ()
-{}
+
 function buildCone(slices, sectors, revealInvisibles, snlen)
 {
    let nfi = 0;
@@ -57,8 +57,9 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
    let verts = [];
    let verts_norms = [];
    let nverts = [];
-   let i0 = 0, i1 = 1, i2 = 2;
-   let n0 = 0, n1 = 1, n2 = 2;
+   let i0  = 0, i1  = 1, i2  = 2;
+   let n0  = 0, n1  = 1, n2  = 2;
+   let nv0 = 0, nv1 = 1, nv2 = 2;
    const nv = snlen;
 
    for (let side of sides)
@@ -77,65 +78,66 @@ function buildCone(slices, sectors, revealInvisibles, snlen)
                s11 = side [j-1][i]; s12 = side[j-1][i+1];
                s21 = side [j]  [i]; s22 = side[j]  [i+1];
             }
-			//if(0)
+            //if(0)
             //if (j == 1)
-			{
-            verts [i0]      =  s21[0];
-            verts [i1]      =  s21[1];
-            verts [i2]      =  s21[2];
-            verts_norms[i0] =  s21[3];
-            verts_norms[i1] =  s21[4];
-            verts_norms[i2] =  s21[5];
-            nverts [n0]     =  s21[0];
-            nverts [n1]     =  s21[1];
-            nverts [n2]     = -s21[2];
-            nverts [n0 + 3] =  s21[0] + s21[3] / nv;
-            nverts [n1 + 3] =  s21[1] + s21[4] / nv;
-            nverts [n2 + 3] =  s21[2] - s21[5] / nv;
-			
-            verts [i0 + 3]      =  s22[0];
-            verts [i1 + 3]      =  s22[1];
-            verts [i2 + 3]      =  s22[2];
-            verts_norms[i0 + 3] =  s22[3];
-            verts_norms[i1 + 3] =  s22[4];
-            verts_norms[i2 + 3] =  s22[5];
-			
-            verts [i0 + 6]      =  s11[0];
-            verts [i1 + 6]      =  s11[1];
-            verts [i2 + 6]      =  s11[2];
-            verts_norms[i0 + 6] =  s11[3];
-            verts_norms[i1 + 6] =  s11[4];
-            verts_norms[i2 + 6] =  s11[5];
+            {
+               verts [i0]      =  s21[0];
+               verts [i1]      =  s21[1];
+               verts [i2]      =  s21[2];
+               verts_norms[i0] =  s21[3];
+               verts_norms[i1] =  s21[4];
+               verts_norms[i2] =  s21[5];
+               nverts [nv0]     =  s21[0];
+               nverts [nv1]     =  s21[1];
+               nverts [nv2]     = -s21[2];
+               nverts [nv0 + 3] =  s21[0] + s21[3] / nv;
+               nverts [nv1 + 3] =  s21[1] + s21[4] / nv;
+               nverts [nv2 + 3] =  s21[2] - s21[5] / nv;
+            
+               verts [i0 + 3]      =  s22[0];
+               verts [i1 + 3]      =  s22[1];
+               verts [i2 + 3]      =  s22[2];
+               verts_norms[i0 + 3] =  s22[3];
+               verts_norms[i1 + 3] =  s22[4];
+               verts_norms[i2 + 3] =  s22[5];
+            
+               verts [i0 + 6]      =  s11[0];
+               verts [i1 + 6]      =  s11[1];
+               verts [i2 + 6]      =  s11[2];
+               verts_norms[i0 + 6] =  s11[3];
+               verts_norms[i1 + 6] =  s11[4];
+               verts_norms[i2 + 6] =  s11[5];
 
-            i0 += 9;  i1 += 9;  i2 += 9;
-            n0 += 18; n1 += 18; n2 += 18;
+               i0  +=  9; i1  += 9;  i2  += 9;
+               n0  += 18; n1  += 18; n2  += 18;
+               nv0 += 6;  nv1 += 6;  nv2 += 6;
             }
 
             // because this is the tip of the cone
             if (j == 0) continue;
-			//if(0)
-            //if( i & 1 == 1)
-			{
-            verts [i0]      =  s22[0];
-            verts [i1]      =  s22[1];
-            verts [i2]      =  s22[2];
-            verts_norms[i0] =  s22[3];
-            verts_norms[i1] =  s22[4];
-            verts_norms[i2] =  s22[5];
-			
-            verts [i0 + 3]      =  s12[0];
-            verts [i1 + 3]      =  s12[1];
-            verts [i2 + 3]      =  s12[2];
-            verts_norms[i0 + 3] =  s12[3];
-            verts_norms[i1 + 3] =  s12[4];
-            verts_norms[i2 + 3] =  s12[5];
-			
-            verts [i0 + 6]      =  s11[0];
-            verts [i1 + 6]      =  s11[1];
-            verts [i2 + 6]      =  s11[2];
-            verts_norms[i0 + 6] =  s11[3];
-            verts_norms[i1 + 6] =  s11[4];
-            verts_norms[i2 + 6] =  s11[5];
+            //if(0)
+               //if( i & 1 == 1)
+            {
+               verts [i0]      =  s22[0];
+               verts [i1]      =  s22[1];
+               verts [i2]      =  s22[2];
+               verts_norms[i0] =  s22[3];
+               verts_norms[i1] =  s22[4];
+               verts_norms[i2] =  s22[5];
+            
+               verts [i0 + 3]      =  s12[0];
+               verts [i1 + 3]      =  s12[1];
+               verts [i2 + 3]      =  s12[2];
+               verts_norms[i0 + 3] =  s12[3];
+               verts_norms[i1 + 3] =  s12[4];
+               verts_norms[i2 + 3] =  s12[5];
+            
+               verts [i0 + 6]      =  s11[0];
+               verts [i1 + 6]      =  s11[1];
+               verts [i2 + 6]      =  s11[2];
+               verts_norms[i0 + 6] =  s11[3];
+               verts_norms[i1 + 6] =  s11[4];
+               verts_norms[i2 + 6] =  s11[5];
 
             }
             i0 += 9;  i1 += 9;  i2 += 9;
@@ -191,7 +193,6 @@ let func = () =>
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
-   gl.drawArrays(gl.LINE_STRIP, 0, ns * 3 + ns * 6 * (nh - 1));
 
    if (show_norms)
    {
