@@ -182,7 +182,7 @@ let main = () =>
       scaleVert: a =>  mulv(a, [1.0 / Math.PI,  1.0 / Math.PI,   1.0]),
       scaleNorm: a =>  mulv(a, [1.0,            1.0,   1.0 / Math.PI]),
       //sectors:16, slices:3, revealInvisibles: false
-      sectors:8, slices:3, revealInvisibles: false
+      sectors:28, slices:3, revealInvisibles: false
    };
    let circle = {
       func: a => 1, //circle double sided
@@ -200,7 +200,7 @@ let main = () =>
    try
    {
       shape = hearth;
-      shape = circle;
+      //shape = circle;
       obj = buildConePolar (shape);
 
       ////slice object with squares
