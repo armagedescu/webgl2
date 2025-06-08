@@ -4,6 +4,7 @@
    <title>webgl test</title>
    <script src="./gljs/glcanvas.js"></script>
    <script src="./gljs/glmath.js"></script>
+   <script src="./gljs/menu.js"></script>
 </head>
 <body>
    <div class="sample">
@@ -17,7 +18,7 @@
              attribute vec3 inputNormal;
              uniform float isDrawNorms;
 
-             varying vec3 nm; //varying mediump
+             varying vec3 nm;            //varying mediump
              varying float isNormsColor; //in place of flag
              void main()
              {
@@ -43,7 +44,6 @@
    </div>
    <br/>
    <div class="sample">
-      <br />
       Cone TRIANGLES (grad), two programs, no conditional<br />
       Geometry 2<br/>
       <canvas id = "cone1 heart geometry 2" width = "400" height = "400"  class="yellow">
@@ -66,8 +66,8 @@
 
             const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
             //const vec3 lightDirection  = normalize(-vec3(1.0,  -1.0,  -1.0));
-            //const vec3 lightDirection  = normalize(-vec3(1.0,  -1.0,  1.0));
-            //const vec3 lightDirection  = normalize(vec3(-1.0,  1.0,  1.0));//direction, left, top, deep
+            //const vec3 lightDirection  = normalize(-vec3(1.0,  -1.0,   1.0));
+            //const vec3 lightDirection  = normalize( vec3(-1.0,  1.0,   1.0));//direction, left, top, deep
             const vec3 lightDirection  = normalize(vec3(1.0,  -1.0,  1.0));//direction, right, down, deep
             void main()
             {
@@ -75,7 +75,7 @@
                //gl_FragColor = vec4(greenColor.rgb * dot(-lightDirection, normalize(vec3(-1, 1, -1))), 1.0);
             }
          </script>
-			<!--   Program "show normals"   -->
+         <!--   Program "show normals"   -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="show normals">
              //attribute vec4 coordinatex;
              attribute vec3 coordinatex;
@@ -85,7 +85,7 @@
              void main()
              {
                 gl_Position = vec4(coordinatex, 1.0);
-					 gl_PointSize = 4.;
+                gl_PointSize = 4.;
                 nmx = inputNormax;
                 //nmx = inputNormax + vec3(2.0, 2.0, 2.0);
                 //nmx = vec3(1.0, 1.0, 1.0); //inputNormax;

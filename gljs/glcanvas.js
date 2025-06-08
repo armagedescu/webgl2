@@ -239,6 +239,7 @@ class GlVAObject extends GlApi
          //throw "GlSurface constructor: unknown context";
       }
       this.vao = this.gl.createVertexArray ();
+      console.log ("this vao created" + this.vao);
    }
    init (){}
    drawVao (){}
@@ -264,7 +265,7 @@ class GlCanvas
    constructor (canvasVar, elementVars)
    {
       this.#canvas = canvasVar;
-      this.#programMap.set (this.#defaultProgramName, new GlProgram (this.gl));
+      this.#programMap.set (this.#defaultProgramName, new GlProgram (this.gl)); //insert into map
       if (canvasVar instanceof  GlInfo) throw "GlInfo to be handled by offscrfeen";
       this.#extractShaderCodes ();
       this.#extractElementCodes (elementVars);
@@ -579,8 +580,8 @@ class GlVideoTexture2D
       let gl = this.gl;
       gl.texImage2D ( gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 
-      gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,     gl.CLAMP_TO_EDGE);
+      gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T,     gl.CLAMP_TO_EDGE);
       gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
    }
    texImage2DUpdate ()

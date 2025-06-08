@@ -14,8 +14,8 @@ function buildGeometryPolar (shape)
    //transform radius to coordinate
    let [xfi, yfi, zfi]  = [a => shape.func(a) * Math.cos(a), a => shape.func(a) * Math.sin(a), a => 0.0];
    //transform radius to normals
-	let  [nxfi, nyfi, nzfi] = [xfi, yfi, a =>  1];
-	if (shape.d) [nxfi, nyfi, nzfi] = [shape.d.x, shape.d.y, shape.d.z];
+   let  [nxfi, nyfi, nzfi] = [xfi, yfi, a =>  1];
+   if (shape.d) [nxfi, nyfi, nzfi] = [shape.d.x, shape.d.y, shape.d.z];
    if (!shape.scaleVert) shape.scaleVert = a => a ;
    if (!shape.scaleNorm) shape.scaleNorm = a => a ;
    // Calculate for fi = [0 .. PI]
@@ -83,7 +83,7 @@ function buildConePolar (shape)
       geo.base[0] = [0.5, 0.0, 0.0];
 
    console.log ("slices;" + slices +  " sectors:" + sectors);
-	//all needed vertices and normals
+   //all needed vertices and normals
    let sides = buildSides(geo, slices, sectors);
    let sec2  = sectors / 2;
 
@@ -178,29 +178,39 @@ let func = () =>
    gl.enable (gl.DEPTH_TEST);
    gl.enable (gl.CULL_FACE);
    gl.clear  (gl.COLOR_BUFFER_BIT);
+   //const extensions = gl.getSupportedExtensions();
+   //const ext = gl.getExtension("WEBGL_depth_texture");
+   gl.depthRange  (1.0,  0.0);
+   //gl.depthRange  (0.0, -1.0);
 
-	let hearth = {
-		func: a => a, //hearth double sided
+   let hearth = {
+      func: a => a, //hearth double sided
       d: //gradient
       {
          x : a =>   Math.sin(a) + hearth.func(a) * Math.cos(a),
          y : a => -(Math.cos(a) - hearth.func(a) * Math.sin(a)),
          z : a =>  -hearth.func(a), //Z negative, dorected toward
-		},
-		scaleVert: a =>  mulv(a, [1.0 / Math.PI,  1.0 / Math.PI,   1.0]),
-		scaleNorm: a =>  mulv(a, [1.0,            1.0,   1.0 / Math.PI]),
-		//sectors:16, slices:3, revealInvisibles: false
-		sectors:8, slices:1, revealInvisibles: false
-	};
-	let circle = {
-		func: a => 1, //circle double sided
-		sectors:40, slices:3
-	};
+      },
+      scaleVert: a =>  mulv(a, [1.0 / Math.PI,  1.0 / Math.PI,   1.0]),
+      scaleNorm: a =>  mulv(a, [1.0,            1.0,   1.0 / Math.PI]),
+      //sectors:16, slices:3, revealInvisibles: false
+      sectors:8, slices:1, revealInvisibles: false
+   };
+   let circle = {
+      func: a => 1, //circle double sided
+      d: //gradient
+      {
+         x : a => circle.func(a) * Math.cos(a), //  Math.sin(a) + hearth.func(a) * Math.cos(a),
+         y : a => circle.func(a) * Math.sin(a), //-(Math.cos(a) - hearth.func(a) * Math.sin(a)),
+         z : a =>  -hearth.func(a), //Z negative, dorected toward
+      },
+      sectors:40, slices:3
+   };
    let obj;
    try
    {
-		let shape = hearth;
-		//shape = circle;
+      let shape = hearth;
+      shape = circle;
       obj = buildConePolar (shape);
 
       ////slice object with squares

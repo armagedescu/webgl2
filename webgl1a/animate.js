@@ -30,7 +30,7 @@ class Animate extends GlVAObject
       let gl = this.gl;
 
       let fi = this.#dt * 0.005;
-	  let t = [0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi), 0.0];
+      let t = [0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi), 0.0];
 
       gl.uniform4f(this.translation, ... t);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -50,7 +50,7 @@ let func = () =>
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       animate.t = time;
-	  animate.draw();
+      animate.draw();
 
       window.requestAnimationFrame(animateMain);
    }

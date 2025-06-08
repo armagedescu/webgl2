@@ -14,8 +14,8 @@ function buildGeometryPolar (shape)
    //transform radius to coordinate
    let [xfi, yfi, zfi]  = [a => shape.func(a) * Math.cos(a), a => shape.func(a) * Math.sin(a), a => 0.0];
    //transform radius to normals
-	let  [nxfi, nyfi, nzfi] = [xfi, yfi, a =>  1];
-	if (shape.d) [nxfi, nyfi, nzfi] = [shape.d.x, shape.d.y, shape.d.z];
+   let  [nxfi, nyfi, nzfi] = [xfi, yfi, a =>  1];
+   if (shape.d) [nxfi, nyfi, nzfi] = [shape.d.x, shape.d.y, shape.d.z];
    if (!shape.scaleVert) shape.scaleVert = a => a ;
    if (!shape.scaleNorm) shape.scaleNorm = a => a ;
    // Calculate for fi = [0 .. PI]
@@ -83,7 +83,7 @@ function buildConePolar (shape)
       geo.base[0] = [0.5, 0.0, 0.0];
 
    console.log ("slices;" + slices +  " sectors:" + sectors);
-	//all needed vertices and normals
+   //all needed vertices and normals
    let sides = buildSides(geo, slices, sectors);
    let sec2  = sectors / 2;
 
@@ -166,41 +166,41 @@ function buildNorms (nm)
    return [ ...nv,  ...nv,  ...nv,   ...nv,  ...nv,  ...nv ];
 }
 
-let func = () =>
+let main = () =>
 {
    let glCanvas = new GlCanvas(canvas);
-
    let gl = glCanvas.gl;
-   glCanvas.useProgram ();
-   let program = glCanvas.program;
-   //gl.useProgram(program);
 
-   gl.enable (gl.DEPTH_TEST);
-   gl.enable (gl.CULL_FACE);
-   gl.clear  (gl.COLOR_BUFFER_BIT);
-
-	let hearth = {
-		func: a => a, //hearth double sided
+   let hearth = {
+      func: a => a, //hearth double sided
       d: //gradient
       {
          x : a =>   Math.sin(a) + hearth.func(a) * Math.cos(a),
          y : a => -(Math.cos(a) - hearth.func(a) * Math.sin(a)),
          z : a =>  -hearth.func(a), //Z negative, dorected toward
-		},
-		scaleVert: a =>  mulv(a, [1.0 / Math.PI,  1.0 / Math.PI,   1.0]),
-		scaleNorm: a =>  mulv(a, [1.0,            1.0,   1.0 / Math.PI]),
-		//sectors:16, slices:3, revealInvisibles: false
-		sectors:8, slices:1, revealInvisibles: false
-	};
-	let circle = {
-		func: a => 1, //circle double sided
-		sectors:40, slices:3
-	};
+      },
+      scaleVert: a =>  mulv(a, [1.0 / Math.PI,  1.0 / Math.PI,   1.0]),
+      scaleNorm: a =>  mulv(a, [1.0,            1.0,   1.0 / Math.PI]),
+      //sectors:16, slices:3, revealInvisibles: false
+      sectors:8, slices:3, revealInvisibles: false
+   };
+   let circle = {
+      func: a => 1, //circle double sided
+      d: //gradient
+      {
+         x : a => circle.func(a) * Math.cos(a), //  Math.sin(a) + hearth.func(a) * Math.cos(a),
+         y : a => circle.func(a) * Math.sin(a), //-(Math.cos(a) - hearth.func(a) * Math.sin(a)),
+         z : a =>  -circle.func(a), //Z negative, dorected toward
+      },
+      sectors:12, slices:3
+   };
    let obj;
+   let shape = hearth;
+
    try
    {
-		let shape = hearth;
-		//shape = circle;
+      shape = hearth;
+      shape = circle;
       obj = buildConePolar (shape);
 
       ////slice object with squares
@@ -218,60 +218,91 @@ let func = () =>
    {
       alert(err);
    }
-   let verts = obj.verts;
-   let norms = obj.norms;
+
    ////////////////////////////////////
 
-   let vertex_buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
-
-   program = glCanvas.program;
-   //gl.useProgram(program);
+   let program = glCanvas.program;
    glCanvas.useProgram ();
+
+   let drawInfo = {};
+   [drawInfo.vertex_buffer,  drawInfo.normal_buffer] = [gl.createBuffer(), gl.createBuffer()];
+   /// = 
+   const vao = gl.createVertexArray();
+   gl.bindVertexArray(vao);
+   gl.bindBuffer(gl.ARRAY_BUFFER, drawInfo.vertex_buffer);
    let coord = gl.getAttribLocation (program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
-   let normalBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
+   gl.bindBuffer(gl.ARRAY_BUFFER, drawInfo.normal_buffer);
    let noord = gl.getAttribLocation (program, "inputNormal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
 
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.drawArrays(gl.TRIANGLES,  0, verts.length / 3);
 
-   //gl.bindBuffer(gl.ARRAY_BUFFER, null);
-   //gl.disableVertexAttribArray (coord);
-   //gl.disableVertexAttribArray (noord);
-   gl.useProgram (null);
-   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-   gl.disableVertexAttribArray (coord);
-   //gl.disableVertexAttribArray (noord);
-   
+   //only set buffer data
+   gl.bindBuffer(gl.ARRAY_BUFFER, drawInfo.vertex_buffer);
+   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.verts), gl.STATIC_DRAW);
+   gl.bindBuffer(gl.ARRAY_BUFFER, drawInfo.normal_buffer);
+   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.norms), gl.STATIC_DRAW);
+
+
+
+
+   // show norms
    let show_norms = false;
-   if (show_norms) showNorms (glCanvas, obj);
+	   let programNorms = glCanvas.programs.get ("show normals").program;
+      glCanvas.useProgram ("show normals");
+      const vaoNorms = gl.createVertexArray();
+      gl.bindVertexArray(vaoNorms);
+      let nverts = obj.nverts;
+      let nvert_buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, nvert_buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(nverts), gl.STATIC_DRAW);
+      let coorx = gl.getAttribLocation (programNorms, "coordinatex");
+      gl.vertexAttribPointer     (coorx, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray (coorx);
+	//end show norms
+
+   const extensions = gl.getSupportedExtensions();
+
+   gl.enable (gl.DEPTH_TEST);
+   gl.enable (gl.CULL_FACE);
+   gl.clear  (gl.COLOR_BUFFER_BIT);
+   //following does not work on WebGL but works on OpenGL
+   //gl.depthRange  (1.0,  0.0);
+
+   let animateMain = (time) =>
+   {
+      gl.clearColor(0.5, 0.1, 0.5, 0.9);
+      glCanvas.useProgram ();
+		gl.bindVertexArray(vao);
+
+      gl.drawArrays(gl.TRIANGLES,  0, obj.verts.length / 3);
+      if (show_norms)
+		{
+			glCanvas.useProgram ("show normals");
+         gl.bindVertexArray(vaoNorms);
+         gl.drawArrays(gl.LINES,  0, nverts.length  / 3);
+         gl.drawArrays(gl.POINTS, 0, nverts.length  / 3);
+		}
+   }
+   window.requestAnimationFrame (animateMain);
+   let menu = new GLMenu(10, 10, canvas);
+   menu.addCheckbox ("Show mesh", (e) =>
+      {
+	   	let polygonMode = gl.getExtension("WEBGL_polygon_mode"); //show lines: gl.FRONT_AND_BACK mode.LINE_WEBGL mode.FILL_WEBGL
+         if (e.target.checked) polygonMode.polygonModeWEBGL(gl.FRONT_AND_BACK, polygonMode.LINE_WEBGL);
+         else polygonMode.polygonModeWEBGL(gl.FRONT_AND_BACK, polygonMode.FILL_WEBGL);
+         window.requestAnimationFrame (animateMain);
+      });
+   menu.addCheckbox ("Show normals", (e) =>
+      {
+         show_norms = e.target.checked ? true : false;
+         window.requestAnimationFrame (animateMain);
+      });
 
 }
 
-function showNorms (glCanvas, obj) {
-   let gl = glCanvas.gl;
-   let program = glCanvas.programs.get ("show normals").program;
-   glCanvas.useProgram ("show normals");
-
-   let nverts = obj.nverts;
-   let nvert_buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, nvert_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(nverts), gl.STATIC_DRAW);
-   let coorx = gl.getAttribLocation (program, "coordinatex");
-   gl.vertexAttribPointer     (coorx, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (coorx);
-
-   gl.drawArrays(gl.LINES, 0, nverts.length  / 3);
-   gl.drawArrays(gl.POINTS, 0, nverts.length / 3);
-}
-
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', main);
 }
