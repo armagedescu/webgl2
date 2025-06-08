@@ -10,7 +10,7 @@
    <div class="sample">
       Simple draw:<br/>
       <canvas id = "draw"  width = "120" height = "120" class="blue">
-         <script src="./webgl1a/draw.js"></script>
+         <script src="./draw.simple.1.vao/draw.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec2 coordinates;
             void main(void)
@@ -30,7 +30,7 @@
    <div class="sample">
       Translate:<br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
-         <script src="./webgl1a/translate.js"></script>
+         <script src="./draw.simple.1.vao/translate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             //TODO: why vec4???
             attribute vec4 coordinates;
@@ -50,7 +50,7 @@
    <div class="sample">
       Translate animate 1:<br/>
       <canvas id = "animate"  width = "120" height = "120" class="cyan">
-         <script src="./webgl1a/animate.js"></script>
+         <script src="./draw.simple.1.vao/animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              uniform   vec4 translation;
@@ -70,7 +70,7 @@
    <div class="sample">
       Translate animate 2:<br/>
       <canvas id = "animate second instance" width = "120" height = "120" class="magenta">
-          <script src="./webgl1a/animate2.js"></script>
+          <script src="./draw.simple.1.vao/animate2.js"></script>
           <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              uniform   vec3 translation;
@@ -90,7 +90,7 @@
    <div class="sample">
       Normals:<br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
-         <script src="./webgl1a/normals.js"></script>
+         <script src="./draw.simple.1.vao/normals.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec4 coordinates;
             attribute vec3 inputNormal;
@@ -119,7 +119,7 @@
    <div class="sample">
       Colors R+G:<br/>
       <canvas id = "usecolors" width = "120" height = "120"  class="yellow">
-          <script src="./webgl1a/usecolors.js"></script>
+          <script src="./draw.simple.1.vao/usecolors.js"></script>
           <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec4 coordinates;
             attribute vec4  forFragColor;
@@ -145,7 +145,7 @@
       Cone TRIANGLE_FAN<br/>
       (wrong)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/triangle_fan.js"></script>
+         <script src="./draw.simple.1.vao/triangle_fan.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -173,7 +173,7 @@
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/cone1_animate.js"></script>
+         <script src="./draw.simple.1.vao/cone1_animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -210,7 +210,7 @@
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/cone1_animate2.js"></script>
+         <script src="./draw.simple.1.vao/cone1_animate2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -243,7 +243,7 @@
       Cone TRIANGLES (correct), </br>
       Normals simple <br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/cone1.js"></script>
+         <script src="./draw.simple.1.vao/cone1.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -274,7 +274,7 @@
       Cone TRIANGLES (correct), </br>
       Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/cone1_geometry.js"></script>
+         <script src="./draw.simple.1.vao/cone1_geometry.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -306,7 +306,7 @@
       Cone TRIANGLES (cross), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
-         <script src="./webgl1a/cone1_heart_geometry.js"></script>
+         <script src="./draw.simple.1.vao/cone1_heart_geometry.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -337,7 +337,7 @@
       Cone TRIANGLES (grad), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./webgl1a/cone1_heart_geometry2.js"></script>
+         <script src="./draw.simple.1.vao/cone1_heart_geometry2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -362,8 +362,8 @@
       </canvas>
    </div>
    <br/>
-   <canvas id = "mycanvas1"  width = "310" height =  "40" class = "red"  ><script src="./webgl1a/2d.js"    ></script></canvas>
-   <canvas id = "mycanvas2"  width =  "40" height =  "40" class = "green"><script src="./webgl1a/simple.js"></script></canvas><br/>
+   <canvas id = "mycanvas1"  width = "310" height =  "40" class = "red"  ><script src="./draw.simple.1.vao/2d.js"    ></script></canvas>
+   <canvas id = "mycanvas2"  width =  "40" height =  "40" class = "green"><script src="./draw.simple.1.vao/simple.js"></script></canvas><br/>
    <a href="./tutorials.html">Tutorials</a>
 
 
