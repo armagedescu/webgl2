@@ -2,11 +2,13 @@
 let canvas = document.currentScript.parentElement;
 
 
-const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
+//const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
+const clearColor = [  0.0,  0.5,   1.0,  1.0 ];
 const vertices = new Float32Array([
-  0.0,  0.6, 0, 1, 1, 0, 0, 1,
- -0.5, -0.6, 0, 1, 0, 1, 0, 1,
-  0.5, -0.6, 0, 1, 0, 0, 1, 1
+ //verts XYZW             //colors RGBA
+  0.0,   0.6,  0,  1,     1,  0,  0,  1,
+ -0.5,  -0.6,  0,  1,     0,  1,  0,  1,
+  0.5,  -0.6,  0,  1,     0,  0,  1,  1
 ]);
 const shaders = `
 struct VertexOut {
@@ -132,4 +134,5 @@ async function init() {
 }
 
 init();
+
 }

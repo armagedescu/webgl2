@@ -2,14 +2,14 @@
 <head>
    <title>webgpu test</title>
    <link rel="stylesheet" href="./css/default.css">
+   <script src="./gljs/glmath.js"></script>
    <script src="./gljs/glcanvas.js"></script>
    <script src="./gpujs/gpucanvas.js"></script>
-   <script src="./gljs/glmath.js"></script>
    <script src="./experiment/experiment.js"></script>
 </head>
 <body>
    <div class="sample">
-      WebGPU triangle:<br/>
+      WebGPU triangle 1:<br/>
       <canvas id="gpuCanvas" width="160" height="120">
         <script src="./webgpu1/webgpu1.js" defer=""></script>
         <script>
@@ -22,10 +22,10 @@
       </canvas>
    </div>
    <div class="sample">
-      WebGPU triangle:<br/>
+      WebGPU triangle 2:<br/>
       <canvas id="gpuCanvas" width="160" height="120">
         <script src="./webgpu1/webgpu2.js" defer=""></script>
-        <script type="text/webgpu-shader" data-gl-type="webgpu-shader">
+        <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
            struct VertexOut
            {
               @builtin(position) position : vec4f,
