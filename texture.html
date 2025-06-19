@@ -1,65 +1,75 @@
-<canvas id="canvas" width = "400" height = "400" >
-
-   <script type="text/glsl-shader" data-gl-type="vertex-shader">
-      #version 300 es
-
-      in vec4 a_position;
-      in vec4 a_color;
-      
-      uniform mat4 u_matrix;
-      out vec4 v_color;
-
-      void main()
-      {
-        gl_Position = u_matrix * a_position;
-        v_color = a_color;
-      }
-   </script>
-   <script type="text/glsl-shader" data-gl-type="fragment-shader">
-      #version 300 es
-      precision highp float;
-      in vec4 v_color;
-      
-      out vec4 outColor;
-      void main()
-      {
-        outColor = v_color;
-      }
-   </script>
-
-
-   <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
-      #version 300 es
-      in vec4 a_position;
-      in vec2 a_texcoord;
-      
-      uniform mat4 u_matrix;
-      out vec2 v_texcoord;
-      
-      void main()
-      {
-        gl_Position = u_matrix * a_position;
-        v_texcoord = a_texcoord;
-      }
-   </script>
-   <script type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-program="texture">
-      #version 300 es
-      precision highp float;
-      in vec2 v_texcoord;
-      uniform sampler2D u_texture;
-      out vec4 outColor;
-      void main()
-      {
-         outColor = texture(u_texture, v_texcoord);
-      }
-   </script>
-</canvas>
-<!--
-This sample uses TWGL (Tiny WebGL) to hide the clutter.
-Otherwise the sample would be full of code not related to the point of the sample.
-For more info see https://webgl2fundamentals.org/webgl/lessons/webgl-less-code-more-fun.html
--->
-<script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-<script src="./lib/js/3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
-<script src="./lib/js/gl2js/glcanvas.js"></script>
-<script src="./texture/texture.js"></script>
+<html>
+<head>
+   <title>Render To Texture</title>
+   <link rel="stylesheet" href="./lib/css/default.css"> 
+</head>
+<body>
+   <canvas id="canvas" width = "400" height = "400" >
+   
+      <script type="text/glsl-shader" data-gl-type="vertex-shader">
+         #version 300 es
+   
+         in vec4 a_position;
+         in vec4 a_color;
+         
+         uniform mat4 u_matrix;
+         out vec4 v_color;
+   
+         void main()
+         {
+           gl_Position = u_matrix * a_position;
+           v_color = a_color;
+         }
+      </script>
+      <script type="text/glsl-shader" data-gl-type="fragment-shader">
+         #version 300 es
+         precision highp float;
+         in vec4 v_color;
+         
+         out vec4 outColor;
+         void main()
+         {
+           outColor = v_color;
+         }
+      </script>
+   
+   
+      <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
+         #version 300 es
+         in vec4 a_position;
+         in vec2 a_texcoord;
+         
+         uniform mat4 u_matrix;
+         out vec2 v_texcoord;
+         
+         void main()
+         {
+           gl_Position = u_matrix * a_position;
+           v_texcoord = a_texcoord;
+         }
+      </script>
+      <script type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-program="texture">
+         #version 300 es
+         precision highp float;
+         in vec2 v_texcoord;
+         uniform sampler2D u_texture;
+         out vec4 outColor;
+         void main()
+         {
+            outColor = texture(u_texture, v_texcoord);
+         }
+      </script>
+   </canvas>
+   <!--
+   This sample uses TWGL (Tiny WebGL) to hide the clutter.
+   Otherwise the sample would be full of code not related to the point of the sample.
+   For more info see https://webgl2fundamentals.org/webgl/lessons/webgl-less-code-more-fun.html
+   -->
+   <script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
+   <script src="./lib/js/3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+   <script src="./lib/js/gl2js/glcanvas.js"></script>
+   <script src="./lib/js/general/api.js"></script>
+   <script src="./texture/texture.js"></script>
+   <!-- script src="./texture/textureManual.js"></script -->
+</body>
+</html>
