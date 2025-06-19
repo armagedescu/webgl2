@@ -9,7 +9,8 @@ const vertices = new Float32Array([
   0.5, -0.6, 0, 1, 0, 0, 1, 1
 ]);
 
-async function main (gpuCanvas)
+
+async function gpumain (gpuCanvas)
 {
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
@@ -95,12 +96,12 @@ async function main (gpuCanvas)
    device.queue.submit([commandEncoder.finish()]);
 	return 0;
 }
-async function init(event) {
+async function main(event) {
    new GpuCanvas ({canvas:canvas, newAdapter: false}).ready().then (
       canvasObj =>{
-         main (canvasObj);
+         gpumain (canvasObj);
 	   });
 }
 
-document.addEventListener('DOMContentLoaded', event => init (event));
+document.addEventListener('DOMContentLoaded', event => main (event));
 }

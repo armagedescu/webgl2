@@ -1,9 +1,9 @@
 "use strict";
-importScripts('../gljs/glcanvas.js');
-importScripts('../gljs/glmath.js');
-importScripts('../gljs/api.js');
-importScripts('../gljs/glcontroller.js');
-importScripts('../3rdparty/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
+importScripts('../lib/js/gl2js/glcanvas.js');
+importScripts('../lib/js/math/3dmath.js');
+importScripts('../lib/js/general/api.js');
+importScripts('../lib/js/gl2js/glcontroller.js');
+importScripts('../lib/js/3rdparty/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
 
 class HeightMap extends GlVAObjectAsync
 {

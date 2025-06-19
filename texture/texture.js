@@ -110,7 +110,7 @@ function main() {
     for (let yy = -1; yy <= 1; ++yy) {
       for (let xx = -2; xx <= 2; ++xx) {
         let fViewMatrix = m4.translate(viewMatrix,
-            translation[0] + xx * spread, translation[1] + yy * spread, translation[2]);
+        translation[0] + xx * spread, translation[1] + yy * spread, translation[2]);
         fViewMatrix = m4.xRotate(fViewMatrix, rotation[0]);
         fViewMatrix = m4.yRotate(fViewMatrix, rotation[1] + yy * xx * 0.2);
         fViewMatrix = m4.zRotate(fViewMatrix, rotation[2] + now + (yy * 3 + xx) * 0.1);
@@ -122,8 +122,8 @@ function main() {
 
         // setup to draw the 'F'
         //gl.useProgram(fProgramInfo.program);
-		fvao.useProgram();
-		fvao.bindVertexArray();
+		    fvao.useProgram();
+		    fvao.bindVertexArray();
 
         // setup the attributes and buffers for the F
         //gl.bindVertexArray(fVAO);
@@ -134,10 +134,11 @@ function main() {
         gl.uniform4fv(fUniforms.u_matrix, fu_matrix);
 
         //twgl.drawBufferInfo(gl, fBufferInfo);
-		fvao.draw();
+		    fvao.draw();
       }
     }
 
+    if (0) {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
@@ -159,21 +160,21 @@ function main() {
 
       // setup to draw the text.
       //gl.useProgram(textProgramInfo.program);
-	  tvao.useProgram();
+	    tvao.useProgram();
 
       //gl.bindVertexArray(textVAO);
-	  tvao.bindVertexArray();
+	    tvao.bindVertexArray();
 
       m4.copy(textMatrix, textUniforms.u_matrix);
-	  //console.log(JSON.stringify(textUniforms.u_matrix));
+	    //console.log(JSON.stringify(textUniforms.u_matrix));
       //twgl.setUniforms(textProgramInfo, textUniforms);
-	  gl.uniform4fv(textUniforms.u_matrix, textMatrix);
+	    gl.uniform4fv(textUniforms.u_matrix, textMatrix);
 
       // Draw the text.
       //twgl.drawBufferInfo(gl, textBufferInfo);
-	  tvao.draw();
+	    tvao.draw();
     });
-
+    }
     requestAnimationFrame(drawScene);
   }
 }

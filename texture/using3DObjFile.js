@@ -26,11 +26,11 @@ function addUIListeners (elm, controller)
 
 async function main()
 {
-   let objtext = await makeOffscreenText ("./3rdparty/obj/chair.obj");
+   let objtext = await makeOffscreenText ("./lib/js/3rdparty/obj/chair.obj");
    let  objfile = new OBJFile(objtext);
    let  obj = objfile.result;
 
-   let trebujeniText = await makeOffscreenText ("./3rdparty/obj/3D-Trebujeni.obj");
+   let trebujeniText = await makeOffscreenText ("./lib/js/3rdparty/obj/3D-Trebujeni.obj");
    let trebujeniFile = new OBJFile(trebujeniText);
    let trebujeniObj = trebujeniFile.result;
    return;

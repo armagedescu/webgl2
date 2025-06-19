@@ -1,5 +1,5 @@
-import { initBuffers } from "../3rdparty/mozilla/init-buffers.js";
-import { drawScene }   from "../3rdparty/mozilla/draw-scene.js";
+import { initBuffers } from "../lib/js/3rdparty/mozilla/init-buffers.js";
+import { drawScene }   from "../lib/js/3rdparty/mozilla/draw-scene.js";
 
 let cubeRotation = 0.0;
 let deltaTime = 0;
