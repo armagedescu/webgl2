@@ -6,6 +6,8 @@
 
 </head>
 <body>
+   TODO: big performance issues with offscreen canvas, to investigate<br/>
+   TODO: height map to texture inversed, to investigate<br/>
    <script src="./lib/js/3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
 
    <script src="./lib/js/general/api.js"></script>
@@ -56,6 +58,7 @@
    </div>
    <div class="sample">
       Render to Texture<br/>
+      TODO: texture inversed, to investigate<br/>
       <canvas id="CraterArizonaToFramebuffer" width="320" height = "240">
       
          <!-- This is main target -->
@@ -122,8 +125,8 @@
    <div class="sample">
       Render to Offscreen Canvas in worker<br/>
       <canvas id="HeightMapButuceniOffscreen" width="400" height = "300">
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap/height-map.vs" ></script>
-         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap/height-map.fs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./renderToTexture/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./renderToTexture/height-map.fs" ></script>
          <script src="./renderToTexture/renderToTexture.uiproxy.js"></script>
    
       </canvas><!-- br/ -->
@@ -134,9 +137,9 @@
       <script>document.getElementById('video1').play();</script>
       <source src="./video/flower.mp4" type="video/mp4">
    </video><br/ -->
-        <!-- crossorigin="anonymous" -->
-   base:<br/><img id="imgBasic" style="display:none"  src="./texture/f-texture.png" /><br/>
-   Tipova:<!-- br/><img id="imgTipova" src="./heightMap/tipova.png" /><br/ -->
+   <!-- crossorigin="anonymous" -->
+   base:<br/><img id="imgBasic" src="./renderToTexture/f-texture.png" /><br/>
+   Tipova:<!-- br/><img id="imgTipova" src="./renderToTexture/tipova.png" /><br/ -->
    <a href="./tutorials.html">Tutorials</a>
 </body>
 </html>
