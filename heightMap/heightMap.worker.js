@@ -5,6 +5,8 @@ importScripts('../lib/js/general/api.js');
 importScripts('../lib/js/gl2js/glcontroller.js');
 importScripts('../lib/js/3rdparty/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
 
+
+//TODO: Add this class to gl2js library
 class HeightMap extends GlVAObjectAsync
 {
    #vertices = [];

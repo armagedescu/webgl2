@@ -115,22 +115,22 @@ class GlImageTexture2D
 
 async function makeExperiments()
 {
-   readImg ("./heightMap/butuceni.png");
-   readImg ("./heightMap/tipova.png");
-   readImg ("./texture/f-texture.png");
+   readImg ("./textureManual1/butuceni.png");
+   readImg ("./textureManual1/tipova.png");
+   readImg ("./textureManual1/f-texture.png");
    document.body.appendChild(document.createElement("br") );
    document.body.appendChild(duplicateCanvas(makeImgCanvas("imgBasic")));    //Show a duplicate of invisible image canvas
-   document.body.appendChild(await makeCanvasFromImg ("./texture/f-texture.png"));
-   //makeCanvasFromImg ("./texture/f-texture.png").then( (canvas) => { document.body.appendChild(canvas);});
+   document.body.appendChild(await makeCanvasFromImg ("./textureManual1/f-texture.png"));
+   //makeCanvasFromImg ("./textureManual1/f-texture.png").then( (canvas) => { document.body.appendChild(canvas);});
    document.body.appendChild(document.createElement("br") );
-   document.body.appendChild(makeTextCanvas ("./texture/f-texture.png", 100, 26) ); //Show text danvas "textu[re/f-text]ure.png"
+   document.body.appendChild(makeTextCanvas ("./textureManual1/f-texture.png", 100, 26) ); //Show text danvas "textu[re/f-text]ure.png"
    document.body.appendChild(document.createElement("br"));
    document.body.appendChild(duplicateCanvas(makeTextCanvas ("hello", 100, 26))); //Show a duplicate of invisible text canvas
 
-   let img  = makeImg("./texture/f-texture.png");
+   let img  = makeImg("./textureManual1/f-texture.png");
    document.body.appendChild(document.createElement("br"));
-   makeOffscreenFromImg ("./texture/f-texture.png").then ( (cnv) => {document.body.appendChild (duplicateCanvas (cnv));});
-   makeCanvasFromImg ("./texture/f-texture.png").then ( (cnv) => {document.body.appendChild (cnv);});
+   makeOffscreenFromImg ("./textureManual1/f-texture.png").then ( (cnv) => {document.body.appendChild (duplicateCanvas (cnv));});
+   makeCanvasFromImg ("./textureManual1/f-texture.png").then ( (cnv) => {document.body.appendChild (cnv);});
 }
 
 function main()
@@ -145,7 +145,7 @@ function main()
    let program = fVaObject.program;
    fVaObject.useProgram();
 
-   let texture = new GlImageTexture2D (gl, "./texture/f-texture.png");
+   let texture = new GlImageTexture2D (gl, "./textureManual1/f-texture.png");
 
    let fieldOfViewRadians    = rad (60);
    let modelXRotationRadians = rad (0);

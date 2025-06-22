@@ -2,6 +2,8 @@
 
 {
 let canvas = document.currentScript.parentElement;
+
+//TODO: Add class to library gl2js
 class HeightMap extends GlVAObject
 {
    #vertices    = [];
@@ -158,7 +160,6 @@ function addUIListeners (elm, controller)
 async function main()
 {
    new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
-
 }
 
 async function heightMapDraw (vao)
@@ -214,16 +215,17 @@ async function heightMapDraw (vao)
          vao.model      = controller.model.matrix; //model;                  //m4.identity();
          vao.view       = controller.camera.matrix; //m4.identity();
          vao.projection = projection;
-         
-           //glm::mat4 model = glm::translate(glm::mat4(1.0), pos);
-           //model = glm::rotate(model, lastFrame, glm::vec3(0.0f, 1.0f, 0.0f));
-           //glm::mat4 view = camera.view();
-           //glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float)windowWidth / windowHeight, 0.1f, 100.0f);
-         
-           //gl.clear (0.f, 0.f, 1.f, 1.0f);
-           //gl.clear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
-           //gl.enable(gl.GL_BLEND);
-           //gl.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+         //TODO: review this comment, looks like refactored from twgl example
+         //glm::mat4 model = glm::translate(glm::mat4(1.0), pos);
+         //model = glm::rotate(model, lastFrame, glm::vec3(0.0f, 1.0f, 0.0f));
+         //glm::mat4 view = camera.view();
+         //glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float)windowWidth / windowHeight, 0.1f, 100.0f);
+
+         //gl.clear (0.f, 0.f, 1.f, 1.0f);
+         //gl.clear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+         //gl.enable(gl.GL_BLEND);
+         //gl.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
          
          //set model      (mtx) {this.gl.uniformMatrix4fv(this.modelLocation,      false, mtx);}
          //set view       (mtx) {this.gl.uniformMatrix4fv(this.viewLocation,       false, mtx);}
@@ -237,7 +239,7 @@ async function heightMapDraw (vao)
 
          vao.draw();
       }
-   
+
       requestAnimationFrame(drawScene);
    }
 }
