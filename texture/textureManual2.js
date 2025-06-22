@@ -48,6 +48,9 @@ class Maual2TexVaObject extends GlVAObject
    }
 }
 
+// This class creates a 2D texture from a given data array.
+// The data is expected to be single BW (gl.LUMINANCE) pixel uint16 values. (uint8?)
+// TODO: This class have hardcoded values for width and height.
 class GlDataBWTexture2D
 {
    constructor (gl, data)
@@ -56,8 +59,8 @@ class GlDataBWTexture2D
       this.data = data;
       this.texture = gl.createTexture ();
       this.type = gl.TEXTURE_2D;
-	  this.bindTexture ();
-	  this.init ();
+	   this.bindTexture ();
+	   this.init ();
    }
    init ()
    {
@@ -100,7 +103,7 @@ function main()
    let program = vaObject.program;
    vaObject.useProgram();
 
-   // Create a texture.
+   // Create a texture. This will take as argument six BW pixels.
    let texture = new GlDataBWTexture2D (gl, new Uint8Array([128, 64, 128,    0, 192, 0])); //gl.createTexture();
 
    let fieldOfViewRadians    = rad (60);
@@ -115,14 +118,14 @@ function main()
    function drawScene(time)
    {
       let ttime = time;
-      time *= 0.001;
+      time *= 0.001; // Convert to seconds
       let deltaTime = time - then;
       then = time;
 
       vaObject.useProgram();
 
-      texture.data[1] = (ttime % 1280) * 0.2;
-	  texture.texImage2D ();
+      texture.data[1] = (ttime % 1280) * 0.2; // Change the second pixel value over time
+	   texture.texImage2D (); // Update the texture with the new data
 
       gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
       gl.enable   (gl.CULL_FACE);

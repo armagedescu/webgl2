@@ -100,7 +100,7 @@ function main()
    let modelYRotationRadians = rad (0);
 
 
-   let texture = new GlTexture2D (gl, loadImg ("./texture/f-texture.png"));
+   let texture = new GlTexture2D (gl, loadImg ("./textureVideo/f-texture.png"));
    texture.ready().then ( () =>
    {
       requestAnimationFrame(drawScene);

@@ -15,7 +15,6 @@ async function gpumain (gpuCanvas)
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
 
-
    // 4: Create vertex buffer to contain vertex data
    //device.createBuffer = alloc buffer
    //device.writeBuffer  = write buffer

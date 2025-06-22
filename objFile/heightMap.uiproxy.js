@@ -4,7 +4,7 @@ let canvas = document.currentScript.parentElement;
 async function webWorker ()
 {
    //let canvas = document.getElementById  ("HeightMapButuceniOffscreen");
-   let worker = new Worker("./heightMap/heightMap.worker.js");
+   let worker = new Worker("./objFile/heightMap.worker.js");
    let grabber = new GlInfoGrabber(canvas);
    worker.onmessage = (msg) => 
    {
@@ -22,7 +22,7 @@ async function webWorker ()
          break;
       case "getArizona":
          //console.log("received getCanvas");
-         worker.postMessage(  {arizona: grabber.buildUrl ( "./heightMap/craterArizona.png")}  );
+         worker.postMessage(  {arizona: grabber.buildUrl ( "./objFile/craterArizona.png")}  );
          break;
       }
    };

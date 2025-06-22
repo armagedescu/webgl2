@@ -45,13 +45,13 @@ class SimpleDrawIndexed extends GlVAObject
 
 let func = async () =>
 {
-
    let simpleDrawIndexed = new SimpleDrawIndexed (canvas);
    let gl = simpleDrawIndexed.gl;
 
-   let texture = new GlTexture2D (gl, loadImg ("./texture/f-texture.png"));
+   let texture = new GlTexture2D (gl, loadImg ("./textureVideo/f-texture.png"));
    texture.ready().then ((tex) =>
    {
+      console.log ("texture.ready().then ((tex)");
       simpleDrawIndexed.useProgram();
       gl.enable   (gl.CULL_FACE);
       //simpleDrawIndexed.u_texture = 0; //using texture
