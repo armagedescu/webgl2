@@ -4,7 +4,7 @@ class Processor
   {
     this.video = document.getElementById("video");
     this.c1    = document.getElementById("c1");
-    this.ctx1  = this.c1.getContext("2d");
+    this.ctx1  = this.c1.getContext("2d", { willReadFrequently: true });
     this.c2    = document.getElementById("c2");
     this.ctx2  = this.c2.getContext("2d");
     let self   = this;
