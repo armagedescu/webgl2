@@ -84,6 +84,7 @@
                fragColor = texture (u_texture, v_texcoord);
             }
          </script>
+         <!-- This is rendered to a texture (framebuffer) -->
          <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
             #version 300 es
             layout (location = 0) in vec3 vert;
@@ -100,10 +101,10 @@
             
             void main()
             {
-               gl_Position = projection * view * model * vec4(vert, 1.0);
-               terrainColor  = vertColor;
-               terrainNormal = norm;
-               lightDirection = vec3(0.f, -1., 0.);
+               gl_Position    = projection * view * model * vec4(vert, 1.0);
+               terrainColor   = vertColor;
+               terrainNormal  = norm;
+               lightDirection = vec3(0.f,  -1.,  0.);
             }
          </script>
          <script  type="text/glsl-shader" data-gl-type="fragment-shader">

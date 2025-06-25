@@ -12,10 +12,10 @@ class HeightMap extends GlVAObject
    {
       super (context);
       this.#p = readImgHeightMap  (src, crossOrigin);
-      //this.#p = readImgHeightMap  (src, crossOrigin);
    }
    async ready ()
    {
+      //TODO: get rid of await
       await this.#p.then ( (heightmap) =>
       {
          this.heightmap = heightmap;
@@ -177,7 +177,8 @@ function addUIListeners (elm, controller)
 class SimpleDrawIndexed extends GlVAObject
 {
    #verts     = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
-   #texCoords = [ 1,    1,      1,   0,      0,    0,     0,    1  ];
+   //#texCoords = [ 1,    1,      1,   0,      0,    0,     0,    1  ];
+   #texCoords = [ 1,    0,      1,   1,      0,    1,     0,    0  ];
 
    #indices   = [0, 1, 2, 0, 2, 3];
 
@@ -205,7 +206,7 @@ class SimpleDrawIndexed extends GlVAObject
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.#indices), gl.STATIC_DRAW);
    }
-   set u_texture (t)   {this.gl.uniform1i(this.textureLocation, t);}
+   //set u_texture (t)   {this.gl.uniform1i(this.textureLocation, t);}
 
    drawVao()
    {
@@ -241,7 +242,7 @@ async function heightMapDraw (vao)
    //let frameBuffer = new GlFrameBuffer(gl, 256, 256);
    let frameBuffer = new GlFrameBuffer(gl, gl.canvas.width, gl.canvas.heigh);
 
-   let sd = new SimpleDrawIndexed (gl, vao.glCanvas.getProgram ("sampleDrawIndexed"));
+   let simpleDrawIndexed = new SimpleDrawIndexed (gl, vao.glCanvas.getProgram ("sampleDrawIndexed"));
 
    function drawScene(time)
    {
@@ -252,6 +253,7 @@ async function heightMapDraw (vao)
       if (controller.timer.stop)
          deltaTime = 0;
 
+      //draw to texture
       frameBuffer.bindFrameBuffer();
       //frameBuffer.unbindFrameBuffer();
       vao.useProgram();
@@ -285,9 +287,9 @@ async function heightMapDraw (vao)
       }
       frameBuffer.unbindFrameBuffer();
       //gl.viewport (0, 0, gl.canvas.width, gl.canvas.height);
-      sd.useProgram ();
+      simpleDrawIndexed.useProgram ();
       //gl.clearColor (0., 0., 1., 1.0);
-      sd.draw ();
+      simpleDrawIndexed.draw ();
    
       requestAnimationFrame(drawScene);
    }

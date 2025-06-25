@@ -1,9 +1,14 @@
+{
 "use strict";
 
 /*
-  var image = new Image();
-  mage.src = "./texture/f-texture.png";
-  document.body.appendChild(image); //*/
+var image = new Image();
+mage.src = "./texture/f-texture.png";
+document.body.appendChild(image); //*/
+// create text html canvas (source for texture).
+let textCanvas = makeTextCanvas("Hello!", 100, 26); // this is lib function
+//document.body.appendChild(textCanvas);
+
 
 function main() {
    // Get A WebGL context
@@ -12,39 +17,83 @@ function main() {
    let glCanvas = new GlCanvas(canvas);
    let gl       = glCanvas.gl;
 
-   let fvao = new GlVAObject (glCanvas);
-   let tvao = new GlVAObject (glCanvas.getGlProgram("texture"));
-   fvao.bindVertexArray();
-   let coordBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
-   let coordsLocation = gl.getAttribLocation (fvao.program, "a_position");
-   //gl.vertexAttribPointer     (coordsLocation, 3, gl.INT, false, 0, 0);
-   gl.vertexAttribPointer     (coordsLocation, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (coordsLocation);
+   let capitalFVao = new GlVAObject (glCanvas);
+   let textVao     = new GlVAObject (glCanvas.getGlProgram("texture"));
 
-   let colorBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-   let colorLocation = gl.getAttribLocation (fvao.program, "a_color");
-   gl.vertexAttribPointer     (colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0);
-   gl.enableVertexAttribArray (colorLocation);
+   // Init capital F buffers
+   capitalFVao.bindVertexArray();
+   let   capitalFVerticesLocation = gl.getAttribLocation (capitalFVao.program, "a_position");
+   let   capitalFColorLocation    = gl.getAttribLocation (capitalFVao.program, "a_color");
+   const capitalFUMatrixlocation  = gl.getUniformLocation(capitalFVao.program, "u_matrix");
 
-   let fMesh = getFMesh3 ();
-   let fColors = getFColor3 ();
-   gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, fMesh, gl.STATIC_DRAW);
-   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, fColors, gl.STATIC_DRAW);
+   let capitalFVerticesBuffer   = gl.createBuffer();
+   gl.bindBuffer                 (gl.ARRAY_BUFFER, capitalFVerticesBuffer);
+   gl.vertexAttribPointer        (capitalFVerticesLocation, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray    (capitalFVerticesLocation);
+
+   let capitalFColorBuffer      = gl.createBuffer();
+   gl.bindBuffer                 (gl.ARRAY_BUFFER, capitalFColorBuffer);
+   gl.vertexAttribPointer        (capitalFColorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+   gl.enableVertexAttribArray    (capitalFColorLocation);
+
+   // Init capital F buffers, feed them with data.
+   let fMesh   = capitalFBuildVertices3 ();
+   let fColors = capitalFBuildColors3   ();
+   gl.bindBuffer (gl.ARRAY_BUFFER, capitalFVerticesBuffer);
+   gl.bufferData (gl.ARRAY_BUFFER, fMesh, gl.STATIC_DRAW);
+   gl.bindBuffer (gl.ARRAY_BUFFER, capitalFColorBuffer);
+   gl.bufferData (gl.ARRAY_BUFFER, fColors, gl.STATIC_DRAW);
 
 
-   // create text texture.
-   let textCanvas = makeTextCanvas("Hello!", 100, 26);
-   document.body.appendChild(textCanvas);
+
+
    let textWidth  = textCanvas.width;
    let textHeight = textCanvas.height;
 
    //texture
-   let textTex = gl.createTexture();
-   gl.bindTexture    (gl.TEXTURE_2D, textTex);
+   textVao.useProgram();
+   textVao.bindVertexArray();
+   const textMatrixLocation           = gl.getUniformLocation (textVao.program,     "u_matrix"   );
+   let   textVerticesLocation         = gl.getAttribLocation  (textVao.program,     "a_position" );
+   let   textTextureCoordLocation     = gl.getAttribLocation  (textVao.program,     "a_texcoord" ); //vec2
+   /*
+   '{
+      "position":
+      {
+         "numComponents":2,
+         "data" : [-0.5, -0.5,   0.5, -0.5,   -0.5, 0.5,   0.5, 0.5]
+      },
+      "texcoord": [0, 0,   1, 0,   0, 1,   1, 1],
+      "normal"  : [0,0,1,0,0,1,0,0,1,0,0,1],
+      "indices" : [0, 1, 2,   2, 1, 3]}'
+   */
+   let texVertsIndexed     = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
+   let texCoordsIndexed    = [   1,    1,      1,   0,      0,    0,     0,    1];
+   let texIndices          = [0, 1, 2, 0, 2, 3];
+   let texVerts            = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,         1.0, -1.0,  -1.0,  1.0, -1.0, -1.0];
+   //let texCoords           = [   1,    1,      1,   0,      0,    0,           1,    1,     0,    0,    0,    1];
+   let texCoords           = [   1,    0,      1,   1,      0,    1,           1,    0,     0,    1,    0,    0];
+
+   let textVerticesBuffer       = gl.createBuffer();
+   gl.bindBuffer                 (gl.ARRAY_BUFFER, textVerticesBuffer);
+   gl.vertexAttribPointer        (textVerticesLocation,     2, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray    (textVerticesLocation);
+
+   let textTextureCoordBuffer   = gl.createBuffer();
+   gl.bindBuffer                 (gl.ARRAY_BUFFER, textTextureCoordBuffer);
+   gl.vertexAttribPointer        (textTextureCoordLocation, 2, gl.SHORT,   false, 0, 0);
+   gl.enableVertexAttribArray    (textTextureCoordLocation);
+
+   gl.bindBuffer (gl.ARRAY_BUFFER, textVerticesBuffer);
+   gl.bufferData (gl.ARRAY_BUFFER, texVerts,  gl.STATIC_DRAW);
+   gl.bindBuffer (gl.ARRAY_BUFFER, textTextureCoordBuffer);
+   gl.bufferData (gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+
+
+
+   let textureLocation  = gl.getUniformLocation (textVao.program, "u_texture");
+   let textTexture = gl.createTexture();
+   gl.bindTexture    (gl.TEXTURE_2D, textTexture);
    gl.pixelStorei    (gl.UNPACK_FLIP_Y_WEBGL, true);
    gl.pixelStorei    (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
    gl.texImage2D     (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
@@ -52,18 +101,32 @@ function main() {
    gl.texParameteri  (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
    gl.texParameteri  (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
+   ////gl.viewport   (0, 0, gl.canvas.width, gl.canvas.height); 
+   ////gl.clearColor (0, 0, 0, 0);
+   ////gl.clear      (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
+   ////gl.enable     (gl.DEPTH_TEST); // turn on depth testing
+   //////gl.enable     (gl.CULL_FACE);
+   ////gl.enable     (gl.BLEND);
+   ////gl.blendFunc  (gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+   ////gl.depthMask  (false);
+   ////let matrix = [];//new Float32Array();//[];
+   ////m4.identity(matrix);
+   ////gl.uniformMatrix4fv(textMatrixLocation, false, matrix);
+   ////textVao.draw();
+   ////gl.drawArrays(gl.TRIANGLES,  0, texVerts.length / 3); // 2D points
+   ////return;
+   //let fUniforms    = { u_matrix: capitalFVao.uniformMatrix4fv("u_matrix") };
+   let textUniforms = { u_matrix: capitalFVao.uniformMatrix4fv("u_matrix"), u_texture: textTexture };
 
-   let fUniforms    = { u_matrix: fvao.uniformMatrix4fv("u_matrix") };
-   let textUniforms = { u_matrix: tvao.uniformMatrix4fv("u_matrix"), u_texture: textTex };
 
-
-   let translation        = [0, 30, 0];
-   let rotation           = [rad (190), rad (0), rad (0)];
-   let scale              = [1, 1, 1];
-   let fieldOfViewRadians = rad (60);
-   let rotationSpeed      = 1.2;
+   let translation        =  [ 0, 30,  0];
+   let scale              =  [ 1,  1,  1];
+   let rotation           =  [rad (190), rad (0), rad (0)];
+   let fieldOfViewRadians =  rad (60);
+   let rotationSpeed      =  1.2;
 
  
+   
    requestAnimationFrame(drawScene);
  
    let then = 0;
@@ -74,7 +137,7 @@ function main() {
       rotation[1] += rotationSpeed * deltaTime;
 
 
-      twgl.resizeCanvasToDisplaySize(gl.canvas); 
+      twgl.resizeCanvasToDisplaySize(gl.canvas);  //TODO: remove
       // Every frame increase the rotation a little.
       // Tell WebGL how to convert from clip space to pixels
       // Clear the canvas
@@ -103,7 +166,11 @@ function main() {
       let textPositions = [];
   
       let spread = 170;
+
       //Draw five F in a 3x5 grid
+      capitalFVao.useProgram();
+      capitalFVao.bindVertexArray();
+
       for (let yy = -1; yy <= 1; ++yy) {
          for (let xx = -2; xx <= 2; ++xx) {
             let fViewMatrix = m4.translate   (viewMatrix,
@@ -116,25 +183,31 @@ function main() {
             fViewMatrix     = m4.scale       (fViewMatrix, scale[0], scale[1], scale[2]);
             fViewMatrix     = m4.translate   (fViewMatrix, -50, -75, 0);
 
-            // remember the position for the text
+            // text position for the current capital F
             textPositions.push([fViewMatrix[12], fViewMatrix[13], fViewMatrix[14]]);
 
-		      fvao.useProgram();
-		      fvao.bindVertexArray();
 
             let fu_matrix = m4.multiply(projectionMatrix, fViewMatrix);
 
-            const location = gl.getUniformLocation(fvao.program, "u_matrix");
-            gl.uniformMatrix4fv(location, false, fu_matrix);
 
-		      fvao.draw();
+            gl.uniformMatrix4fv(capitalFUMatrixlocation, false, fu_matrix);
+
+		      //capitalFVao.draw(); //TODO: to move code to GlVAObject
             gl.drawArrays(gl.TRIANGLES,  0, fMesh.length / 3);
          }
       }
 
+
       ////draw text on each 'F' on one edge
+      // setup to draw the text.
+      //gl.useProgram(textProgramInfo.program);
+      //gl.bindVertexArray(textVAO);
+      textVao.useProgram();
+      textVao.bindVertexArray();
+
       if (1) {
          gl.enable(gl.BLEND);
+         gl.disable  (gl.CULL_FACE); 
          gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
          gl.depthMask(false);
 
@@ -153,12 +226,6 @@ function main() {
             // scale the F to the size we need it.
             textMatrix = m4.scale(textMatrix, textWidth, textHeight, 1);
 
-            // setup to draw the text.
-            //gl.useProgram(textProgramInfo.program);
-	         tvao.useProgram();
-
-            //gl.bindVertexArray(textVAO);
-	         tvao.bindVertexArray();
 
             let fu_matrix = [];//new Float32Array();//[];
             //m4.copy(textMatrix, textUniforms.u_matrix);
@@ -166,13 +233,14 @@ function main() {
 	         //console.log(JSON.stringify(textUniforms.u_matrix));
             //twgl.setUniforms(textProgramInfo, textUniforms);
 	         //gl.uniform4fv(textUniforms.u_matrix, textMatrix);
-            const location = gl.getUniformLocation(tvao.program, "u_matrix");
 
-            gl.uniformMatrix4fv(location, false, fu_matrix);
+            m4.identity(fu_matrix);
+            gl.uniformMatrix4fv(textMatrixLocation, false, fu_matrix);
             //gl.uniform4fv(location, fu_matrix); 
             // Draw the text.
             //twgl.drawBufferInfo(gl, textBufferInfo);
-	         tvao.draw();
+	         textVao.draw();
+            gl.drawArrays(gl.TRIANGLES,  0, texVerts.length / 3); // 2D points
          });
       }
       requestAnimationFrame(drawScene);
@@ -184,7 +252,7 @@ document.addEventListener("DOMContentLoaded", main);
 
 
 
-function getFMesh3() {
+function capitalFBuildVertices3 () {
       return new Float32Array([
           // left column front
            0,   0,   0,
@@ -317,7 +385,8 @@ function getFMesh3() {
 }
 
 // Fill the current ARRAY_BUFFER buffer with colors for the 'F'.
-function getFColor3() {
+// Color format is RGB, each color is 3 bytes, 0-255 further normalized to 0.0-1.0
+function capitalFBuildColors3 () {
    return new Uint8Array([
          // left column front
          200,  70, 120,
@@ -448,3 +517,5 @@ function getFColor3() {
          160, 160, 220,
       ]);
    }
+
+}
