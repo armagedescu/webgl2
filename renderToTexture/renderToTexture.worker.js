@@ -3,7 +3,7 @@ importScripts('../lib/js/gl2js/glcanvas.js');
 importScripts('../lib/js/math/3dmath.js');
 importScripts('../lib/js/general/api.js');
 importScripts('../lib/js/gl2js/glcontroller.js');
-importScripts('../lib/js/3rdparty/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
+importScripts('../3rdparty/twgl/js/m4.js'); //copied from 'https://webglfundamentals.org/webgl/resources/m4.js', copyright included 
 
 class HeightMap extends GlVAObjectAsync
 {

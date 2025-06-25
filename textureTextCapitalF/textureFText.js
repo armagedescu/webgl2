@@ -1,6 +1,5 @@
 {
 "use strict";
-
 /*
 var image = new Image();
 mage.src = "./texture/f-texture.png";

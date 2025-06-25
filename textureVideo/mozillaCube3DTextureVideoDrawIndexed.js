@@ -1,5 +1,5 @@
-import { initBuffers } from "../lib/js/3rdparty/mozilla/init-buffers.js";
-import { drawScene }   from "../lib/js/3rdparty/mozilla/draw-scene.js";
+import { initBuffers } from "../3rdparty/mozilla/js/init-buffers.js";
+import { drawScene }   from "../3rdparty/mozilla/js/draw-scene.js";
 
 let cubeRotation = 0.0;
 let deltaTime = 0;
@@ -96,7 +96,7 @@ function main()
   const buffers = initBuffers(gl);
 
   const texture = initTexture(gl);
-  const video = setupVideo("./video/flower.mp4");
+  const video = setupVideo("./3rdparty/video/flower.mp4");
 
   // Flip image pixels into the bottom-to-top order that WebGL expects.
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);

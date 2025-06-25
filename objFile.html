@@ -4,8 +4,8 @@
 </head>
 <body>
    <link rel="stylesheet" href="./lib/css/default.css">
-   <script src="./lib/js/3rdparty/OBJFile.js"></script> <!-- cloned from "https://github.com/WesUnwin/obj-file-parser", copyright included -->
-   <script src="./lib/js/3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+   <script src="./3rdparty/js/OBJFile.js"></script> <!-- cloned from "https://github.com/WesUnwin/obj-file-parser", copyright included -->
+   <script src="./3rdparty/twgl/js/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
 
    <script src="./lib/js/general/api.js"></script>
    <script src="./lib/js/math/3dmath.js"></script>
@@ -123,10 +123,10 @@
    <br/>
    <div  class="sample">
       Statically view some media resources<br/>
-      <video id="video"  height="90" width="160" src="./video/flower.mp4" autoplay muted loop  > </video>
+      <video id="video"  height="90" width="160" src="./3rdparty/video/flower.mp4" autoplay muted loop  > </video>
       <video id="video1" height="90" width="160" autoplay muted loop>
          <script>document.getElementById('video1').play();</script>
-         <source src="./video/flower.mp4" type="video/mp4">
+         <source src="./3rdparty/video/flower.mp4" type="video/mp4">
       </video><br/>
       <!-- crossorigin="anonymous" -->
       Basic Letter F Texture:<br/><img id="imgBasic" src="./objFile/f-texture.png" /><br/>

@@ -26,12 +26,12 @@ let canvas = document.currentScript.parentElement;
 
 async function main()
 {
-   let objtext = await makeOffscreenText ("./lib/js/3rdparty/obj/chair.obj");
+   let objtext = await makeOffscreenText ("./3rdparty/3dobj/chair.obj");
    let  objfile = new OBJFile(objtext);
    let  obj = objfile.result;
 
    //TODO: 3D-Trebujeni.obj is not 3rdparty, it is 1stparty owned by author (IF)
-   let trebujeniText = await makeOffscreenText ("./lib/js/3rdparty/obj/3D-Trebujeni.obj");
+   let trebujeniText = await makeOffscreenText ("./lib/3dobj/3D-Trebujeni.obj");
    let trebujeniFile = new OBJFile(trebujeniText);
    let trebujeniObj = trebujeniFile.result;
    return;

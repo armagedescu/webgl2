@@ -44,9 +44,9 @@ class SimpleDrawIndexed extends GlVAObject
 function makeExperiments()
 {
    return;
-   loadVideo ("./video/flower.mp4").then((vd) => {document.body.appendChild(vd)});
+   loadVideo ("./3rdparty/video/flower.mp4").then((vd) => {document.body.appendChild(vd)});
    loadVideo ("https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4").then(vd => {document.body.appendChild(vd)})
-   let vd = makeVideo ("./video/flower.mp4");
+   let vd = makeVideo ("./3rdparty/video/flower.mp4");
    vd.height = 90;
    vd.width = 160;
    document.body.appendChild(vd);
@@ -59,7 +59,7 @@ let func = async () =>
    let simpleDrawIndexed = new SimpleDrawIndexed (canvas);
    let gl = simpleDrawIndexed.gl;
 
-   //let texture = new GlVideoTexture2D (gl, loadVideo ("./video/flower.mp4"));
+   //let texture = new GlVideoTexture2D (gl, loadVideo ("./3rdparty/video/flower.mp4"));
    let texture = new GlVideoTexture2D (gl, loadCamera ());
    texture.ready().then ((tex) =>
    {

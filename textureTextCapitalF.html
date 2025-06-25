@@ -3,8 +3,9 @@
    <title>Render To Texture</title>
    <link rel="stylesheet" href="./lib/css/default.css">
 
-   <script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-   <script src="./lib/js/3rdparty/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+   <script src="./3rdparty/twgl/js/twgl-full.v6.1.0.js"></script> <!-- copied from https://twgljs.org/dist/6.x/twgl-full.js, copyright included -->
+   <!-- script src="./3rdparty/twgl/js/twgl-full.v6.1.0.module.js"></script --> <!-- copied from https://twgljs.org/dist/6.x/twgl-full.module.js, copyright included -->
+   <script src="./3rdparty/twgl/js/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
    <script src="./lib/js/gl2js/glcanvas.js"></script>
    <script src="./lib/js/general/api.js"></script>
    <script src="./lib/js/math/3dmath.js"></script>
@@ -68,13 +69,13 @@
          </script>
          <script src="./textureTextCapitalF/textureFText.js"></script>
       </canvas>
-   </div>
+   </div><br/>
    <div class="sample">
       TWGL Sample<br/>
       This draws big capital F and text texture on a corner of each F<br/>
       TODO: texture does not work<br/>
-      <canvas id="canvas" class="green" width = "300" height = "300" >
-         <!-- This draws big capital F -->
+      <!-- canvas id="canvas" class="green" width = "300" height = "300" >
+         < !-- This draws big capital F -- >
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
       
@@ -102,7 +103,7 @@
             }
          </script>
       
-         <!-- This draws text texture on a corner of each F, positioned by u_matrix -->
+         < !-- This draws text texture on a corner of each F, positioned by u_matrix -- >
          <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
             #version 300 es
             in vec4 a_position;
@@ -127,12 +128,12 @@
             }
          </script>
          <script src="./textureTextCapitalF/capitalFText.twgl.js"></script>
-      </canvas>
-   </div>
+      </canvas  -->
+   </div><br/>
    <div class="sample">
       TWGL Sample Stripped Of Textures<br/>
       This draws big capital F, stripped of text textures<br/>
-      <canvas class="green" width = "300" height = "300" >
+      <!-- canvas class="green" width = "300" height = "300" >
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
       
@@ -160,11 +161,12 @@
             }
          </script>
          <script src="./textureTextCapitalF/capitalF.strip.twgl.js"></script>
-      </canvas>
+      </canvas -->
    </div><br/>
    <div class="sample">
-      <canvas class="green" width = "300" height = "300" >
-         <!-- This draws big capital F -->
+      LIB Sample Stripped Of Textures, adaoted from TWGL<br/>
+      This draws big capital F, stripped of text textures<br/>
+      <!-- canvas class="green" width = "300" height = "300" >
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
       
@@ -192,13 +194,12 @@
             }
          </script>
          <script src="./textureTextCapitalF/capitalF.strip.js"></script>
-      </canvas>
-   </div>
+      </canvas -->
+   </div><br/>
    <div class="sample">
       TWGL Sample Stripped Of Capital F<br/>
       Direct draw of texture text<br/>
       <canvas class="green" width = "300" height = "300" >
-         <!-- This draws text texture on a corner of each F, positioned by u_matrix -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader"  data-gl-program="texture">
             #version 300 es
             in vec4 a_position;
