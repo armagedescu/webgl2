@@ -22,7 +22,7 @@ async function webWorker ()
          break;
       case "getArizona":
          //console.log("received getCanvas");
-         worker.postMessage(  {arizona: grabber.buildUrl ( "./objFile/craterArizona.png")}  );
+         worker.postMessage(  {arizona: grabber.buildUrl ( "./lib/heightmap/craterArizona.png")}  );
          break;
       }
    };

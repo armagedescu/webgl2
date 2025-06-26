@@ -48,7 +48,7 @@ let func = async () =>
    let simpleDrawIndexed = new SimpleDrawIndexed (canvas);
    let gl = simpleDrawIndexed.gl;
 
-   let texture = new GlTexture2D (gl, loadImg ("./textureVideo/f-texture.png"));
+   let texture = new GlTexture2D (gl, loadImg ("./3rdparty/texture/f-texture.png"));
    texture.ready().then ((tex) =>
    {
       console.log ("texture.ready().then ((tex)");

@@ -5,7 +5,7 @@
     <title>Video test page</title>
     <style>
       #c2 {
-        background-image: url(video/foo.png);
+        background-image: url(./3rdparty/video/foo.png);
         background-repeat: no-repeat;
       }
     </style>
@@ -20,8 +20,10 @@
         crossorigin="anonymous" />
     </div>
     <div>
-      <canvas id="c1" width="160" height="96"></canvas>
-      <canvas id="c2" width="160" height="96"></canvas>
+      <table>
+         <tr><td>#c1<br/><canvas id="c1" width="160" height="96"></canvas></td>
+         <td>#c1<br/><canvas id="c2" width="160" height="96"></canvas></td></tr>
+      </table>
     </div>
     <script src="./video_canvas/video-processor.js"></script>
     <a href="./tutorials.html">Tutorials</a>

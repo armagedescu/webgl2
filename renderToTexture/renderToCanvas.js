@@ -122,9 +122,9 @@ function addUIListeners (elm, controller)
 
 async function main()
 {
-   //new HeightMap ("HeightMapButuceni", "./renderToTexture/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
-   new HeightMap (canvas, "./renderToTexture/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
-   //new HeightMap ("HeightMapButuceni", "./renderToTexture/butuceni.png").ready().then ( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./lib/heightmap/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./lib/heightmap/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./lib/heightmap/butuceni.png").ready().then ( (v) =>  { heightMapDraw (v);} );
 }
 
 async function heightMapDraw (vao)

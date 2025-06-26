@@ -4,7 +4,7 @@
 let canvas = document.currentScript.parentElement;
 /*
 var image = new Image();
-mage.src = "./texture/f-texture.png";
+image.src = "./3rdparty/texture/f-texture.png";
 document.body.appendChild(image); //*/
 // create text html canvas (source for texture).
 let textCanvas = makeTextCanvas("Hello!", 100, 26); // this is lib function

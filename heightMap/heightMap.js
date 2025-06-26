@@ -159,7 +159,7 @@ function addUIListeners (elm, controller)
 
 async function main()
 {
-   new HeightMap (canvas, "./heightMap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
+   new HeightMap (canvas, "./lib/heightmap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
 }
 
 async function heightMapDraw (vao)

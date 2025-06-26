@@ -277,7 +277,7 @@ main();
 
 function main2()
 {
-//       makeExperiments();
+//   makeExperiments();
 
    let fVaObject = new FVaObject ("FSimpleObjectWidhTexture");
    let gl = fVaObject.gl;
@@ -285,7 +285,7 @@ function main2()
    let program = fVaObject.program;
    fVaObject.useProgram();
 
-   let texture = new GlImageTexture2D (gl, "./textureManual1combined2/f-texture.png");
+   let texture = new GlImageTexture2D (gl, "./3rdparty/texture/f-texture.png");
 
    let fieldOfViewRadians    = rad (60);
    let modelXRotationRadians = rad (0);
