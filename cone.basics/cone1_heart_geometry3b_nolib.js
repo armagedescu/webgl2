@@ -4,7 +4,8 @@ let canvas = document.currentScript.parentElement;
 //math functions
 function normv   (norm)   { let len = Math.hypot ( ... norm); return norm.map(a => a / len); }
 function mulv    (v,  f)  { return v.map  ( (a, i) => a * f[i] ); }
-//gl classes
+
+//copy of gl classes
 //GL Shader Compiler, used by GL Program Linker
 class CGlShader
 {
@@ -30,8 +31,6 @@ class CGlShader
       }
       throw "Unknown shader type: " + str;
    }
-   //TODO: not used isAsynk
-   isAsynk = false;
    #glType = null;
    constructor (gl, obj, type)
    {
@@ -44,7 +43,6 @@ class CGlShader
       else if (obj instanceof Element) this.#setScriptElement (obj);
       else if (obj instanceof WebGLShader) this.shader = obj;
    }
-
    //internal automatic full compile
    #compile ()
    {
@@ -78,7 +76,6 @@ class CGlShader
       let msg = gl.getShaderInfoLog (shader);
       console.log ("SHADER ERROR: " + msg);
    }
-
    get type () { return this.#glType; }
    set type (str)
    {
@@ -97,9 +94,8 @@ class CGlShader
       this.shader = null;
    }
 }
-
 //GL Shaders Compiler And Linker
-class GlProgram //extends CGlApi
+class GlProgram
 {
    #shaders = [];
    constructor (gl)
@@ -186,7 +182,6 @@ class CGlCanvas
       if (info.shader)
          this.programs.get (info.id).add (info.shader);
    }
-
    #extractElementCodes (elementVars)
    {
       if (!elementVars) return;
@@ -225,6 +220,7 @@ class CGlCanvas
    useProgram     (progName) { this.getGlProgram (progName).useProgram(); }            //defaults to
 }
 //end copy of classes
+
 
 function buildGeometryPolar (shape)
 {
