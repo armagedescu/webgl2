@@ -8,7 +8,7 @@
 <body>
    <div class="sample">
       <canvas id = "cone1 heart geometry 2" width = "400" height = "400"  class="yellow">
-         <script src="./cone4/cone1_heart_geometry3b.js"></script>
+         <script src="./cone.basics/cone1_heart_geometry3b.js"></script>
          <!--   Program default  -->
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec3 coordinates;
@@ -27,6 +27,35 @@
 
             const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
             const vec3 lightDirection  = normalize(vec3(1.0,  -1.0,  1.0));
+            void main()
+            {
+               gl_FragColor = vec4(greenColor.rgb * -dot(lightDirection, normalize(nm)), 1.0);
+            }
+         </script>
+
+      </canvas>
+   </div>
+   <div class="sample">
+      <canvas id = "cone1 heart geometry 2" width = "400" height = "400"  class="yellow">
+         <script src="./cone.basics/cone1_heart_geometry3b_nolib.js"></script>
+         <!--   Program default  -->
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
+             attribute vec3 coordinates;
+             attribute vec3 inputNormal;
+
+             varying vec3 nm;
+             void main()
+             {
+                gl_Position = gl_Position = vec4(coordinates, 1.0); //coordinates;
+                nm = inputNormal;
+             }
+         </script>
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec3 nm; //varying mediump
+
+            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
+            const vec3 lightDirection  = normalize(vec3(1.0,  -1.0,  1.0)); //right down far
             void main()
             {
                gl_FragColor = vec4(greenColor.rgb * -dot(lightDirection, normalize(nm)), 1.0);

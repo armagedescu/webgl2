@@ -1,7 +1,230 @@
 "use strict";
 {
 let canvas = document.currentScript.parentElement;
+//math functions
+function normv   (norm)   { let len = Math.hypot ( ... norm); return norm.map(a => a / len); }
+function mulv    (v,  f)  { return v.map  ( (a, i) => a * f[i] ); }
+//gl classes
+//GL Shader Compiler, used by GL Program Linker
+class CGlShader
+{
+   static shaderMap = new Map(
+   [
+      ["vertex-shader",                        "vertex-shader"],
+      ["x-vertex",                             "vertex-shader"],
+      ["x-shader/x-vertex",                    "vertex-shader"],
+      ["fragment-shader",                      "fragment-shader"],
+      ["x-fragment",                           "fragment-shader"],
+      ["x-shader/x-fragment",                  "fragment-shader"]
+   ]);
+   
+   static translateType (str, gl)
+   {
+      if (typeof(str) != 'string' && (str == gl.VERTEX_SHADER || str == gl.FRAGMENT_SHADER))
+         return str;
+      if (!CGlShader.shaderMap.has(str)) throw "Unknown shader type: " + str;
+      switch ( CGlShader.shaderMap.get(str) )
+      {
+      case "vertex-shader":       return gl.VERTEX_SHADER;
+      case "fragment-shader":     return gl.FRAGMENT_SHADER;
+      }
+      throw "Unknown shader type: " + str;
+   }
+   //TODO: not used isAsynk
+   isAsynk = false;
+   #glType = null;
+   constructor (gl, obj, type)
+   {
+      this.source = "";
+      this.gl     = gl;
+      this.shader = null;
+      if (type) this.type = type;
+      if (!obj) return;
+      if (typeof obj == "string") this.#setString (obj);
+      else if (obj instanceof Element) this.#setScriptElement (obj);
+      else if (obj instanceof WebGLShader) this.shader = obj;
+   }
 
+   //internal automatic full compile
+   #compile ()
+   {
+      this.shader = this.gl.createShader (this.#glType);
+      this.gl.shaderSource  (this.shader, this.source);
+      this.compileShader();
+   }
+   //private:
+   #setString (str) //type = go.VERTEX_SHADER/gl.VERTEX_SHADER
+   {
+      if (!str) {console.log ("no string for shader to compile"); return;}
+      this.source = str.trimStart ();
+      if (!this.type) return;
+      if (this.type.length <= 0) return;
+      this.#compile ();
+   }
+   #setScriptElement (obj)
+   {
+      this.script = obj;
+      let type = obj.dataset.glType; //same as getAttribute("data-gl-type");
+      if (type) { if (type.length > 0) this.type = type; }
+      let text = obj.innerText;
+      if (!text) text = "";
+      text = text.trimStart ();
+      this.#setString (text);
+   }
+   #showResult ()
+   {
+      let shader = this.shader, gl = this.gl;  //shortcuts
+      if (gl.getShaderParameter (shader, gl.COMPILE_STATUS)) return;
+      let msg = gl.getShaderInfoLog (shader);
+      console.log ("SHADER ERROR: " + msg);
+   }
+
+   get type () { return this.#glType; }
+   set type (str)
+   {
+      this.#glType = CGlShader.translateType (str, this.gl);
+   }
+   compileShader ()
+   {
+      this.gl.compileShader (this.shader);
+      this.#showResult ();
+   }
+   deleteShader ()
+   {
+      this.gl.deleteShader (this.shader);
+      this.#glType = null;
+      this.source = "";
+      this.shader = null;
+   }
+}
+
+//GL Shaders Compiler And Linker
+class GlProgram //extends CGlApi
+{
+   #shaders = [];
+   constructor (gl)
+   {
+      this.gl = gl;
+      this.program = this.gl.createProgram ();
+   }
+   add (shader, type)
+   {
+      if (!shader)
+      {
+         console.log("null shader");
+         return;
+      }
+      if (shader instanceof CGlShader)        this.#shaders.push (shader);
+      else if (shader instanceof WebGLShader) this.#shaders.push (new CGlShader (this.gl, shader));
+      else if (shader instanceof Element)     this.#shaders.push (new CGlShader (this.gl, shader, type));
+      else if (typeof shader == "string")     this.#shaders.push (new CGlShader (this.gl, shader, type));
+   }
+   #showResult ()
+   {
+      let program = this.program; //shortcut
+      let gl = this.gl;           //shortcut
+      if (gl.getProgramParameter (program, gl.LINK_STATUS)) return;
+      let msg = gl.getProgramInfoLog (program);
+      if (this.name)
+         console.log ("PROGRAM ERROR [" + this.name + "]: " + msg);
+      else
+         console.log ("CPROGRAM ERROR: " + msg);
+   }
+   linkProgram ()
+   {
+      let program = this.program;
+      let gl = this.gl; //shortcut
+      for (let shader of this.#shaders) gl.attachShader (program, shader.shader);
+      gl.linkProgram (program);
+      this.#showResult (program);
+      for (let shader of this.#shaders) shader.deleteShader ();
+   }
+   useProgram (){this.gl.useProgram (this.program);}
+}
+class CGlCanvas
+{
+   #glObj                = null;
+   #canvasObj            = null;
+   #defaultProgramName   = "___DEFAULT_PROGRAM___";
+   #programMap           = new Map();
+
+   constructor (canvasVar, elementVars)
+   {
+      this.#canvas = canvasVar;
+      this.#programMap.set (this.#defaultProgramName, new GlProgram (this.gl));
+      this.#extractShaderCodes ();
+      this.#extractElementCodes (elementVars);
+      
+      for (let program of this.programs)
+         program[1].linkProgram ();
+   }
+   #prepareElement (el)
+   {
+      if (typeof el == "string") el = document.getElementById (el);
+      if (!el.hasAttribute ("data-gl-type"))
+         if (el.hasAttribute ("type") && (el.getAttribute ("type") != "text/glsl-shader")  )
+         {
+            let type = CGlShader.translateType (el.getAttribute("type"), this.gl);
+            if (type) el.setAttribute ("data-gl-type", type);
+         }
+      if (el.hasAttribute ("data-gl-type")) return el;
+      return null;
+   }
+   #extractProgramInfo (el)
+   {
+      el = this.#prepareElement (el);
+      let programName = this.#defaultProgramName;
+      if (el.hasAttribute ("data-gl-program"))
+            programName = el.getAttribute ("data-gl-program");
+      return {id: programName, shader: new CGlShader (this.gl, el)};
+   }
+   #addScriptShader (el)
+   {
+      let info = this.#extractProgramInfo (el);
+      if (! this.programs.has (info.id) )
+         this.programs.set (info.id, new GlProgram (this.gl));
+      if (info.shader)
+         this.programs.get (info.id).add (info.shader);
+   }
+
+   #extractElementCodes (elementVars)
+   {
+      if (!elementVars) return;
+      for (let el of elementVars)
+         this.#addScriptShader (el);
+   }
+   #extractShaderCodes ()
+   {
+      const shaderElements = document.evaluate ("./script[@type='text/glsl-shader']", this.canvas);
+   
+      for (let el = shaderElements.iterateNext (); el; el = shaderElements.iterateNext ())
+         this.#addScriptShader (el);
+   
+   }
+   set #gl (glObj) {this.#glObj = glObj;}
+   set #canvas (canvasVar)
+   {
+      if (typeof canvasVar == "string")
+            this.#canvasObj = document.getElementById (canvasVar);
+      else if (typeof canvasVar == "object")
+            this.#canvasObj = canvasVar;
+      this.#gl = this.canvas.getContext ('webgl2');
+      this.gl.viewport (0, 0, this.canvas.width, this.canvas.height);
+   }
+   //publig getter private setter
+   get gl (){return this.#glObj;}
+   get canvas   () { return this.#canvasObj;  }
+   get programs () { return this.#programMap; }
+   //default context and default program
+
+   #ProgName (progName) {if (progName) return progName; return this.#defaultProgramName;}
+   get glProgram  () { return this.programs.get( this.#ProgName () ); }
+   get program    () { return this.glProgram.program; }
+   getGlProgram   (progName) { return this.programs.get (this.#ProgName (progName)); } //defaults to
+   getProgram     (progName) { return this.getGlProgram (progName).program; }          //defaults to
+   useProgram     (progName) { this.getGlProgram (progName).useProgram(); }            //defaults to
+}
+//end copy of classes
 
 function buildGeometryPolar (shape)
 {
@@ -154,7 +377,6 @@ function buildConePolar (shape)
    return cone;
 
 }
-
 function buildSquare (len, z)
 {
    return   [ len, -len, z,    len, len, z,   -len,   len, z, 
@@ -166,9 +388,9 @@ function buildNorms (nm)
    return [ ...nv,  ...nv,  ...nv,   ...nv,  ...nv,  ...nv ];
 }
 
-let func = () =>
+let func = async () =>
 {
-   let glCanvas = new GlCanvas(canvas);
+   let glCanvas = new CGlCanvas(canvas);
 
    let gl = glCanvas.gl;
    glCanvas.useProgram ();
@@ -179,8 +401,8 @@ let func = () =>
    gl.enable (gl.CULL_FACE);
    gl.clear  (gl.COLOR_BUFFER_BIT);
    //const extensions = gl.getSupportedExtensions();
-   //const ext = gl.getExtension("WEBGL_depth_texture");
-   gl.depthRange  (1.0,  0.0);
+   //const ext = gl.getExtension("WEBGL_depth_texture"); //Extension with limited support
+   //gl.depthRange  (1.0,  0.0); //Right handed system not supported
    //gl.depthRange  (0.0, -1.0);
 
    let hearth = {
