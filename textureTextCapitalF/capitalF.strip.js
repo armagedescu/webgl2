@@ -32,26 +32,12 @@ function main() {
    gl.bindBuffer (gl.ARRAY_BUFFER, capitalFColorBuffer);
    gl.bufferData (gl.ARRAY_BUFFER, fColors, gl.STATIC_DRAW);
 
-   /*
-   '{
-      "position":
-      {
-         "numComponents":2,
-         "data" : [-0.5, -0.5,   0.5, -0.5,   -0.5, 0.5,   0.5, 0.5]
-      },
-      "texcoord": [0, 0,   1, 0,   0, 1,   1, 1],
-      "normal"  : [0,0,1,0,0,1,0,0,1,0,0,1],
-      "indices" : [0, 1, 2,   2, 1, 3]}'
-   */
-
    let translation        =  [ 0, 30,  0];
    let scale              =  [ 1,  1,  1];
    let rotation           =  [rad (190), rad (0), rad (0)];
    let fieldOfViewRadians =  rad (60);
    let rotationSpeed      =  1.2;
 
- 
-   
    requestAnimationFrame(drawScene);
  
    let then = 0;
@@ -87,8 +73,6 @@ function main() {
       let up             = [0, 1, 0];
       let cameraMatrix   = m4.lookAt  (cameraPosition, target, up);
       let viewMatrix     = m4.inverse (cameraMatrix);
-  
-      let textPositions = [];
   
       let spread = 170;
 
