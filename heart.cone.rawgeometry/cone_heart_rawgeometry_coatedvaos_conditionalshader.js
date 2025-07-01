@@ -41,8 +41,7 @@ function buildSides (geometry, slices, sectors)
    }
    return sides;
 }
-function buildShape ()
-{}
+
 function buildCone(slices, sectors, revealInvisibles, snlen)
 {
    let nfi = 0;
@@ -190,7 +189,7 @@ let func = () =>
    gl.uniform1f(drawNorms, 0.0);
 
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
+   //gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
    gl.drawArrays(gl.LINE_STRIP, 0, ns * 3 + ns * 6 * (nh - 1));
 
    if (show_norms)

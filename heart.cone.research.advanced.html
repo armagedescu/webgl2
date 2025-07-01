@@ -8,46 +8,11 @@
 </head>
 <body>
    <div class="sample">
-      <br />
-      Cone TRIANGLES (grad), one program, one conditional<br />
-      Geometry<br/>
-      <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./heart.cone.4/cone1_heart_geometry3.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             uniform float isDrawNorms;
-
-             varying vec3 nm;            //varying mediump
-             varying float isNormsColor; //in place of flag
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-                isNormsColor = isDrawNorms;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            varying vec3 nm; //varying mediump
-
-            varying float isNormsColor;
-            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
-            void main()
-            {
-               if (isNormsColor < 0.5) gl_FragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
-               if (isNormsColor > 0.5) gl_FragColor = vec4(0.5 * (nm + vec3(1.0)), 1.0);
-            }
-         </script>
-      </canvas>
-   </div>
-   <br/>
-   <div class="sample">
+      Using Show Mesh WegGL Extenshion<br />
       Cone TRIANGLES (grad), two programs, no conditional<br />
       Geometry 2<br/>
       <canvas id = "cone1 heart geometry 2" width = "400" height = "400"  class="yellow">
-         <script src="./heart.cone.4/cone1_heart_geometry3a.js"></script>
+         <script src="./heart.cone.research.advanced/cone1_heart_geometry3a.js"></script>
          <!--   Program default  -->
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec3 coordinates;

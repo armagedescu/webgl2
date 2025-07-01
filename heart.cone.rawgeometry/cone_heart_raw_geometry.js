@@ -1,3 +1,4 @@
+"use strict";
 {
 let canvas = document.currentScript.parentElement;
 
@@ -33,7 +34,7 @@ function buildSides (geometry, slices, sectors)
       {
          let bs = geometry.base[i];
          let ns = geometry.norms[i];
-         sd = [s * bs[0] / slices, s * bs[1] / slices, h,   ns[0], ns[1], ns[2]]; //[coords.xyz  |  norms.xyz]
+         let sd = [s * bs[0] / slices, s * bs[1] / slices, h,   ns[0], ns[1], ns[2]]; //[coords.xyz  |  norms.xyz]
          sides[0][j][i]  = [sd[0],  sd[1], sd[2],    sd[3],  sd[4], sd[5]];
          sides[1][j][i2] = [sd[0], -sd[1], sd[2],    sd[3], -sd[4], sd[5]];
       }

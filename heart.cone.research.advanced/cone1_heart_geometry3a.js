@@ -2,7 +2,6 @@
 {
 let canvas = document.currentScript.parentElement;
 
-
 function buildGeometryPolar (shape)
 {
    let dfi = 2 * Math.PI / shape.sectors;
