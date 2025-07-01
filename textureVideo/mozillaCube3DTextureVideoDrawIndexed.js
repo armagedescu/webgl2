@@ -1,6 +1,8 @@
 import { initBuffers } from "../3rdparty/mozilla/js/init-buffers.js";
 import { drawScene }   from "../3rdparty/mozilla/js/draw-scene.js";
 
+{
+
 let cubeRotation = 0.0;
 let deltaTime = 0;
 // will set to true when video can be copied to texture
@@ -271,4 +273,5 @@ function setupVideo(url) {
   }
 
   return video;
+}
 }

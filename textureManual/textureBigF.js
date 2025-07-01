@@ -1,5 +1,5 @@
 "use strict";
-
+{
 class FVaObject extends GlVAObject
 {
    #vertices  = null;
@@ -88,7 +88,7 @@ function main()
 
    let a = x => x * x;
 
-   let fVaObject = new FVaObject ("FSimpleObjectWidhTexture");
+   let fVaObject = new FVaObject ("FSimpleObjectWidhTexture1");
    let gl = fVaObject.gl;
 
    let program = fVaObject.program;
@@ -153,3 +153,4 @@ function main()
 }
 
 main();
+}

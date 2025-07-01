@@ -10,64 +10,6 @@
    <script src="./lib/js/gl2js/glcanvas.js"></script>
 
    <div class="sample">
-      F: Adapted webglfundamentals sample<br/>
-      <canvas id="FSimpleObjectWidhTexture" width="200" height = "150">
-         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in  vec4 a_position; //a_texcoord
-            layout (location = 1) in  vec2 a_texcoord;
-            uniform mat4 u_matrix;
-            out vec2 v_texcoord;
-            void main()
-            {
-              gl_Position = u_matrix * a_position;
-              v_texcoord  = a_texcoord;
-            }
-         </script>
-         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            in vec2 v_texcoord; // Passed in from the vertex shader.
-            uniform sampler2D u_texture; // The texture.
-            out vec4 fragColor;
-
-            void main()
-            {
-               fragColor = texture (u_texture, v_texcoord);
-            }
-         </script>
-         <script src="./textureVideo/textureBigF.js"></script>
-      </canvas>
-   </div>
-   <div class="sample">
-      WebGL2 Texture with image<br/>
-      <canvas id="SimpleDrawTexture" width="200" height = "150">
-         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in  vec2 coordinates;
-            layout (location = 1) in  vec2 a_texcoord;
-            out vec2 v_texcoord;
-            void main()
-            {
-              v_texcoord  = a_texcoord;
-              gl_Position = vec4(coordinates, 0.0, 1.0);
-            }
-         </script>
-         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            in vec2 v_texcoord; // Passed in from the vertex shader.
-            uniform sampler2D u_texture; // The texture.
-            out vec4 fragColor;
-            void main()
-            {
-               fragColor = texture (u_texture, v_texcoord);
-            }
-         </script>
-         <script src="./textureVideo/textureSimpleBigFIndexed.js"></script>
-      </canvas>
-   </div><br/>
-   <div class="sample">
       WebGL2 Texture with video <br/> 
       <canvas id="videoDrawIndexedDrawTexture" width="200" height = "150">
          <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
@@ -96,7 +38,7 @@
       </canvas>
    </div>
    <div class="sample">
-      WebGL2 Texture with video <br/> 
+      WebGL2 Texture WebCam video <br/> 
       <canvas id="videoDrawIndexedDrawTexture" width="200" height = "150">
          <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
             #version 300 es
@@ -124,30 +66,18 @@
       </canvas>
    </div>
    <div class="sample">
-      Mozilla Cube3D video sample<br/>
+      Mozilla Cube3D flower mp4 video sample<br/>
       <canvas id="simpleVideoSample" width="200" height = "150">
          <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
               integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0h`VZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
               crossorigin="anonymous" defer=""></script -->
          <!-- copied from https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js copyright included -->
          <!-- copied from https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js copyright included -->
-	     <script src="./3rdparty/js/cdnjs.cloudflare.com_ajax_libs_gl-matrix_2.8.1_gl-matrix-min.js"></script>
+	      <script src="./3rdparty/js/cdnjs.cloudflare.com_ajax_libs_gl-matrix_2.8.1_gl-matrix-min.js"></script>
          <script src="./textureVideo/mozillaCube3DTextureVideoDrawIndexed.js"  type="module"></script>
       </canvas>
    </div><br/>
 
-   <!-- div>
-      Video elements<br/>
-      <video id="video"  height="90" width="160" src="./3rdparty/video/flower.mp4" autoplay muted loop  > </video>
-      <video id="video1" height="90" width="160" autoplay muted loop>
-         <script>document.getElementById('video1').play();</script>
-         <source src="./3rdparty/video/flower.mp4" type="video/mp4">
-      </video>
-   </div>
-   <br/ -->
-        <!-- crossorigin="anonymous" -->
-   base:<img id="imgBasic" src="./3rdparty/texture/f-texture.png" /><br/>
-   Tipova:<!-- img id="imgTipova" src="./lib/heightmap/tipova.png" --><br/>
    <a href="./tutorials.html">Tutorials</a>
 </body>
 </html>

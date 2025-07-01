@@ -1,6 +1,7 @@
 <html>
 <head>
-   <title>Texture Manual 2, data textures</title>
+   <title>Texture Manual, data textures</title>
+   <link rel="stylesheet" href="./lib/css/default.css">
    <!-- TODO: unused webgl-utils? Make it local if used -->
    <!-- TODO: unused m4 source review (copyright included) -->
    <!-- script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script -->
@@ -86,7 +87,7 @@
          </script>
          <script src="./textureManual/texture.strip.canv.js"></script>
       </canvas>
-   </div><br/>
+   </div>
    <div class="sample">
       Texture only from element (canvas/div/img)<br/>
       <canvas id="SquareCanvTextureMap" width = "200" height = "200">
@@ -140,6 +141,96 @@
             }
          </script>
          <script src="./textureManual/textureCapitalFImg.js"></script>
+      </canvas>
+   </div><br/>
+   
+   <div class="sample">
+      F: Adapted webglfundamentals sample<br/>
+      textureBigF.js<br/>
+      TODO: This is very similar to previous<br/>
+      <canvas id="FSimpleObjectWidhTexture1" width="200" height = "150">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in  vec4 a_position; //a_texcoord
+            layout (location = 1) in  vec2 a_texcoord;
+            uniform mat4 u_matrix;
+            out vec2 v_texcoord;
+            void main()
+            {
+              gl_Position = u_matrix * a_position;
+              v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            out vec4 fragColor;
+
+            void main()
+            {
+               fragColor = texture (u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManual/textureBigF.js"></script>
+      </canvas>
+   </div>
+   <div class="sample">
+      WebGL2 Texture with image<br/>
+      Big F Indexed<br/>
+      <canvas id="SimpleDrawTexture" width="200" height = "150">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in  vec2 coordinates;
+            layout (location = 1) in  vec2 a_texcoord;
+            out vec2 v_texcoord;
+            void main()
+            {
+              v_texcoord  = a_texcoord;
+              gl_Position = vec4(coordinates, 0.0, 1.0);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            out vec4 fragColor;
+            void main()
+            {
+               fragColor = texture (u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManual/textureSimpleBigFIndexed.js"></script>
+      </canvas>
+   </div><br/>
+   <div  class="sample">
+      TODO: Looks like simple draw texture
+      TODO: Unclear purpose. Not finished.<br/>
+      TODO: No consumer for this canvas: ID UShowTexture<br/>
+      TODO: copy/pasted F Shape (from twgl, webgl2fundamentals.org)<br/>
+      <canvas id="UShowTexture" width="400" height = "300">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            attribute vec4 a_position; //a_texcoord
+            attribute vec2 a_texcoord;
+            varying vec2 v_texcoord;
+            layout (location = 0) in  vec2 coordinates;
+            void main(void)
+            {
+               gl_Position = vec4(coordinates, 0.0, 1.0);
+               v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            void main()
+            {
+               gl_FragColor = texture2D(u_texture, v_texcoord);
+            }
+         </script>
       </canvas>
    </div><br/>
    <a href="./tutorials.html">Tutorials</a>
