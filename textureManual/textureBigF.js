@@ -1,5 +1,7 @@
 "use strict";
 {
+let canvas = document.currentScript.parentElement;
+
 class FVaObject extends GlVAObject
 {
    #vertices  = null;
@@ -86,25 +88,23 @@ class FVaObject extends GlVAObject
 function main()
 {
 
-   let a = x => x * x;
 
-   let fVaObject = new FVaObject ("FSimpleObjectWidhTexture1");
+
+   let fVaObject = new FVaObject (canvas);
    let gl = fVaObject.gl;
 
    let program = fVaObject.program;
    fVaObject.useProgram();
-
-
-   let fieldOfViewRadians    = rad (60);
-   let modelXRotationRadians = rad (0);
-   let modelYRotationRadians = rad (0);
-
 
    let texture = new GlTexture2D (gl, loadImg ("./3rdparty/texture/f-texture.png"));
    texture.ready().then ( () =>
    {
       requestAnimationFrame(drawScene);
    });
+
+   let fieldOfViewRadians    = rad (60);
+   let modelXRotationRadians = rad (0);
+   let modelYRotationRadians = rad (0);
 
    // Draw the scene.
    let then = 0;
@@ -152,5 +152,6 @@ function main()
    }
 }
 
-main();
+document.addEventListener("DOMContentLoaded", main);
+
 }

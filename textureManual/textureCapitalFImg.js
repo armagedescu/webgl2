@@ -117,9 +117,8 @@ class GlImageTexture2D
 
 async function main()
 {
-   //
-   
-   let a = x => x * x;
+
+
 
    let fVaObject = new FVaObject ("FSimpleObjectWidhTexture");
    let gl = fVaObject.gl;
@@ -132,7 +131,6 @@ async function main()
    let fieldOfViewRadians    = rad (60);
    let modelXRotationRadians = rad (0);
    let modelYRotationRadians = rad (0);
-
 
    requestAnimationFrame(drawScene);
 
@@ -182,8 +180,6 @@ async function main()
    }
 }
 
-
 document.addEventListener("DOMContentLoaded", main);
 
-//main();
 }

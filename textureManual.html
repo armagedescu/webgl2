@@ -148,7 +148,7 @@
       F: Adapted webglfundamentals sample<br/>
       textureBigF.js<br/>
       TODO: This is very similar to previous<br/>
-      <canvas id="FSimpleObjectWidhTexture1" width="200" height = "150">
+      <canvas width="200" height = "150">
          <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
             #version 300 es
             layout (location = 0) in  vec4 a_position; //a_texcoord
@@ -167,7 +167,6 @@
             in vec2 v_texcoord; // Passed in from the vertex shader.
             uniform sampler2D u_texture; // The texture.
             out vec4 fragColor;
-
             void main()
             {
                fragColor = texture (u_texture, v_texcoord);
@@ -204,35 +203,8 @@
          </script>
          <script src="./textureManual/textureSimpleBigFIndexed.js"></script>
       </canvas>
-   </div><br/>
-   <div  class="sample">
-      TODO: Looks like simple draw texture
-      TODO: Unclear purpose. Not finished.<br/>
-      TODO: No consumer for this canvas: ID UShowTexture<br/>
-      TODO: copy/pasted F Shape (from twgl, webgl2fundamentals.org)<br/>
-      <canvas id="UShowTexture" width="400" height = "300">
-         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
-            attribute vec4 a_position; //a_texcoord
-            attribute vec2 a_texcoord;
-            varying vec2 v_texcoord;
-            layout (location = 0) in  vec2 coordinates;
-            void main(void)
-            {
-               gl_Position = vec4(coordinates, 0.0, 1.0);
-               v_texcoord  = a_texcoord;
-            }
-         </script>
-         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            varying vec2 v_texcoord; // Passed in from the vertex shader.
-            uniform sampler2D u_texture; // The texture.
-            void main()
-            {
-               gl_FragColor = texture2D(u_texture, v_texcoord);
-            }
-         </script>
-      </canvas>
-   </div><br/>
+   </div>
+   <br/>
    <a href="./tutorials.html">Tutorials</a>
 
 

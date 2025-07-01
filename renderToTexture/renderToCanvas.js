@@ -1,5 +1,4 @@
 "use strict";
-
 {
 let canvas = document.currentScript.parentElement;
 class HeightMap extends GlVAObject
