@@ -2,7 +2,7 @@
 "use strict";
 let canvas = document.currentScript.parentElement;
 
-class Maual2TexVaObject extends GlVAObject
+class SquareTexVAO extends GlVAObject
 {
    //similar variant to full canvas cover rectangle
    //#texVerts            = new Float32Array([ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,         1.0, -1.0,   -1.0,  1.0,   -1.0, -1.0]);
@@ -84,9 +84,9 @@ class GlDataCanvTexture2D
 }
 function main()
 {
-   //As good as this when unspecified:   let vaObject = new Maual2TexVaObject (canvas);
+   //As good as this when unspecified:   let vaObject = new SquareTexVAO (canvas);
    let glCanvas = new GlCanvas(canvas);
-   let vaObject = new Maual2TexVaObject (glCanvas.getGlProgram("texture"));
+   let vaObject = new SquareTexVAO (glCanvas.getGlProgram("texture"));
 
    let gl = vaObject.gl;
 

@@ -2,7 +2,8 @@
 "use strict";
 let canvas = document.currentScript.parentElement;
 
-class Maual2TexVaObject extends GlVAObject
+//TODO: Add Cube To Library
+class CubeTexVAO extends GlVAObject
 {
    #vertices  = new Float32Array( //this is 3D
               [
@@ -145,7 +146,7 @@ class GlDataRGBTexture2D
 }
 function main()
 {
-   let vaObject = new Maual2TexVaObject (canvas); //, ["vertex-shader-3d", "fragment-shader-3d"]);
+   let vaObject = new CubeTexVAO (canvas); //, ["vertex-shader-3d", "fragment-shader-3d"]);
    let gl = vaObject.gl;
 
    let program = vaObject.program;

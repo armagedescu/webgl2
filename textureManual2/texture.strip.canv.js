@@ -3,7 +3,7 @@
 let canvas = document.currentScript.parentElement;
 //TODO: Make elevated lib for text texture creation
 
-class Maual2TexVaObject extends GlVAObject
+class SquareTexVAO extends GlVAObject
 {
    //similar variant to full canvas cover rectangle
    //#texVerts  = new Float32Array([ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,         1.0, -1.0,   -1.0,  1.0,   -1.0, -1.0]);
@@ -84,7 +84,7 @@ class GlDataCanvTexture2D
 }
 function main()
 {
-   let vaObject = new Maual2TexVaObject (canvas);
+   let vaObject = new SquareTexVAO (canvas);
    let gl = vaObject.gl;
 
    vaObject.useProgram();

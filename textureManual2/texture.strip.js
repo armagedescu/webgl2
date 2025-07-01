@@ -2,7 +2,7 @@
 "use strict";
 let canvas = document.currentScript.parentElement;
 
-class Maual2TexVaObject extends GlVAObject
+class SquareTexVAO extends GlVAObject
 {
    //similar variant to full canvas cover rectangle
    //#texVerts            = new Float32Array([ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,         1.0, -1.0,   -1.0,  1.0,   -1.0, -1.0]);
@@ -23,10 +23,10 @@ class Maual2TexVaObject extends GlVAObject
       const gl = this.gl;
       this.bindVertexArray();
 
-      this.vertex_buffer = this.arrayBuffer  (new Float32Array(this.#vertices));
+      this.vertex_buffer = this.arrayBuffer  (this.#vertices);
       this.coord         = this.vertex_buffer.attrib ("a_position",  2, gl.FLOAT);
 
-      this.tex_buffer    = this.arrayBuffer (new Float32Array(this.#texCoords));
+      this.tex_buffer    = this.arrayBuffer  (this.#texCoords);
       this.tex_coord     = this.tex_buffer.attrib  ("a_texcoord", 2, gl.FLOAT);
 
       this.textureLocation  = gl.getUniformLocation (this.program, "u_texture");
@@ -86,7 +86,7 @@ class GlDataRGBTexture2D
 }
 function main()
 {
-   let vaObject = new Maual2TexVaObject (canvas);
+   let vaObject = new SquareTexVAO (canvas);
    let gl = vaObject.gl;
 
    let program = vaObject.program;
