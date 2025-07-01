@@ -16,47 +16,6 @@
    <script src="./lib/js/gl2js/glcontroller.js"></script>
 
    <div class="sample">
-      Render to Canvas<br/>
-      <canvas id="CraterArizonaDirect" width="320" height = "240">
-         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in vec3 vert;
-            layout (location = 1) in vec3 norm;
-            layout (location = 2) in vec4 vertColor;
-               
-            out vec4 terrainColor;
-            out vec3 terrainNormal;
-            out vec3 lightDirection;
-            
-            uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
-            uniform mat4 view;       //moves world space objects around based on camera
-            uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
-            
-            void main()
-            {
-               gl_Position = projection * view * model * vec4(vert, 1.0);
-               terrainColor  = vertColor;
-               terrainNormal = norm;
-               lightDirection = vec3(0.f, -1., 0.);
-            }
-         </script>
-         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            in vec4 terrainColor;
-            in vec3 terrainNormal;
-            in vec3 lightDirection;
-            out vec4 fragColor;
-            void main()
-            {
-               float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
-               fragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
-            }
-         </script>
-	     <script src="./renderToTexture/renderToCanvas.js"></script>
-      </canvas>
-   </div>
-   <div class="sample">
       Render to Texture<br/>
       TODO: texture inversed, to investigate<br/>
       <canvas id="CraterArizonaToFramebuffer" width="320" height = "240">

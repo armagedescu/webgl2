@@ -63,7 +63,7 @@ class HeightMap extends GlVAObjectAsync
       let heightmap = this.heightmap;
 
       //const bottom = -0.7, maxheight = 0.2;
-      const bottom = -0.7, maxheight = 0.2/heightmap.maxh; //0.2;
+      const bottom = -0.7, maxheight = 0.2 / heightmap.maxh; //0.2;
 
       //const bottom = -0.7, maxheight = 1;
       const rfi = 2.0 / heightmap.height, rfj = 2.0 / heightmap.width;

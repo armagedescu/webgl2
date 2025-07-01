@@ -15,20 +15,16 @@ class HeightMap extends GlVAObject
       super (context);
       this.#htmap = readImgHeightMap  (src, crossOrigin);
    }
-
    async ready ()
    {
-      //console.log ("in ready");
       await this.#htmap.then ( (heightmap) =>
       {
-         //console.log ("this.#p.then()");
          this.heightmap = heightmap;
          this.buildGeometry ();
          this.init ();
       });
       return this;
    }
-
    init()
    {
       this.bindVertexArray();
@@ -46,8 +42,6 @@ class HeightMap extends GlVAObject
       this.viewLocation        = gl.getUniformLocation (this.program, "view");
       this.projectionLocation  = gl.getUniformLocation (this.program, "projection");
       this.vertColorLocation   = 2;
-      //this.vertColorLocation   = gl.getAttribLocation (this.program, "vertColor");
-      //console.log("color location: " + this.vertColorLocation);
    }
    set model      (mtx)  {this.gl.uniformMatrix4fv (this.modelLocation,      false,  mtx) ;}
    set view       (mtx)  {this.gl.uniformMatrix4fv (this.viewLocation,       false,  mtx) ;}
@@ -57,28 +51,8 @@ class HeightMap extends GlVAObject
    {
       let heightmap = this.heightmap;
 
-      //heightmap =
-      //   {
-      //      height:4,width:4,maxh:1.5,
-      //      data:
-      //      [
-      //         [0.5, 0.5, 0.5, 0.0],
-      //         [0.5, 1.5, 0.5, 0.0],
-      //         [0.5, 0.5, 0.5, 0.0],
-      //         [0.0, 0.0, 0.0, 0.0]
-      //         ///[]
-      //      ]
-      //   };
-      //heightmap =
-      //   {
-      //      height:50,width:50,
-      //      data: this.heightmap.data
-      //   };
-
-      //const bottom = -0.7, maxheight = 0.2;
       const bottom = -0.7, maxheight = 0.2/heightmap.maxh; //0.2;
 
-      //const bottom = -0.7, maxheight = 1;
       const rfi = 2.0 / heightmap.height, rfj = 2.0 / heightmap.width;
       let viter = 0;
 
@@ -98,18 +72,13 @@ class HeightMap extends GlVAObject
             nms = normv (nms);
 
             [x,  y,  z]   = resizev ([ x,  y,  z], [rfi, maxheight, rfj]); [x,  y,  z]  = offsetv([x,  y,  z],  [-1., bottom, -1.]);
-            //[x1, y1, z1]  = resizev ([x1, y1, z1], [rfi, maxheight, rfj]); [x1, y1, z1] = offsetv([x1, y1, z1], [-1., bottom, -1.]);
-            //[x2, y2, z2]  = resizev ([x2, y2, z2], [rfi, maxheight, rfj]); [x2, y2, z2] = offsetv([x2, y2, z2], [-1., bottom, -1.]);
-            //let nms   = [0, 1, 0]; //norm3nz(re1[0] - re0[0], re1[1] - re0[1], re1[2] - re0[2], re2[0] - re0[0], re2[1] - re0[1], re2[2] - re0[2], 2);
-            //let nms   = norm3nz(x2 - x, y2 - y, z2 - z, x1 - x, y1 - y, y1 - z, 2);
             [this.#vertices[viter], this.#vertices[viter + 1], this.#vertices[viter + 2]] = [x, y, z];
             [this.#norms   [viter], this.#norms   [viter + 1], this.#norms   [viter + 2]] = nms;
 
             viter += 3;
          }
       }
-      //console.log (this.#vertices);
-      //console.log (this.#norms);
+
       let iiter = 0;   //index iterator
       for (let j = 0; j < length - 1; j++)
       {
@@ -130,10 +99,6 @@ class HeightMap extends GlVAObject
       let gl = this.gl;
       this.color      = new Float32Array([1, 0, 0, 1]);
       gl.drawElements (gl.TRIANGLES, this.#indices.length, gl.UNSIGNED_INT, 0);
-      //this.color      = new Float32Array([0, 0, 0, 1]);
-      //for (let i = 0; i < this.#indices.length; i+= 3)
-      //   gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_INT, i * 4);
-      //gl.drawElements (gl.LINES, this.#indices.length, gl.UNSIGNED_INT, 0);
    }
 }
 
@@ -159,7 +124,9 @@ function addUIListeners (elm, controller)
 
 async function main()
 {
+   //new HeightMap ("HeightMapButuceni", "./lib/heightmap/craterArizona.png").ready().then ( (v) =>  { heightMapDraw (v);} );
    new HeightMap (canvas, "./lib/heightmap/craterArizona.png").ready().then( (v) =>  { heightMapDraw (v);} );
+   //new HeightMap ("HeightMapButuceni", "./lib/heightmap/butuceni.png").ready().then ( (v) =>  { heightMapDraw (v);} );
 }
 
 async function heightMapDraw (vao)
@@ -170,7 +137,6 @@ async function heightMapDraw (vao)
    addUIListeners (gl.canvas, controller);
 
    console.log(gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
-   vao.useProgram();
 
    let fieldOfViewRadians    = rad (60);
 
@@ -212,30 +178,9 @@ async function heightMapDraw (vao)
 
          projection = m4.identity();
 
-         vao.model      = controller.model.matrix; //model;                  //m4.identity();
-         vao.view       = controller.camera.matrix; //m4.identity();
+         vao.model      = controller.model.matrix;
+         vao.view       = controller.camera.matrix;
          vao.projection = projection;
-
-         //TODO: review this comment, looks like refactored from twgl example
-         //glm::mat4 model = glm::translate(glm::mat4(1.0), pos);
-         //model = glm::rotate(model, lastFrame, glm::vec3(0.0f, 1.0f, 0.0f));
-         //glm::mat4 view = camera.view();
-         //glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float)windowWidth / windowHeight, 0.1f, 100.0f);
-
-         //gl.clear (0.f, 0.f, 1.f, 1.0f);
-         //gl.clear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
-         //gl.enable(gl.GL_BLEND);
-         //gl.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-         
-         //set model      (mtx) {this.gl.uniformMatrix4fv(this.modelLocation,      false, mtx);}
-         //set view       (mtx) {this.gl.uniformMatrix4fv(this.viewLocation,       false, mtx);}
-         //set projection (mtx) {this.gl.uniformMatrix4fv(this.projectionLocation, false, mtx);}
-         //fVaObject.u_matrix  = matrix;
-         //fVaObject.u_texture = 0; //using texture
-         //
-         //fVaObject.draw();
-         //vao.bindVertexArray();
-
 
          vao.draw();
       }
