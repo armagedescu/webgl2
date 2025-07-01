@@ -1,7 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
 
-
 function buildGeometry (sectors, revealInvisible)
 {
    let dfi = 2 * Math.PI / sectors;
@@ -137,7 +136,7 @@ class HeartCoat extends GlVAObject
    init ()
    {
       this.bindVertexArray();
-	  let gl = this.gl;
+      let gl = this.gl;
 
       this.vertex_buffer = this.arrayBuffer(new Float32Array(this.coat.verts));
       this.coord = this.vertex_buffer.attrib ("coordinates", 3, gl.FLOAT);
@@ -158,9 +157,9 @@ class HeartSet extends GlCanvas
    constructor(context, nh, ns, revealInvisibles)
    {
       super(context);
-	  this.vaos = buildCone (nh, ns, revealInvisibles).map ((coat) => {return new HeartCoat(this, coat)});
+      this.vaos = buildCone (nh, ns, revealInvisibles).map ((coat) => {return new HeartCoat(this, coat)});
    }
-   draw(){for (let vao of this.vaos) vao.draw()}
+   draw() { for (let vao of this.vaos) {vao.draw();} }
 }
 let func = () =>
 {

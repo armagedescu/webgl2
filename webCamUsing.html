@@ -3,15 +3,17 @@
 </head>
 <body>
    <!-- canvas width="100" height="100"><video autoplay></video></canvas -->
-    <script src="./lib/js/general/api.js"></script>
+   <script src="./lib/js/general/api.js"></script>
 
    <!-- video autoplay></video-->
    <script>
-       loadCamera ().then(video => {
-              video.height = 180;
-            video.width = 320;
-            document.body.appendChild(video);
-           });
+      loadCamera ().then(video => {
+               video.height = 180;
+               video.width = 320;
+               document.body.appendChild(video);
+            });
+      ////the librarized function loadCamera is in ./lib/js/general/api.js
+      ////represents same as following code:
       //document.appendChild(video);
       //console.log ("salut");});
       //var onFailSoHard =  (e) => { console.log ('Camera rejected!', e); };

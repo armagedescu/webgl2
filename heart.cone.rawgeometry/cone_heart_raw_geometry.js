@@ -1,7 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
 
-
 function buildGeometry (sectors, revealInvisible)
 {
    let dfi = 2 * Math.PI / sectors;
@@ -41,8 +40,7 @@ function buildSides (geometry, slices, sectors)
    }
    return sides;
 }
-function buildShape ()
-{}
+
 function buildCone(slices, sectors, revealInvisibles)
 {
    let nfi = 0;
