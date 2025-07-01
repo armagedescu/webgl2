@@ -12,19 +12,15 @@
 </head>
 <body>
    <div class="sample">
-      This draws big capital F and text texture on a corner of each F<br/>
-      TODO: texture does not work<br/>
+      LIB: Capital F and text texture<br/>
       <canvas id="canvas" class="green" width = "300" height = "300" >
-         <!-- This draws big capital F -->
+         <!-- Capital F -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-      
             in vec4 a_position;
             in vec4 a_color;
-            
             uniform mat4 u_matrix;
             out vec4 v_color;
-      
             void main()
             {
                gl_Position = u_matrix * a_position;
@@ -42,8 +38,7 @@
                outColor = v_color;
             }
          </script>
-      
-         <!-- This draws text texture on a corner of each F, positioned by u_matrix -->
+         <!-- Text texture on a corner of each F -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
             #version 300 es
             in vec2 a_position;
@@ -69,13 +64,11 @@
          </script>
          <script src="./textureTextCapitalF/textureFText.js"></script>
       </canvas>
-   </div><br/>
+   </div>
    <div class="sample">
-      TWGL Sample<br/>
-      This draws big capital F and text texture on a corner of each F<br/>
-      TODO: texture does not work<br/>
-      <!-- canvas id="canvas" class="green" width = "300" height = "300" >
-         < !-- This draws big capital F -- >
+      TWGL: Capital F and text texture<br/>
+      <canvas id="canvas" class="green" width = "300" height = "300" >
+         <!-- This draws capital F, positioned by u_matrix -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
       
@@ -102,8 +95,7 @@
             outColor = v_color;
             }
          </script>
-      
-         < !-- This draws text texture on a corner of each F, positioned by u_matrix -- >
+         <!-- This draws text texture on a corner of each F, positioned by u_matrix -->
          <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
             #version 300 es
             in vec4 a_position;
@@ -128,54 +120,17 @@
             }
          </script>
          <script src="./textureTextCapitalF/capitalFText.twgl.js"></script>
-      </canvas  -->
+      </canvas>
    </div><br/>
    <div class="sample">
-      TWGL Sample Stripped Of Textures<br/>
-      This draws big capital F, stripped of text textures<br/>
-      <!-- canvas class="green" width = "300" height = "300" >
+      LIB: Capital F No Text<br/>
+      <canvas class="green" width = "300" height = "300" >
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-      
             in vec4 a_position;
             in vec4 a_color;
-            
             uniform mat4 u_matrix;
             out vec4 v_color;
-      
-            void main()
-            {
-               gl_Position = u_matrix * a_position;
-               v_color = a_color;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision highp float;
-            in vec4 v_color;
-            
-            out vec4 outColor;
-            void main()
-            {
-               outColor = v_color;
-            }
-         </script>
-         <script src="./textureTextCapitalF/capitalF.strip.twgl.js"></script>
-      </canvas -->
-   </div><br/>
-   <div class="sample">
-      LIB Sample Stripped Of Textures, adaoted from TWGL<br/>
-      This draws big capital F, stripped of text textures<br/>
-      <!-- canvas class="green" width = "300" height = "300" >
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-      
-            in vec4 a_position;
-            in vec4 a_color;
-            
-            uniform mat4 u_matrix;
-            out vec4 v_color;
-      
             void main()
             {
                gl_Position = u_matrix * a_position;
@@ -194,7 +149,35 @@
             }
          </script>
          <script src="./textureTextCapitalF/capitalF.strip.js"></script>
-      </canvas -->
+      </canvas>
+   </div>
+   <div class="sample">
+      TWGL: capital F, no text<br/>
+      <canvas class="green" width = "300" height = "300" >
+         <script type="text/glsl-shader" data-gl-type="vertex-shader">
+            #version 300 es
+            in vec4 a_position;
+            in vec4 a_color;
+            uniform mat4 u_matrix;
+            out vec4 v_color;
+            void main()
+            {
+               gl_Position = u_matrix * a_position;
+               v_color = a_color;
+            }
+         </script>
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision highp float;
+            in vec4 v_color;
+            out vec4 outColor;
+            void main()
+            {
+               outColor = v_color;
+            }
+         </script>
+         <script src="./textureTextCapitalF/capitalF.strip.twgl.js"></script>
+      </canvas>
    </div><br/>
    <div class="sample">
       TWGL Sample Stripped Of Capital F<br/>
@@ -256,7 +239,12 @@
          </script>
          <script src="./textureTextCapitalF/texture.strip.js"></script>
       </canvas>
-   </div>
+   </div><br/>
+   <div class="sample">
+      TODO: make it project style<br/>
+      TWGL Texture Sample, with 3D Letter F and 3D text<br/>
+      <canvas><script src="./textureTextCapitalF/textTextureManual.twgl.js"></script></canvas>
+   </div></br>
    <!--
    This sample uses TWGL (Tiny WebGL) to hide the clutter.
    Otherwise the sample would be full of code not related to the point of the sample.

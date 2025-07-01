@@ -1,5 +1,5 @@
 "use strict";
-
+{
 class FVaObject extends GlVAObject
 {
    #vertices  = null;
@@ -113,29 +113,11 @@ class GlImageTexture2D
    bindTexture(){this.gl.bindTexture(this.type, this.texture);}
 }
 
-async function makeExperiments()
-{
-   readImg ("./lib/heightmap/butuceni.png");
-   readImg ("./lib/heightmap/tipova.png");
-   readImg ("./3rdparty/texture/f-texture.png");
-   document.body.appendChild(document.createElement("br") );
-   document.body.appendChild(duplicateCanvas(makeImgCanvas("imgBasic")));    //Show a duplicate of invisible image canvas
-   document.body.appendChild(await makeCanvasFromImg ("./3rdparty/texture/f-texture.png"));
-   //makeCanvasFromImg ("../3rdparty/texture/f-texture.png").then( (canvas) => { document.body.appendChild(canvas);});
-   document.body.appendChild(document.createElement("br") );
-   document.body.appendChild(makeTextCanvas ("./3rdparty/texture/f-texture.png", 100, 26) ); //Show text canvas "texture/f-texture.png"
-   document.body.appendChild(document.createElement("br"));
-   document.body.appendChild(duplicateCanvas(makeTextCanvas ("hello", 100, 26))); //Show a duplicate of invisible text canvas
 
-   let img  = makeImg("./3rdparty/texture/f-texture.png");
-   document.body.appendChild(document.createElement("br"));
-   makeOffscreenFromImg ("./3rdparty/texture/f-texture.png").then ( (cnv) => {document.body.appendChild (duplicateCanvas (cnv));});
-   makeCanvasFromImg ("./3rdparty/texture/f-texture.png").then ( (cnv) => {document.body.appendChild (cnv);});
-}
 
-function main()
+async function main()
 {
-   makeExperiments();
+   //
    
    let a = x => x * x;
 
@@ -186,10 +168,10 @@ function main()
    
       let viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
       // Animate the rotation
-      modelXRotationRadians +=  -0.4 * deltaTime;
-      modelYRotationRadians +=  -0.7 * deltaTime;
+      modelXRotationRadians += -0.4 * deltaTime;
+      modelYRotationRadians += -0.7 * deltaTime;
       let matrix = m4.xRotate(viewProjectionMatrix, modelXRotationRadians);
-      matrix = m4.yRotate(matrix, modelYRotationRadians);
+      matrix     = m4.yRotate(matrix, modelYRotationRadians);
 
       fVaObject.u_matrix  = matrix;
       fVaObject.u_texture = 0; //using texture
@@ -200,4 +182,8 @@ function main()
    }
 }
 
-main();
+
+document.addEventListener("DOMContentLoaded", main);
+
+//main();
+}

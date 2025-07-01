@@ -74,7 +74,7 @@ function buildCone(slices, sectors, revealInvisibles)
                s11 = side [j-1][i]; s12 = side[j-1][i+1];
                s21 = side [j]  [i]; s22 = side[j]  [i+1];
             }
-			//if (j == 0){
+
             verts [i0] = s21[0];
             verts [i1] = s21[1];
             verts [i2] = s21[2];
@@ -96,10 +96,8 @@ function buildCone(slices, sectors, revealInvisibles)
             verts_norms[i1 + 6] = s11[4];	
             verts_norms[i2 + 6] = s11[5];
             i0 += 9; i1 += 9; i2 += 9;
-			//}
 
-            // because this is the tip of the cone
-            if (j == 0) continue;
+            if (j == 0) continue;  // because this is the tip of the cone
             //if(0){
             verts [i0] = s22[0];
             verts [i1] = s22[1];
