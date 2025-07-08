@@ -2,7 +2,7 @@
 let canvas = document.currentScript.parentElement;
 let func = () =>
 {
-   let glCanvas = new GlCanvas('draw');
+   let glCanvas = new GlCanvas(canvas);
    let gl = glCanvas.gl;
    glCanvas.useProgram ();
 
@@ -10,8 +10,10 @@ let func = () =>
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   let vertices = [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
-                    0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ];
+   let vertices  = [ 0.5, -0.5,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
+   ////to be changed to
+   //let vertices  = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
+   let indices   = [0, 1, 2, 0, 2, 3];
 
    // Create a new buffer object
    let vertex_buffer = gl.createBuffer();
@@ -22,8 +24,11 @@ let func = () =>
    gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0); //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
 
-   gl.drawArrays(gl.TRIANGLES, 0, 6);
-   // gl.POINTS gl.TRIANGLE_STRIP gl.LINE_STRIP gl.LINE_LOOP gl.TRIANGLE_FAN
+   let idxBuffer = gl.createBuffer();
+   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuffer);
+   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
+
+   gl.drawElements (gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 
 };
 document.addEventListener('DOMContentLoaded', func);

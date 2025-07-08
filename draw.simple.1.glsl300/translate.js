@@ -18,7 +18,7 @@ let func = () =>
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
+   let coord = gl.getAttribLocation (glCanvas.program, "coordinate");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
