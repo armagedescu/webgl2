@@ -11,8 +11,8 @@ let func = () =>
    const ns = 16, dr = 0.6; //number of sectors and radius
    for (let i = 0, ix = 3, iy = 4, iz = 5;   i <= ns;   i++, ix += 3, iy += 3, iz += 3)
    {
-      [verts [ix], verts [iy], verts [iz], norms [ix], norms [iy], norms [iz]] =
-             [... sect2coord (dr, i / ns), -1,     ...norm]; //z = -1, directed away from us
+      [verts [ix], verts [iy], verts [iz],  norms [ix], norms [iy], norms [iz]] =
+         [... sect2coord (dr, i / ns), -1,          ...norm]; //z = -1, directed away from us
    }
 
    //initialize buffers
