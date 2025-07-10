@@ -101,6 +101,7 @@ class HeightMap extends GlVAObject
    }
 }
 
+//TODO: add to lib
 class GlFrameBuffer
 {
    constructor(gl, width = 256, height = 256)
@@ -226,7 +227,7 @@ async function heightMapDraw (vao)
    let gl = vao.gl;
    let controller = new glcontroller ();
 
-   //addUIListeners (gl.canvas, controller);
+   addUIListeners (gl.canvas, controller);
 
    console.log(gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
    //vao.useProgram();

@@ -277,8 +277,6 @@ main();
 
 function main2()
 {
-//   makeExperiments();
-
    let fVaObject = new FVaObject ("FSimpleObjectWidhTexture");
    let gl = fVaObject.gl;
 
