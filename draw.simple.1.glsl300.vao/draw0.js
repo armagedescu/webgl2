@@ -3,16 +3,21 @@ let canvas = document.currentScript.parentElement;
 let func = () =>
 {
    let gl = canvas.getContext('webgl2');
-   const vertexShaderElement = document.evaluate("./script[@data-gl-type='vertex-shader']", canvas).iterateNext();
-   const fragmentShaderElement = document.evaluate("./script[@data-gl-type='fragment-shader']", canvas).iterateNext();
-   console.log (vertexShaderElement.innerText.trim());
-   console.log (fragmentShaderElement.innerText.trim());
+
+   //let resolver = () => "http://www.w3.org/XML/1998/namespace"; //sample of resolver
+   let selectSingleNode = (xpathStr, element, resolver) =>
+      document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+   let selectSingleNodeText = (xpathStr, element, resolver) =>
+      selectSingleNode (xpathStr, element, resolver).textContent;
+
+   console.log (selectSingleNodeText ("./script[@data-gl-type='vertex-shader']",   canvas).trim());
+   console.log (selectSingleNodeText ("./script[@data-gl-type='fragment-shader']", canvas).trim());
 
    let vertexShader   = gl.createShader (gl.VERTEX_SHADER);
-   gl.shaderSource  (vertexShader, vertexShaderElement.innerText.trim());
+   gl.shaderSource  (vertexShader, selectSingleNodeText ("./script[@data-gl-type='vertex-shader']", canvas).trim());
    gl.compileShader (vertexShader);
    let fragmentShader = gl.createShader (gl.FRAGMENT_SHADER);
-   gl.shaderSource  (fragmentShader, fragmentShaderElement.innerText.trim());
+   gl.shaderSource  (fragmentShader, selectSingleNodeText ("./script[@data-gl-type='fragment-shader']", canvas).trim());
    gl.compileShader (fragmentShader);
 
    let program = gl.createProgram ();

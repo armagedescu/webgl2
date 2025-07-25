@@ -13,15 +13,21 @@ function main() {
       {
          let baseXpath = `@type='text/glsl-shader' and @data-gl-type='${glType}'`;
          if (progname) baseXpath += ` and @data-gl-program='${progname}'`;
+         else baseXpath += " and not(@data-gl-program)";
          return `./script[${baseXpath}]`;
       };
-   let vertexShaderElement   = document.evaluate (getShaderXPath('vertex-shader'),   canvas).iterateNext();
-   let fragmentShaderElement = document.evaluate (getShaderXPath('fragment-shader'), canvas).iterateNext();
-   let fProgramInfo = twgl.createProgramInfo(gl, [vertexShaderElement.textContent.trim(), fragmentShaderElement.textContent.trim()]);
+   let selectSingleNode = (xpathStr, element, resolver) =>
+      document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+   let selectSingleNodeText = (xpathStr, element, resolver) =>
+      selectSingleNode (xpathStr, element, resolver).textContent;
 
-   vertexShaderElement   = document.evaluate (getShaderXPath('vertex-shader',   'texture'), canvas).iterateNext();
-   fragmentShaderElement = document.evaluate (getShaderXPath('fragment-shader', 'texture'), canvas).iterateNext();
-   let textProgramInfo = twgl.createProgramInfo(gl, [vertexShaderElement.textContent.trim(), fragmentShaderElement.textContent.trim()]);
+   let fProgramInfo = twgl.createProgramInfo(gl,
+      [selectSingleNodeText (getShaderXPath('vertex-shader'  ), canvas).trim(),
+       selectSingleNodeText (getShaderXPath('fragment-shader'), canvas).trim()]);
+
+   let textProgramInfo = twgl.createProgramInfo(gl,
+      [selectSingleNodeText (getShaderXPath('vertex-shader',   'texture'), canvas).trim(),
+       selectSingleNodeText (getShaderXPath('fragment-shader', 'texture'), canvas).trim()]);
 
    // Create data for 'F'
    var fBufferInfo = twgl.primitives.create3DFBufferInfo(gl);

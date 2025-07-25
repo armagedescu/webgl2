@@ -12,9 +12,21 @@ function main() {
    // normal to a_normal etc...
    twgl.setAttributePrefix("a_");
 
-   let vertexShaderElement   = document.evaluate ("./script[@type='text/glsl-shader' and @data-gl-type='vertex-shader']",   canvas).iterateNext();
-   let fragmentShaderElement = document.evaluate ("./script[@type='text/glsl-shader' and @data-gl-type='fragment-shader']", canvas).iterateNext();
-   let textProgramInfo = twgl.createProgramInfo(gl, [vertexShaderElement.textContent.trim(), fragmentShaderElement.textContent.trim()]);
+   let getShaderXPath = (glType, progname) => 
+      {
+         let baseXpath = `@type='text/glsl-shader' and @data-gl-type='${glType}'`;
+         if (progname) baseXpath += ` and @data-gl-program='${progname}'`;
+         else baseXpath += " and not(@data-gl-program)";
+         return `./script[${baseXpath}]`;
+      };
+   let selectSingleNode = (xpathStr, element, resolver) =>
+      document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+   let selectSingleNodeText = (xpathStr, element, resolver) =>
+      selectSingleNode (xpathStr, element, resolver).textContent;
+ 
+   let textProgramInfo = twgl.createProgramInfo(gl, 
+      [selectSingleNodeText (getShaderXPath('vertex-shader'  ), canvas).trim(),
+       selectSingleNodeText (getShaderXPath('fragment-shader'), canvas).trim()]);
 
    // Create a unit quad for the 'text'
    let textBufferInfo = twgl.primitives.createXYQuadBufferInfo(gl, 1);

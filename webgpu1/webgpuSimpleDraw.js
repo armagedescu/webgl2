@@ -21,8 +21,12 @@ let func = async () =>
         alphaMode :  "premultiplied",
       });
 
-   let shaderElement = document.evaluate ("./script[@type='text/wgsl-shader']", canvas).iterateNext();
-   const shaderModule = device.createShaderModule({code: shaderElement.textContent});
+   let selectSingleNode = (xpathStr, element, resolver) =>
+      document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+   let selectSingleNodeText = (xpathStr, element, resolver) =>
+      selectSingleNode (xpathStr, element, resolver).textContent;
+
+   const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
 
    let vertexBuffer;
    vertexBuffer = device.createBuffer({

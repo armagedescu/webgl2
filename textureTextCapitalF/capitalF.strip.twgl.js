@@ -9,11 +9,15 @@ function main()
    // tell twgl to match program to a_program and
    // normal to a_normal etc...
    twgl.setAttributePrefix("a_");
+   //let resolver = () => "http://www.w3.org/XML/1998/namespace"; //sample of resolver
+   let selectSingleNode = (xpathStr, element, resolver) =>
+      document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+   let selectSingleNodeText = (xpathStr, element, resolver) =>
+      selectSingleNode (xpathStr, element, resolver).textContent;
 
    // setup GLSL programs
-   let vertexShaderElement   = document.evaluate ("./script[@type='text/glsl-shader' and @data-gl-type='vertex-shader']",   canvas).iterateNext();
-   let fragmentShaderElement = document.evaluate ("./script[@type='text/glsl-shader' and @data-gl-type='fragment-shader']", canvas).iterateNext();
-   let fProgramInfo = twgl.createProgramInfo(gl, [vertexShaderElement.textContent.trim(), fragmentShaderElement.textContent.trim()]);
+   let fProgramInfo = twgl.createProgramInfo(gl, [ selectSingleNodeText ("./script[@data-gl-type='vertex-shader']",   canvas).trim(),
+                                                   selectSingleNodeText ("./script[@data-gl-type='fragment-shader']", canvas).trim()]);
    /* //fProgramInfo
    {
       program          : {},

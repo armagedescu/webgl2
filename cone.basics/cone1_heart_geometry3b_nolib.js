@@ -64,7 +64,7 @@ class CGlShader
       this.script = obj;
       let type = obj.dataset.glType; //same as getAttribute("data-gl-type");
       if (type) { if (type.length > 0) this.type = type; }
-      let text = obj.innerText;
+      let text = obj.textContent;
       if (!text) text = "";
       text = text.trimStart ();
       this.#setString (text);
