@@ -16,50 +16,9 @@
       </canvas>
    </div><br/>
    <div class="sample">
-      Simple draw:<br/>
-      <canvas id = "draw"  width = "120" height = "120" class="blue">
-         <script src="./draw.simple.1.glsl300.vao.auto/draw.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in vec2 coordinates; //layout (location = 10) in vec2 coordinates
-            void main(void)
-            {
-               gl_Position = vec4(coordinates, 0.0, 1.0);
-               //gl_PointSize = 10.0;\n' +
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 buzzColor;
-            void main(void)
-            {
-               buzzColor = vec4(0.0, 0.0, 0.0, 0.1);
-            }
-         </script>
-      </canvas>
-   </div>
-   <div class="sample">
       Translate:<br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
          <script src="./draw.simple.1.glsl300.vao.auto/translate.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            void main(void)
-            {
-               gl_Position = coordinates + vec4(0.5, 0.5, 0.0, 0.0);
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 fragColor;
-            void main(void)
-            {
-               fragColor = vec4(0.0, 1.0, 0.0, 1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="sample">
@@ -130,7 +89,8 @@
             precision mediump float;
             out vec4 fragColor;
 
-            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            //system is left handed
+            const vec3  lightDirection = normalize(vec3(-1.0, -1.0,  1.0)); // Direction -> to left down forward
             const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
 
             in vec3 nm;
