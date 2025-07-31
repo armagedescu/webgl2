@@ -7,16 +7,17 @@
    <script src="./lib/js/gl2js/gldynamic.js"></script>
 </head>
 <body>
+   Automatic Dynamic GLSL 300 Shader Handling. Migrated from  <a href="./draw.simple.1.glsl300.vao.html">WebGL2 GLSL 300</a><br/>
+   Older version available here <a href="./draw.simple.1.glsl300.html">WebGL</a><br/>
    A WebGPU variant <a href="./webgpu1.html">available</a><br/>
-   The WebGL with VAO migrated from <a href="./draw.simple.1.glsl300.html">WebGL</a><br/>
    <div class="sample">
-      Simple draw:<br/>
+      <b>Simple draw, migrated:</b><br/>
       <canvas id = "draw0"  width = "120" height = "120" class="blue">
          <script src="./draw.simple.1.glsl300.vao.auto/draw0.js"></script>
       </canvas>
    </div><br/>
    <div class="sample">
-      Translate:<br/>
+      <b>Translate, migrated:</b><br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
          <script src="./draw.simple.1.glsl300.vao.auto/translate.js"></script>
       </canvas>
@@ -70,65 +71,15 @@
       </canvas>
    </div>
    <div class="sample">
-      Normals:<br/>
+      <b>Normals, migrated:</b><br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/normals.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-            out vec3 nm;
-            void main()
-            {
-               gl_Position = coordinates;
-               nm = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 fragColor;
-
-            //system is left handed
-            const vec3  lightDirection = normalize(vec3(-1.0, -1.0,  1.0)); // Direction -> to left down forward
-            const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
-
-            in vec3 nm;
-            void main() 
-            {
-               float prod   =  -dot (lightDirection,   normalize(nm));
-               fragColor = vec4 (greenColor * prod,  1.0);
-            }
-         </script>
       </canvas>
    </div>
-
    <div class="sample">
-      Colors R+G:<br/>
+      <b>Colors R+G, migrated:</b><br/>
       <canvas id = "usecolors" width = "120" height = "120"  class="yellow">
           <script src="./draw.simple.1.glsl300.vao.auto/usecolors.js"></script>
-          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec4 forFragColor;
-            out lowp vec4 passcolor; //<-- varying = pass to frag shader
-            void main(void)
-            {
-               gl_Position = coordinates;
-               passcolor = forFragColor;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            //precision mediump float;
-            out mediump vec4 fragColor;
-            //precision mediump float; varying vec4 fragColor; <-- without lowp??
-            in lowp vec4 passcolor;
-            void main(void)
-            {
-               fragColor = passcolor;
-            }
-         </script>
       </canvas>
    </div><br/>
    <div class="sample">

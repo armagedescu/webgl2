@@ -6,6 +6,8 @@ let func = () =>
    let shape = new GlShapev1 (canvas).withVertices2d(
                      [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
                        0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ]);
+                     //.withConstColor ([0, 1, 0, 1]);
+   //shape.logStrategyShaders ("draw0");
 
    let gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
