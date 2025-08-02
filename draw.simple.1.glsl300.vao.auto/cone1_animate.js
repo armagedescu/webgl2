@@ -19,8 +19,6 @@ class Cone1Animate1 extends GlVAObject
    {
       this.#nh = nh;
       this.#ns = ns;
-      this.#verts    = [];
-      this.#norms    = [];
       let  dr = 0.6;
 
       for (let i = 0, ix = 0,iy = 1,iz = 2; i < this.#ns; i++, ix += 9,iy += 9,iz += 9)
@@ -59,7 +57,27 @@ class Cone1Animate1 extends GlVAObject
       gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
    }
 }
+function getCone (nhe, nse)
+{
+   let nh = nhe;
+   let ns = nse;
+   let verts = new Float32Array ();
+   let norms = new Float32Array ();
+   let dr = 0.6;
 
+   for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
+   {
+         verts[ix] = 0.0; //<-- tip of the cone ???
+         [verts[ix],     verts[iy],     verts[iz]]     = [0.0, 0.0, 0.7] ;//<-- tip of the cone, points to us
+         [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = [dr * Math.cos(2 * Math.PI * i     / ns),   dr * Math.sin(2 * Math.PI * i     / ns),  0] ;
+         [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = [dr * Math.cos(2 * Math.PI * (i+1) / ns),   dr * Math.sin(2 * Math.PI * (i+1) / ns),  0] ;
+
+         [norms[ix],     norms[iy],     norms[iz]]     = [0, 0, 0] ;//<-- tip of the cone, points to us
+         [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = [verts[ix + 3],   verts[iy + 3],  0.7] ;
+         [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = [verts[ix + 6],   verts[iy + 6],  0.7] ;
+   }
+   return {verts:verts, norms:norms};
+}
 let func = () =>
 {
    let cone1Animate1 = new Cone1Animate1(canvas);
