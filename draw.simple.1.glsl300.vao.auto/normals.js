@@ -10,7 +10,7 @@ let func = () =>
          .withNormals3d  (
                [ 1.0,  1.0, -1.0,   1.0, 1.0, -1.0,    1.0,  1.0, -1.0,
                  1.0,  0.0, -1.0,   1.0, 0.0, -1.0,    1.0,  0.0, -1.0  ]);
-   //shape.logStrategyShaders ("normals.js");
+   shape.logStrategyShaders ("normals.js");
    let gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
