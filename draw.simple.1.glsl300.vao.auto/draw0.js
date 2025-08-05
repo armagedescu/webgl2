@@ -3,6 +3,10 @@ let canvas = document.currentScript.parentElement;
 
 let func = () =>
 {
+   if (true)
+   {
+      if (false){}
+   }
    let shape = new GlShapev1 (canvas).withVertices2d(
                      [ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
                        0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ]);

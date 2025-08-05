@@ -15,7 +15,7 @@
       <canvas id = "draw0"  width = "120" height = "120" class="blue">
          <script src="./draw.simple.1.glsl300.vao.auto/draw0.js"></script>
       </canvas>
-   </div><br/>
+   </div>
    <div class="sample">
       <b>Translate, migrated:</b><br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
@@ -23,33 +23,21 @@
       </canvas>
    </div>
    <div class="sample">
-      <b>Translate animate 1,<br/> migrated</b>:<br/>
+      <b>Animate, 2 progs<br/> 1 prog Verts dynamic<br/> 1 prog 2 VAO<br/> migrated</b>:<br/>
       <canvas id = "animate"  width = "120" height = "120" class="cyan">
          <script src="./draw.simple.1.glsl300.vao.auto/animate.js"></script>
       </canvas>
    </div>
    <div class="sample">
-      <b>Translate animate 2, <br/> two vao (!!!), migrated:</b><br/>
-      <canvas id = "animate second instance" width = "120" height = "120" class="magenta">
-         <script src="./draw.simple.1.glsl300.vao.auto/animate2.js"></script>
-      </canvas>
-   </div>
-   <div class="sample">
-      <b>Normals, migrated:</b><br/>
+      <b>Normals + Colors,<br/> two programs, migrated:</b><br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao.auto/normals.js"></script>
-      </canvas>
-   </div>
-   <div class="sample">
-      <b>Colors R+G, migrated:</b><br/>
-      <canvas id = "usecolors" width = "120" height = "120"  class="yellow">
-          <script src="./draw.simple.1.glsl300.vao.auto/usecolors.js"></script>
+         <script src="./draw.simple.1.glsl300.vao.auto/normals_and_colors_2progs.js"></script>
       </canvas>
    </div><br/>
    <div class="sample">
       <br/>
       Cone TRIANGLE_FAN<br/>
-      (wrong)</br>
+      (wrong but corrected)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/triangle_fan.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
@@ -70,9 +58,11 @@
             in  vec3 nm;
 
             const vec3 green = vec3(0.0, 1.0, 0.0);
+            const vec3 lightDirection = vec3(0.0, 1.2, 0.0);
             void main() 
             {
-               fragColor = vec4(green, 1.0) * vec4(nm, 0.9);
+               float intensity = dot (lightDirection, nm);
+               fragColor = vec4(green  * intensity, 1.0);
             }
          </script>
       </canvas>
