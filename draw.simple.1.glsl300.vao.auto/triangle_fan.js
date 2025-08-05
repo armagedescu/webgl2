@@ -54,11 +54,11 @@ function initGeometry(nh = 1, ns = 16, dr = 0.6, type = Float32Array)
 
 let func = () =>
 {
-   //let geometry = initGeometry();
-   //let shape = new GlShapev1 (canvas)
-   //         .withVertices3d (geometry.verts)
-   //         .withConstColor ([ 0.0,  1.0,  0.0,  0.1])
-   //         .withConstLightDireciton ([0.0, 1.2, 0.0, 1.0]);
+   let geometry = initGeometry();
+   let shape = new GlShapev1 (canvas)
+            .withVertices3d (geometry.verts)
+            .withConstColor ([ 0.0,  1.0,  0.0,  0.1])
+            .withConstLightDireciton ([0.0, 1.2, 0.0, 1.0]);
    //shape.logStrategyShaders ("triangle_fan.js");
    //let gl = shape.gl;
    //gl.clearColor(0.5, 0.5, 0.5, 0.9);
