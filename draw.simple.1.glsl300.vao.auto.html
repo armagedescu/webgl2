@@ -36,35 +36,10 @@
    </div><br/>
    <div class="sample">
       <br/>
-      Cone TRIANGLE_FAN<br/>
-      (wrong but corrected)</br>
+      <b>Cone TRIANGLE_FAN<br/>
+      (wrong but correct)</br>migrated<br/></b>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/triangle_fan.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-            out vec3 nm;
-            void main()
-            {
-               gl_Position = coordinates;
-               nm = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 fragColor;
-            in  vec3 nm;
-
-            const vec3 green = vec3(0.0, 1.0, 0.0);
-            const vec3 lightDirection = vec3(0.0, 1.2, 0.0);
-            void main() 
-            {
-               float intensity = -dot (lightDirection, normalize(nm));
-               fragColor = vec4(green  * intensity, 1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="sample">

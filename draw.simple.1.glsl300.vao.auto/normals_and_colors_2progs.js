@@ -8,8 +8,9 @@ let func = () =>
             [  0.0, 0.0, 0.0,   -1.0,  0.4,  2.0,    -0.5, -0.3,  2.0,
                0.0, 0.0, 0.0,    0.6, -0.3,  2.0,     0.4,  0.3, -0.0 ])
       .withNormals3d  (
-            [ 1.0,  1.0, -1.0,   1.0, 1.0, -1.0,    1.0,  1.0, -1.0,
-              1.0,  0.0, -1.0,   1.0, 0.0, -1.0,    1.0,  0.0, -1.0  ]);
+            [ 1.0,  1.0, -1.0,   1.0, 1.0, -1.0,     1.0,  1.0, -1.0,
+              1.0,  0.0, -1.0,   1.0, 0.0, -1.0,     1.0,  0.0, -1.0  ])
+      .withConstLightDireciton ([-0.0, 0.5, 1.0]);
 
    let shape2 = new GlShapev1 (canvas)
       .withVertices3d (
@@ -23,7 +24,7 @@ let func = () =>
                1.0, 0.0, 0.0,      1.0, 0.0, 0.0,      1.0, 0.0, 0.0,]);
    //shape2.logStrategyShaders("normals_and_colors_2progs.js shape2");
 
-   //shape.logStrategyShaders ("normals.js");
+   shape.logStrategyShaders ("normals.js");
    let gl = shape.gl;
    gl.clearColor (0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);
