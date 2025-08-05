@@ -57,12 +57,12 @@ class Cone1Animate1 extends GlVAObject
       gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
    }
 }
-function getCone (nhe, nse)
+function getCone (nhe, nse, type = Float32Array)
 {
    let nh = nhe;
    let ns = nse;
-   let verts = new Float32Array ();
-   let norms = new Float32Array ();
+   let verts = []; //new Float32Array ();
+   let norms = []; //new Float32Array ();
    let dr = 0.6;
 
    for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
@@ -76,7 +76,7 @@ function getCone (nhe, nse)
          [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = [verts[ix + 3],   verts[iy + 3],  0.7] ;
          [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = [verts[ix + 6],   verts[iy + 6],  0.7] ;
    }
-   return {verts:verts, norms:norms};
+   return {verts:new type(verts), norms:new type(norms)};
 }
 let func = () =>
 {

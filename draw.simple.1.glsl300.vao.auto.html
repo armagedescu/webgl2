@@ -61,7 +61,7 @@
             const vec3 lightDirection = vec3(0.0, 1.2, 0.0);
             void main() 
             {
-               float intensity = dot (lightDirection, nm);
+               float intensity = -dot (lightDirection, normalize(nm));
                fragColor = vec4(green  * intensity, 1.0);
             }
          </script>
