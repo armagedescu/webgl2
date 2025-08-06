@@ -45,27 +45,27 @@
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_animate.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
+            layout (location = 0) in vec3 vertex;
+            layout (location = 1) in vec3 normal;
 
-            out vec3 nm; //varying
+            out vec3 normalVary; //varying
             void main()
             {
-               gl_Position = coordinates;
-               nm  = inputNormal;
+               gl_Position = vec4(vertex, 1);
+               normalVary  = normal;
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
             precision mediump float;
             out vec4 fragColor;
-            uniform vec2  lightDirection; // Direction -> right up forward
-            const   vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            in vec3 nm;
+            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 1.0);
+            in vec3 normalVary;
+            uniform vec3  lightDirection; // Direction -> right up forward
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(lightDirection, 1.0)),   normalize(nm));
-               fragColor = vec4 (greenColor * prod,  1.0);
+               float prod   =  -dot ( normalize(lightDirection),   normalize(normalVary));
+               fragColor = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>
