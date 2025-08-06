@@ -40,34 +40,10 @@
       Cone TRIANGLES (correct), <br/>
       Normals simple, smooth gradient<br/>
       Tip normal set to 0,0,0<br/>
+      Migration in progress<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_animate.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-
-            out vec3 nm; //varying
-            void main()
-            {
-               gl_Position = coordinates;
-               nm  = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 fragColor;
-            uniform vec2  lightDirection; // Direction -> right up forward
-            const   vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            in vec3 nm;
-            void main()
-            {
-               float prod   =  -dot ( normalize(vec3(lightDirection, 1.0)),   normalize(nm));
-               fragColor = vec4 (greenColor * prod,  1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="sample">
@@ -81,29 +57,23 @@
             #version 300 es
             in vec4 coordinates;
             in vec3 inputNormal;
-            uniform vec2  lightDirection; // Direction -> changing
-
-            out vec2 ld;
             out vec3 nm;
             void main()
             {
                gl_Position = coordinates;
-               ld  = lightDirection;
                nm = inputNormal;
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
             precision mediump float;
-
             out vec4 fragColor;
-
+            uniform vec2  lightDirection; // Direction -> changing
             const vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            in vec2 ld;
             in vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(lightDirection, -1.0)),   normalize(nm));
                fragColor    = vec4 (greenColor * prod,  1.0);
             }
          </script>

@@ -22,7 +22,7 @@ let func = () =>
             .withVertices3d  (geometry.verts)
             .withNormals3d   (geometry.norms)
             .withConstColor  ([ 0.0,  1.0,  0.0,  0.1])
-            .withConstLightDireciton ([0.0, 1.2, 0.0]);
+            .withConstLightDireciton ([0.0, 1.2, 0.0], false);
    //shape.logStrategyShaders ("triangle_fan.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
