@@ -11,25 +11,19 @@
    Older version available here <a href="./draw.simple.1.glsl300.html">WebGL</a><br/>
    A WebGPU variant <a href="./webgpu1.html">available</a><br/>
    <div class="sample">
-      <b>Simple draw, migrated:</b><br/>
+      <b>Simple draw<br/>Translate<br/> migrated:</b><br/>
       <canvas id = "draw0"  width = "120" height = "120" class="blue">
          <script src="./draw.simple.1.glsl300.vao.auto/draw0.js"></script>
       </canvas>
    </div>
    <div class="sample">
-      <b>Translate, migrated:</b><br/>
-      <canvas id = "translate"  width = "120" height = "120" class="yellow" >
-         <script src="./draw.simple.1.glsl300.vao.auto/translate.js"></script>
-      </canvas>
-   </div>
-   <div class="sample">
-      <b>Animate, 2 progs<br/> 1 prog Verts dynamic<br/> 1 prog 2 VAO<br/> migrated</b>:<br/>
+      <b>Animate, 2 progs<br/> P1 Verts dynamic<br/> P2 2 VAOs static<br/> migrated</b>:<br/>
       <canvas id = "animate"  width = "120" height = "120" class="cyan">
          <script src="./draw.simple.1.glsl300.vao.auto/animate.js"></script>
       </canvas>
    </div>
    <div class="sample">
-      <b>Normals + Colors,<br/> two programs, migrated:</b><br/>
+      <b>Normals + Colors,<br/> 2 progs, migrated:</b><br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/normals_and_colors_2progs.js"></script>
       </canvas>
@@ -70,7 +64,7 @@
             in vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(lightDirection, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(lightDirection, 1.0)),   normalize(nm));
                fragColor = vec4 (greenColor * prod,  1.0);
             }
          </script>

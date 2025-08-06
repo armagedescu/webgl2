@@ -3,8 +3,10 @@ let canvas = document.currentScript.parentElement;
 
 let func = () =>
 {
+   //TODO: Effects research area
    let gl;
    //full triangle fan, only ns sectors, no nh slices
+   //with wrong normals, achive some glowing effect
    let geometry = function (ns = 16, dr = 0.6, type = Float32Array) 
       {
          let verts    = [0.8, 0.8, 0];
@@ -17,9 +19,9 @@ let func = () =>
          return {verts:new type(verts), norms:new type(norms)};
       } ();
    let shape = new GlShapev1 (canvas)
-            .withVertices3d (geometry.verts)
-            .withNormals3d  (geometry.norms)
-            .withConstColor ([ 0.0,  1.0,  0.0,  0.1])
+            .withVertices3d  (geometry.verts)
+            .withNormals3d   (geometry.norms)
+            .withConstColor  ([ 0.0,  1.0,  0.0,  0.1])
             .withConstLightDireciton ([0.0, 1.2, 0.0]);
    //shape.logStrategyShaders ("triangle_fan.js");
    gl = shape.gl;

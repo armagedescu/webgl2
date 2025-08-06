@@ -1,4 +1,5 @@
 {
+
 let canvas = document.currentScript.parentElement;
 
 class Cone1Geometry extends GlVAObject
