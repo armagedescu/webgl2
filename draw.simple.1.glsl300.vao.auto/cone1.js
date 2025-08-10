@@ -1,69 +1,45 @@
+"use strict";
 {
 let canvas = document.currentScript.parentElement;
 
-class Cone1 extends GlVAObject
+function getCone (nh = 1, ns = 20, type = Float32Array)
 {
-   #verts    = [];
-   #norms    = [];
-   #nh = null;
-   #ns = null;
-   #dt = 0;
-   constructor(context, nh = 1, ns = 20)
+   let verts    = [];
+   let norms    = [];
+   let  dr = 0.6;
+
+   for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
    {
-      super(context);
-      this.initGeometry(nh, ns);
-      this.init();
+      [verts[ix],     verts[iy],     verts[iz]]     = [0.0, 0.0, -0.7] ;//<-- tip of the cone, points to us
+      [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = [dr * Math.cos(2 * Math.PI * i / ns),       dr * Math.sin(2 * Math.PI * i / ns),      0] ;
+      [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = [dr * Math.cos(2 * Math.PI * (i+1) / ns),   dr * Math.sin(2 * Math.PI * (i+1) / ns),  0] ;
+
+      [norms[ix],     norms[iy],     norms[iz]]     = [verts[ix + 3],   verts[iy + 3],  -0.7] ;//<-- tip of the cone, points to us
+      [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = [verts[ix + 3],   verts[iy + 3],  -0.7] ;
+      [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = [verts[ix + 6],   verts[iy + 6],  -0.7] ;
    }
-   initGeometry(nh, ns)
-   {
-      this.#nh = nh;
-      this.#ns = ns;
-      this.#verts    = [];
-      this.#norms    = [];
-      let  dr = 0.6;
-
-      for (let i = 0, ix = 0,iy = 1,iz = 2; i < this.#ns; i++, ix += 9,iy += 9,iz += 9)
-      {
-         [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = [0.0, 0.0, 0.7] ;//<-- tip of the cone, points to us
-         [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = [dr * Math.cos(2 * Math.PI * i / this.#ns),       dr * Math.sin(2 * Math.PI * i / this.#ns),      0] ;
-         [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = [dr * Math.cos(2 * Math.PI * (i+1) / this.#ns),   dr * Math.sin(2 * Math.PI * (i+1) / this.#ns),  0] ;
-
-         [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = [this.#verts[ix + 3],   this.#verts[iy + 3],  0.7] ;//<-- tip of the cone, points to us
-         [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = [this.#verts[ix + 3],   this.#verts[iy + 3],  0.7] ;
-         [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = [this.#verts[ix + 6],   this.#verts[iy + 6],  0.7] ;
-      }
-
-   }
-   init ()
-   {
-      this.bindVertexArray();
-      let gl = this.gl;
-
-      this.vertex_buffer = this.arrayBuffer(new Float32Array(this.#verts));
-      this.coord = this.vertex_buffer.attrib ("coordinates",  3, gl.FLOAT);
-
-      this.norms_buffer  = this.arrayBuffer(new Float32Array(this.#norms));
-      this.noord = this.norms_buffer.attrib  ("inputNormal",  3, gl.FLOAT);
-
-   }
-   drawVao()
-   {
-      let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
-   }
+   return {verts:new type(verts), norms:new type(norms)};
 }
-
 let func = () =>
 {
-   let cone1 = new Cone1(canvas);
-   let gl = cone1.gl;
-   cone1.useProgram ();
-
+   let gl;
+   let geo = getCone(1, 20);
+   let shape = new GlShapev1 (canvas)
+      .withConstColor ([0.0, 1.0, 0.0, 1.0])
+      .withVertices3d (geo.verts)
+      .withNormals3d  (geo.norms)
+      .withConstLightDireciton ([-1.0,  -1.0,  1.0])
+      ;
+   //shape.logStrategyShaders ("cone1.js");
+   gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-   cone1.draw();
+   gl.enable (gl.DEPTH_TEST);
+   gl.clear  (gl.COLOR_BUFFER_BIT);
+   gl.clear  (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+   shape.drawTriangles ();
+
+   return;
 };
 document.addEventListener('DOMContentLoaded', func);
 }
