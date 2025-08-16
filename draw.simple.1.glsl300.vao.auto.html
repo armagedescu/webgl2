@@ -56,18 +56,18 @@
       </canvas>
    </div>
    <div class="sample">
-      </br>
-      Cone TRIANGLES (correct), </br>
+      <b>Cone TRIANGLES (correct), </br>
       Normals simple <br/>
+      Migrated</b><br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1.js"></script>
       </canvas>
    </div>
    <div class="sample">
-      Cone TRIANGLES (correct), </br>
+      <b>Cone TRIANGLES (correct), </br>
       Geometry <br/>
-      Migration in progress <br/>
-      To make left handed <br/>
+      Very good investigation<br/>
+      Migrated: to be merged</b><br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_geometry.js"></script>
       </canvas>
@@ -78,67 +78,13 @@
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_heart_geometry.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-
-            out mediump vec3 nm;
-            void main()
-            {
-               gl_Position = coordinates;
-               nm = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-
-            out vec4 fragColor;
-
-            const vec3  lightDirection = -normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-            in mediump vec3 nm;
-            void main() 
-            {
-              float prod   =  dot (lightDirection,   normalize(nm));
-              fragColor = vec4 (greenColor * prod,  1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="sample">
-      </br>
-      Cone TRIANGLES (grad), </br>
+      <b>Cone TRIANGLES (grad), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_heart_geometry2.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-            out mediump vec3 nm;
-            void main()
-            {
-               gl_Position = coordinates;
-               nm = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-
-            out vec4 fragColor;
-
-            in mediump vec3 nm;
-            
-            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
-            void main()
-            {
-               fragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="async">
@@ -147,32 +93,6 @@
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao.auto/cone1_heart_geometry2async.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in vec4 coordinates;
-            layout (location = 1) in vec3 inputNormal;
-            out mediump vec3 nm;
-            void main()
-            {
-               gl_Position = coordinates;
-               nm = inputNormal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-
-            out vec4 fragColor;
-
-            in mediump vec3 nm;
-            
-            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
-            void main()
-            {
-               fragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
-            }
-         </script>
       </canvas>
    </div>
    <br/>
