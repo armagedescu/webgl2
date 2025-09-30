@@ -82,12 +82,12 @@ async function init() {
          entryPoint: 'fragment_main',
          targets: [{ format: navigator.gpu.getPreferredCanvasFormat() }]
       },
-      primitive: { topology: 'triangle-list' },
+      primitive: { topology: 'triangle-list' }, //~glDrawArrays with TRIANGLES
       layout: 'auto'
    };
 
    // 6: Create the actual render pipeline // 
-   const renderPipeline = device.createRenderPipeline(pipelineDescriptor); // link shaders
+   const renderPipeline = device.createRenderPipeline(pipelineDescriptor); // ~link shaders
 
    // 7: Create GPUCommandEncoder to issue commands to the GPU
    // Note: render pass descriptor, command encoder, etc. are destroyed after use, fresh one needed for each frame.
@@ -104,6 +104,8 @@ async function init() {
       }]
    };
 
+   /////////     start of encoding commands for a frame    ///////////
+   //
    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     
    // 9: Draw the triangle
@@ -113,6 +115,8 @@ async function init() {
 
    // End the render pass
    passEncoder.end();
+   //
+   /////////     end of encoding commands for a frame    ///////////
 
    // 10: End frame by passing array of command buffers to command queue for execution
    device.queue.submit([commandEncoder.finish()]);

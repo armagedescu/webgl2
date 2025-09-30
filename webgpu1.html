@@ -8,6 +8,35 @@
    <script src="./lib/js/experiment/experiment.js"></script>
 </head>
 <body>
+   <pre>
+adapter = await navigator.gpu.requestAdapter();
+device       = await adapter.requestDevice();
+context      = canvas.getContext('webgpu');
+
+/////////// adapter
+// limited to WebGPU initialization
+/////////// end adapter
+
+/////////// context
+// initial configure
+// Render pass descriptor, where to render (!?): context.getCurrentTexture().createView()
+/////////// end context
+
+/////////// device 
+// compiles shaders, create/write buffers,  createBuffer/writeBuffer
+// create renderPipeline (~link program), 
+// create commandEncoder
+//// draw happens here
+//       renderPassDescriptor //structure for begin: like glClear/glEnable(?)
+//       passEncoder = commandEncoder.beginRenderPass renderPassDescriptor (starts here with above init structures) :const
+//           passEncoder.setPipeline     (renderPipeline);  // bind program?
+//           passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
+//           passEncoder.draw(3);
+//           passEncoder.end();
+//        commandEncoder.finish()
+// ends with device.queue.submit([commandEncoder.finish()]);
+/////////// end device
+   </pre>
    This WebGPU sample migrated from <a href="./draw.simple.1.glsl300.html">this WebGL</a><br/>
    Same WebGL <a href="./draw.simple.1.glsl300.html">using VAO</a><br/>
    <div class="sample">
@@ -29,9 +58,10 @@
       <canvas width="160" height="120">
          <script src="./webgpu1/webgpuMultipleBuffers.js" defer=""></script>
       </canvas>
-   </div>
+   </div><br/>
    <div class="sample">
       WebGPU triangle<br/>
+      Depth not enabled (?!)<br/>
       Try Classes:<br/>
       html/script shaders<br/>
       <canvas width="160" height="120">
@@ -57,9 +87,38 @@
             }
         </script>
       </canvas>
+   </div>
+   <div class="sample">
+      WebGPU triangle<br/>
+      Depth enabled (!!)<br/>
+      Try Classes2:<br/>
+      html/script shaders<br/>
+      <canvas width="160" height="120">
+        <script src="./webgpu1/webgpuTryClasses2.js" defer=""></script>
+        <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
+            {
+               @builtin(position) position : vec4f,
+               @location(0) color : vec4f
+            }
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) color: vec4f) -> VertexOut
+            {
+               var output : VertexOut;
+               output.position = position;
+               output.color    = color;
+               return output;
+            }
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               return fragData.color;
+            }
+        </script>
+      </canvas>
    </div><br/>
    <div class="sample">
-      Simple draw:<br/>
+      WebGPU Simple draw:<br/>
       <canvas width="120" height="120" class="blue">
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VertexOut
@@ -84,7 +143,7 @@
       </canvas>
    </div>
    <div class="sample">
-      Simple draw indexed:<br/>
+      WebGPU Simple indexed:<br/>
       <canvas id="simpleDrawIndexed"  width="120" height="120" class="blue">
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VertexOut
@@ -108,7 +167,7 @@
       </canvas>
    </div>
    <div class="sample">
-      Translate:<br/>
+      WebGPU Translate:<br/>
       <canvas id="translate"  width="120" height="120" class="yellow">
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VertexOut
@@ -119,7 +178,7 @@
             fn vertex_main(@location(0) position: vec4f) -> VertexOut
             {
                var ret : VertexOut;
-               ret.position = position + vec4f(0.5, 0.5, 0.0, 0.0);
+               ret.position = position + vec4f(0.5, 0.5, 0.0, 0.0); //hardcoded translation
                return ret;
             }
             @fragment
@@ -133,22 +192,8 @@
    </div><br/>
    <!-- Go big for screen snippets -->
    <div class="sample">
-      Translate animate 1:<br/>
+      WebGPU Translate animate 1:<br/>
       <canvas id = "animate"  width = "360" height = "360" class="cyan">
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinate;
-             uniform   vec4 translation;
-             void main(void)
-             {
-                gl_Position = coordinate + translation;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            void main(void)
-            {
-               gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.1);
-            }
-         </script>
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VSUniforms {
                translation: vec4f,

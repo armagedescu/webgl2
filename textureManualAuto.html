@@ -1,0 +1,212 @@
+<html>
+<head>
+   <title>Texture Manual, data textures</title>
+   <link rel="stylesheet" href="./lib/css/default.css">
+   <!-- TODO: unused webgl-utils? Make it local if used -->
+   <!-- TODO: unused m4 source review (copyright included) -->
+
+   <script src="./3rdparty/twgl/js/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+   <script src="./lib/js/general/api.js"></script>
+   <script src="./lib/js/math/3dmath.js"></script>
+   <script src="./lib/js/gl2js/glcanvas.js"></script>
+   <script src="./lib/js/gl2js/gldynamic.js"></script>
+</head>
+<body>
+   <div class="sample">
+      Cube with texture pixels<br/>
+      <canvas id="CubeBWTextureMap" width = "200" height = "200">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            attribute vec4 a_position;
+            attribute vec2 a_texcoord;
+            uniform mat4 u_matrix;
+            varying vec2 v_texcoord;
+            void main()
+            {
+               gl_Position = u_matrix * a_position;
+               v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec2 v_texcoord;
+            uniform sampler2D u_texture;
+            uniform sampler2D b_texture;
+            void main()
+            {
+               gl_FragColor = texture2D(u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/textureCube.js"></script>
+      </canvas>
+   </div>
+   <div class="sample">
+      Just texture<br/>
+      <canvas id="SquareBWTextureMap" width = "200" height = "200">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            attribute vec2 a_position;
+            attribute vec2 a_texcoord;
+            varying vec2 v_texcoord;
+            void main()
+            {
+               gl_Position = vec4(a_position, 0, 1);
+               v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec2 v_texcoord;
+            uniform sampler2D u_texture;
+            void main()
+            {
+               gl_FragColor = texture2D(u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/texture.strip.js"></script>
+      </canvas>
+   </div><br/>
+   <div class="sample">
+      Texture only, from pixels<br/>
+      <canvas id="SquareCanvTextureMap" width = "200" height = "200">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            attribute vec2 a_position;
+            attribute vec2 a_texcoord;
+            varying vec2 v_texcoord;
+            void main()
+            {
+               gl_Position = vec4(a_position, 0, 1); // Yet must be a vec4
+               v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec2 v_texcoord;
+            uniform sampler2D u_texture;
+            void main()
+            {
+               gl_FragColor = texture2D(u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/texture.strip.canv.js"></script>
+      </canvas>
+   </div>
+   <div class="sample">
+      Texture only from element (canvas/div/img)<br/>
+      <canvas id="SquareCanvTextureMap" width = "200" height = "200">
+         <script type="text/glsl-shader" data-gl-type="vertex-shader" data-gl-program="texture">
+            #version 300 es
+            in vec2 a_position;
+            in vec2 a_texcoord;
+            out vec2 v_texcoord;
+            void main()
+            {
+               gl_Position = vec4 (a_position, 0, 1); // Yet must be a vec4
+               v_texcoord = a_texcoord;
+            }
+         </script>
+         <script type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-program="texture">
+            #version 300 es
+            precision highp float;
+            in vec2 v_texcoord;
+            uniform sampler2D u_texture;
+            out vec4 outColor;
+            void main()
+            {
+               outColor = texture(u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/texture.strip.canv.glsl300.js"></script>
+      </canvas>
+   </div><br/>
+   <div class="sample">
+      Texture will work only under HTTP<br/>
+      <canvas id="FSimpleObjectWidhTexture" width="400" height = "300">
+         This will work only under HTTP.
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            attribute vec4 a_position;
+            attribute vec2 a_texcoord;
+            uniform mat4 u_matrix;
+            varying vec2 v_texcoord;
+            void main()
+            {
+               gl_Position = u_matrix * a_position;
+               v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            precision mediump float;
+            varying vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            void main()
+            {
+               gl_FragColor = texture2D(u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/textureCapitalFImg.js"></script>
+      </canvas>
+   </div><br/>
+   <div class="sample">
+      F: Adapted webglfundamentals sample<br/>
+      textureBigF.js<br/>
+      TODO: This is very similar to previous<br/>
+      <canvas width="200" height = "150">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in  vec4 a_position; //a_texcoord
+            layout (location = 1) in  vec2 a_texcoord;
+            uniform mat4 u_matrix;
+            out vec2 v_texcoord;
+            void main()
+            {
+              gl_Position = u_matrix * a_position;
+              v_texcoord  = a_texcoord;
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            out vec4 fragColor;
+            void main()
+            {
+               fragColor = texture (u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/textureBigF.js"></script>
+      </canvas>
+   </div>
+   <div class="sample">
+      WebGL2 Texture with image<br/>
+      Big F Indexed<br/>
+      <canvas id="SimpleDrawTexture" width="200" height = "150">
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in  vec2 coordinates;
+            layout (location = 1) in  vec2 a_texcoord;
+            out vec2 v_texcoord;
+            void main()
+            {
+              v_texcoord  = a_texcoord;
+              gl_Position = vec4(coordinates, 0.0, 1.0);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec2 v_texcoord; // Passed in from the vertex shader.
+            uniform sampler2D u_texture; // The texture.
+            out vec4 fragColor;
+            void main()
+            {
+               fragColor = texture (u_texture, v_texcoord);
+            }
+         </script>
+         <script src="./textureManualAuto/textureSimpleBigFIndexed.js"></script>
+      </canvas>
+   </div>
+   <br/>
+   <a href="./tutorials.html">Tutorials</a>
+
+
+</body>
+</html>

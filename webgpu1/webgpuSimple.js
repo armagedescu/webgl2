@@ -27,9 +27,13 @@ document.addEventListener('DOMContentLoaded', async () =>
             }
          ]
       };
-
+   /////////     start of encoding commands for a frame    ///////////
+   //
    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+   //any drawing commands here...
    passEncoder.end();
+   //
+   /////////     end of encoding commands for a frame    ///////////
 
    device.queue.submit([commandEncoder.finish()]);
 });

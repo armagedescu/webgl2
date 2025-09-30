@@ -37,28 +37,19 @@ let func = () =>
       ;
    //shape.logStrategyShaders ("cone1_animate.js");
    gl = shape.gl;
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable (gl.DEPTH_TEST);
-   gl.clear  (gl.COLOR_BUFFER_BIT);
-   gl.clear  (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-   shape.bind ();
-   shape.lightDirection3 ([1.0, 0.0, 1.0]);
-   shape.drawTriangles ();
 
    animate = (time) =>
    {
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
-      gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       shape.lightDirection3 ([Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]);
       shape.drawTriangles ();
       window.requestAnimationFrame(animate);
    }
    animate(0);
    return;
-
-
 };
+
 document.addEventListener('DOMContentLoaded', func);
 }
+      //gl.enable(gl.DEPTH_TEST);//gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

@@ -27,6 +27,7 @@ let func = async () =>
       selectSingleNode (xpathStr, element, resolver).textContent;
    const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
 
+
    let vertexBuffer = device.createBuffer({
       size:  vertices.byteLength, // malloc size
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
@@ -37,6 +38,8 @@ let func = async () =>
       usage: GPUBufferUsage.INDEX  | GPUBufferUsage.COPY_DST
    });
    device.queue.writeBuffer(indexBuffer, 0, indices);//, 0, indices.length);
+
+
    let vertexBuffers;
    vertexBuffers = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
