@@ -65,7 +65,7 @@ async function gpumain (gpuCanvas)
          topology: 'triangle-list'
       },
       layout: 'auto',
-            depthStencil: {
+      depthStencil: {
          depthWriteEnabled: true,
          depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
          //depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0

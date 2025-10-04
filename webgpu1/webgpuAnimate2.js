@@ -1,8 +1,9 @@
 {
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let vertices   = new Float32Array ([ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,     //lower triangle
-                                     0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ]); //upper triangle
+let vertices   = new Float32Array ([ 0.0, 0.0, 0.0,  -1.0, 0.4, 1.0,   -0.5, -0.6,  1.0,     //lower triangle
+                                     0.0, 0.0, 0.0,   0.4, 0.4, 1.0,   -0.4,  0.5, -0.0  ]); //upper triangle
+
 
 let gpumain = async () =>
 {
@@ -76,7 +77,7 @@ let gpumain = async () =>
    let animateMain = (time) =>
    {
       let fi = time * 0.005;
-      translation4f.set ([0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi), 0.0])
+      translation4f.set ([   0.5 *  Math.cos(fi),     0.5 *  Math.sin(fi),    0.5 + (0.5 *  Math.sin(fi) / 2),    0.0])
       device.queue.writeBuffer(vsUniformBuffer, 0, translation4f, 0, 4);
 
       ////this works without translation4f
@@ -107,4 +108,5 @@ let gpumain = async () =>
    window.requestAnimationFrame (animateMain);
 };
 document.addEventListener ('DOMContentLoaded', gpumain);
+
 }
