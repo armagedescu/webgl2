@@ -70,14 +70,15 @@ async function gpumain (gpuCanvas)
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
-         depthCompare: 'less',
+         //depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
+         depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
          format: 'depth24plus',
       },
    };
 
    // 6: Create the actual render pipeline
    const renderPipeline = device.createRenderPipeline(pipelineDescriptor);
-    
+
    // 7: Create GPUCommandEncoder to issue commands to the GPU
    // Note: render pass descriptor, command encoder, etc. are destroyed after use, fresh one needed for each frame.
    const commandEncoder = device.createCommandEncoder();
@@ -101,7 +102,7 @@ async function gpumain (gpuCanvas)
       depthStencilAttachment: { //this is deth stensil aware in renderPipeline:depthStencil
          label            : "Depth Attachment",
          view             : depthTexture.createView(),
-         depthClearValue  : 1.0,
+         depthClearValue  : 0.0,
          depthLoadOp      : 'clear',
          depthStoreOp     : 'store',
       },

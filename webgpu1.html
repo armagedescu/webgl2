@@ -48,6 +48,7 @@ context      = canvas.getContext('webgpu');
    </div>
    <div class="sample">
       WebGPU triangle 1:<br/>
+      Strided<br/>
       <canvas width="160" height="120">
          <script src="./webgpu1/webgpuBasic.js" defer=""></script>
       </canvas>
@@ -61,7 +62,7 @@ context      = canvas.getContext('webgpu');
    </div><br/>
    <div class="sample">
       WebGPU triangle<br/>
-      Depth not enabled (?!)<br/>
+      Depth: Direct Z<br/>
       Try Classes:<br/>
       html/script shaders<br/>
       <canvas width="160" height="120">
@@ -90,7 +91,7 @@ context      = canvas.getContext('webgpu');
    </div>
    <div class="sample">
       WebGPU triangle<br/>
-      Depth enabled (!!)<br/>
+      Depth: Inveted Z<br/>
       Try Classes2:<br/>
       html/script shaders<br/>
       <canvas width="160" height="120">
@@ -240,52 +241,58 @@ context      = canvas.getContext('webgpu');
       </canvas>
    </div></br>
    <div class="sample">
-      Normals:<br/>
+      WebGPU Normals:<br/>
+      Multiple Buffers<br/>
       <canvas id = "normals" width = "120" height = "120"  class="yellow">
          <script src="./webgpu1/normals.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-            attribute vec4 coordinates;
-            attribute vec3 inputNormal;
-            varying vec3 nm;
-            void main()
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               gl_Position = coordinates;
-               nm = inputNormal;
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
-            const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
-            varying vec3 nm;
-            void main()
+            @vertex
+            fn vertex_main(@location(0) position: vec3f, @location(1) normal: vec3f) -> VertexOut
             {
-               float prod   =  -dot (lightDirection,   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               var ret : VertexOut;
+               ret.position = vec4(position, 1.0);
+               ret.normal   = normal;
+               return ret;
+            }
+            const lightDirection = normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const greenColor     = vec3      (0.0,  1.0,  0.0);         // RGB of green
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let prod   =  -dot (lightDirection,   normalize(fragData.normal));
+               return vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
    </div>
    <div class="sample">
-      Colors R+G:<br/>
+      WebGPU: Colors R+G:<br/>
+      Strided<br/>
       <canvas id = "usecolors" width = "120" height = "120"  class="yellow">
           <script src="./webgpu1/usecolors.js"></script>
-          <script type="text/glsl-shader" data-gl-type="vertex-shader">
-            attribute vec4 coordinates;
-            attribute vec4  forFragColor;
-            varying lowp vec4 fragColor; //<-- varying = pass to frag shader
-            void main(void)
+          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               gl_Position = coordinates;
-               fragColor = forFragColor;
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        color    : vec4f,
             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            //precision mediump float; varying vec4 fragColor; <-- without lowp??
-            varying lowp vec4 fragColor;
-            void main(void)
+            @vertex
+            fn vertex_main(@location(0) position: vec3f, @location(1) color: vec4f) -> VertexOut
             {
-               gl_FragColor = fragColor;
+               var ret : VertexOut;
+               ret.position = vec4(position, 1.0);
+               ret.color    = color;
+               return ret;
+            }
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               return fragData.color;
             }
          </script>
       </canvas>
