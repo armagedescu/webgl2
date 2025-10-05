@@ -459,7 +459,7 @@ context      = canvas.getContext('webgpu');
       WebGPU:</br>
       Cone 1 geometry 1, </br>
       Smooth, </br>
-      Normals borow previous <br/>
+      Verts as normals<br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
          <script src="./webgpu1/webgpuCone1Geometry1.js"></script>
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
@@ -488,61 +488,63 @@ context      = canvas.getContext('webgpu');
       </canvas>
    </div>
    <div class="sample">
-      </br>
+      WebGPU</br>
       Cone 1 geometry 2, </br>
-      Geometry <br/>
+      cross normals<br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./webgpu1/cone1_geometry2.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-            attribute vec4 coordinates;
-            attribute vec3 inputNormal;
-            varying vec3 nm;
-            void main()
+         <script src="./webgpu1/webgpuCone1Geometry2.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               gl_Position = coordinates;
-               nm = inputNormal;
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-            varying vec3 nm;
-            void main()
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
             {
-               //find the cos of angle between plane normal and light direction
-               float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let prod = -dot (lightDirection,   normalize(fragData.normal));
+               return vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
    </div>
    <div class="sample">
-      </br>
-      Cone 1 geometry 3, </br>
-      Geometry <br/>
+      WebGPU</br>
+      Cone 1 geometry 3</br>
+      Geometry borrow normals<br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./webgpu1/cone1_geometry3.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-            varying vec3 nm;
-            void main()
+         <script src="./webgpu1/webgpuCone1Geometry3.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               //find the cos of angle between plane normal and light direction
-               float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
+            }
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let prod = -dot (lightDirection,   normalize(fragData.normal));
+               return vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
