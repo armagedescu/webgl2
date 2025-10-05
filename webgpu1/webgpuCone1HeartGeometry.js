@@ -72,9 +72,6 @@ function buildConeHearth (nh, ns, dr)
    return {verts:new Float32Array(verts), norms:new Float32Array(norms), topology: 'triangle-list' };
 }
 
-
-
-
 let gpumain = (gpuCanvas) =>
 {
    let   device = gpuCanvas.device; //DPUDevice

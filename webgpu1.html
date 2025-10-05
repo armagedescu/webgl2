@@ -575,35 +575,38 @@ context      = canvas.getContext('webgpu');
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
                let prod = -dot (lightDirection,   normalize(fragData.normal));
-               return vec4 (greenColor * prod,  1.0);
+               return vec4 (greenColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>
    </div>
    <div class="sample">
-      </br>
-      Cone TRIANGLES (grad), </br>
-      Geometry <br/>
+      WebGPU, face culling</br>
+      Hearth Cone Triangles, </br>
+      Geometry, gradient<br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./webgpu1/cone1_heart_geometry2.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             varying mediump vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            varying mediump vec3 nm;
-            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
-            void main()
+         <script src="./webgpu1/webgpuCone1HeartGeometry2.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               gl_FragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
+            }
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let prod = -dot (lightDirection,   normalize(fragData.normal));
+               return vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
