@@ -552,7 +552,7 @@ context      = canvas.getContext('webgpu');
    <div class="sample">
       WebGPU: face culling</br>
       Hearth Cone, </br>
-      Geometry (cross) <br/>
+      Geometry left (cross) <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
          <script src="./webgpu1/webgpuCone1HeartGeometry.js"></script>
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
@@ -569,13 +569,13 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
-            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
-            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const greenColor     =  vec4 (0.0,  1.0,  0.0, 1.0);              // RGBA of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, 1.0)); // Direction -> to left down forward
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               let prod = -dot (lightDirection,   normalize(fragData.normal));
-               return vec4 (greenColor.rgb * prod,  1.0);
+               let prod = -dot (normalize(fragData.normal), lightDirection  );
+               return vec4 (greenColor.rgb  * prod,  1.0);
             }
          </script>
       </canvas>
@@ -601,11 +601,11 @@ context      = canvas.getContext('webgpu');
                return ret;
             }
             const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
-            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, 1.0)); // Direction -> to left down forward z:lefthanded, points into deep
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               let prod = -dot (lightDirection,   normalize(fragData.normal));
+               let prod = -dot (normalize(fragData.normal), lightDirection);
                return vec4 (greenColor * prod,  1.0);
             }
          </script>

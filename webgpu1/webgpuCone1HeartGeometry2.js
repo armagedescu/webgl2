@@ -28,13 +28,13 @@ function buildConeHearth (nh, ns)
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- next radius
 
-         ps = [[0.0,                  0.0,                  (1.0)], //<--points in direction of us
-               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)],
-               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)]];
+         ps = [[0.0,                  0.0,                  -(0.0)], //<--0 points to us, z lefhanded
+               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(0 - D_H)],
+               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(0 - D_H)]];
 
          cr = [[0,   0,   0],
-               [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   1 + fi1],
-               [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   1 + fi2]];
+               [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   -(1 + fi1)],
+               [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   -(1 + fi2)]];
 
       } else
       {
@@ -48,13 +48,13 @@ function buildConeHearth (nh, ns)
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- radius
          
-         ps =     [[0.0,                  0.0,                  (1.0)], //<--points to us
-                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)],
-                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)]];
+         ps =     [[0.0,                  0.0,                  -(0.0)], //<--0 points to us, z lefhanded
+                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(0 - D_H)],
+                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(0 - D_H)]];
 
          cr = [[ 0,  0,  0],
-               [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), 1 + fi2],
-               [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), 1 + fi1]];
+               [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), -(1 + fi2)],
+               [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), -(1 + fi1)]];
       }
       [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
       [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
@@ -86,15 +86,15 @@ function buildConeHearth (nh, ns)
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1] []    [1]   [4]
-                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ] []    [ ]   [6]
-                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [3] []    [2]   [ ]
-                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [2] []    [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(0.0 - h1n)],  // <-- points [1] []    [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(0.0 - h1n)],  // <-- points [ ] []    [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(0.0 - h2n)],  // <-- points [3] []    [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(0.0 - h2n)]]; // <-- points [2] []    [3]   [5]
 
-            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                  ];
          } else
          {
@@ -111,15 +111,15 @@ function buildConeHearth (nh, ns)
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1]   [4]
-                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ]   [6]
-                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [2]   [ ]
-                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(0 - h1n)],  // <-- points [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(0 - h1n)],  // <-- points [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(0 - h2n)],  // <-- points [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(0 - h2n)]]; // <-- points [3]   [5]
 
-            cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+            cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                  ];
          }
 
@@ -143,7 +143,8 @@ function buildConeHearth (nh, ns)
 
       }
    }
-   return {verts:new Float32Array(verts), norms:new Float32Array(norms), topology: 'triangle-list' };
+   return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list', cullMode: 'back' } };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list' } };
 }
 
 
@@ -203,7 +204,7 @@ let gpumain = (gpuCanvas) =>
          }]
       },
       //primitive: {  topology: 'triangle-list' },
-      primitive: {  topology: geometry.topology, cullMode: 'back' },
+      primitive: geometry.gpu, //{  topology: geometry.topology, cullMode: 'back' },
       layout: 'auto'
    };
 
