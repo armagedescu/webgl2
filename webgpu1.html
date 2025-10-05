@@ -23,18 +23,20 @@ context      = canvas.getContext('webgpu');
 /////////// end context
 
 /////////// device 
-// compiles shaders, create/write buffers,  createBuffer/writeBuffer
+// compiles shaders, create/write buffers,  createBuffer/writeBuffer, uniformBuffers
 // create renderPipeline (~link program), 
-// create commandEncoder
-//// draw happens here
-//       renderPassDescriptor //structure for begin: like glClear/glEnable(?)
-//       passEncoder = commandEncoder.beginRenderPass renderPassDescriptor (starts here with above init structures) :const
-//           passEncoder.setPipeline     (renderPipeline);  // bind program?
-//           passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
-//           passEncoder.draw(3);
-//           passEncoder.end();
-//        commandEncoder.finish()
-// ends with device.queue.submit([commandEncoder.finish()]);
+//// draw happens here, can be also a loop, time dependent, animates etc
+//    +   renderPassDescriptor //structure for begin: like glClear/glEnable(?)
+//    |   update uniforms
+//    |   create commandEncoder // like glBegin //is destroyed after use, fresh one needed for each frame
+//    |   passEncoder = commandEncoder.beginRenderPass renderPassDescriptor (starts here with above init structures) :const
+//    |      passEncoder.setPipeline     (renderPipeline);  // bind program?
+//    |      passEncoder.setVertexBuffer (0/2/3..., vertexBuffer); // bind vao?
+//    |      passEncoder.setBindGroup    (0, bindGroup); //  bind uniforms
+//    |      passEncoder.draw(numvertices...);
+//    |      passEncoder.end();
+//    |   commandEncoder.finish()
+//    +   ends with device.queue.submit([commandEncoder.finish()]);
 /////////// end device
    </pre>
    This WebGPU sample migrated from <a href="./draw.simple.1.glsl300.html">this WebGL</a><br/>
@@ -194,7 +196,7 @@ context      = canvas.getContext('webgpu');
    <!-- Go big for screen snippets -->
    <div class="sample">
       WebGPU<br/>
-      webgl space doesn't concide<br/>
+      webgl space mess<br/>
       Translate animate 1:<br/>
       <canvas id = "animate"  width="120" height="120" class="cyan">
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
@@ -224,7 +226,7 @@ context      = canvas.getContext('webgpu');
    </div>
    <div class="sample" >
       WebGPU<br/>
-      webgl space adapted to webgpu<br/>
+      webgl to webgpu space<br/>
       Translate animate 2:<br/>
       <canvas id = "animate second instance" width="120" height="120" class="magenta">
           <script src="./webgpu1/webgpuAnimate2.js"></script>
@@ -250,20 +252,7 @@ context      = canvas.getContext('webgpu');
                return vec4f(0.0, 0.0, 0.0, 0.1);
             }
          </script>
-          <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             uniform   vec3 translation;
-             void main(void)
-             {
-                gl_Position = coordinates + vec4(translation, 0.0);
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            void main(void)
-            {
-               gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
-            }
-         </script>
+
       </canvas>
    </div>
    <div class="sample">
@@ -400,100 +389,100 @@ context      = canvas.getContext('webgpu');
       </canvas>
    </div><br/>
    <div class="sample">
-      Cone TRIANGLES (correct), <br/>
+      WebGPU: Cone TRIANGLES (correct), <br/>
       Normals simple, smooth gradient<br/>
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./webgpu1/cone1_animate.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             uniform vec2  lightDirection; // Direction -> right up forward
-             varying vec2 ld;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                ld  = lightDirection;
-                nm = inputNormal;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            //precision lowp float;
-            //precision highp float;
-            precision mediump float;
-            const vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            varying vec2 ld;
-            varying vec3 nm;
-            void main()
+         <script src="./webgpu1/webgpuCone1Animate.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f
+            }
+            struct VSUniforms { lightDirection: vec2f };
+            @group(0) @binding(0) var<uniform> vsUniforms: VSUniforms;
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let greenColor = vec3(0.0,  1.0,  0.0);
+               let prod      = -dot (normalize(vec3(vsUniforms.lightDirection, -1.0)), normalize(fragData.normal));
+               return vec4(greenColor * prod,  1.0);
             }
          </script>
       </canvas>
    </div>
    <div class="sample">
-      Cone TRIANGLES (correct), <br/>
-      Normals simple, no gradient, <br/>
+      WebGPU, Cone TRIANGLES (correct), <br/>
+      Normals simple cross prod<br/>
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./webgpu1/cone1_animate2.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             uniform vec2  lightDirection; // Direction -> changing
-             varying vec2 ld;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                ld  = lightDirection;
-                nm = inputNormal;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            const vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            varying vec2 ld;
-            varying vec3 nm;
-            void main()
+         <script src="./webgpu1/webgpuCone1Animate2.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
-               gl_FragColor =  vec4 (greenColor * prod,  1.0);
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
+            }
+            struct VSUniforms { lightDirection: vec2f };
+            @group(0) @binding(0) var<uniform> vsUniforms: VSUniforms;
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let greenColor = vec3(0.0,  1.0,  0.0);
+               let prod      = -dot (normalize(vec3(vsUniforms.lightDirection, -1.0)), normalize(fragData.normal));
+               return vec4(greenColor * prod,  1.0);
             }
          </script>
       </canvas>
    </div><br/>
    <br/>
    <div class="sample">
-      </br>
+      WebGPU:</br>
       Cone 1 geometry 1, </br>
       Smooth, </br>
       Normals borow previous <br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
-         <script src="./webgpu1/cone1_geometry1.js"></script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-             }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            precision mediump float;
-            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-            varying vec3 nm;
-            void main()
+         <script src="./webgpu1/webgpuCone1Geometry1.js"></script>
+         <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VertexOut
             {
-               float prod   =  -dot (lightDirection,   normalize(nm));
-               gl_FragColor =  vec4 (greenColor * prod,  1.0);
+               @builtin  (position) position : vec4f, //builtin cannot be changed
+               @location (0)        normal   : vec3f,
+            }
+            @vertex
+            fn vertex_main(@location(0) position: vec4f, @location(1) normal: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = position;
+               ret.normal   = normal;
+               return ret;
+            }
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            @fragment
+            fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+            {
+               let prod = -dot (lightDirection,   normalize(fragData.normal));
+               return vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
@@ -505,14 +494,14 @@ context      = canvas.getContext('webgpu');
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
          <script src="./webgpu1/cone1_geometry2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-             }
+            attribute vec4 coordinates;
+            attribute vec3 inputNormal;
+            varying vec3 nm;
+            void main()
+            {
+               gl_Position = coordinates;
+               nm = inputNormal;
+            }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;

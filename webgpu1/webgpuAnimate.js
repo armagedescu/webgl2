@@ -90,7 +90,8 @@ let gpumain = async () =>
             storeOp:     'store',
             view:        context.getCurrentTexture().createView()
          }]
-      };      const commandEncoder = device.createCommandEncoder();
+      };
+      const commandEncoder = device.createCommandEncoder();
       const passEncoder = commandEncoder.beginRenderPass (renderPassDescriptor);
 
       passEncoder.setPipeline     (renderPipeline); 
