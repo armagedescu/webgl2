@@ -11,7 +11,7 @@ function getCone (nh = 2, ns = 6, type = Float32Array)
 
    for (let i = 0,   [ix, iy, iz] = [0, 1, 2];    i < ns;    i++, [ix += 9,iy += 9,iz += 9])
    {
-      let ps = [[0.0,                                            0.0,                                          (-1.0)], //<--points in opposite from us direction
+      let ps = [[0.0,                                            0.0,                                          (-1.0)], //<--points to us, z is lefthanded
                 [(dr/nh) * Math.cos(2 * Math.PI *      i / ns ), (dr/nh) * Math.sin(2 * Math.PI *     i / ns), (-1 + 1/nh)],
                 [(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (-1 + 1/nh)]];
       let cr = cross3pl (ps[0], ps[1], ps[2]);
@@ -59,7 +59,7 @@ function getCone (nh = 2, ns = 6, type = Float32Array)
    }
    return {verts:new type(verts), norms:new type(norms)};
 }
-let func = () =>
+let webglmain = () =>
 {
    let gl;
    let geo = getCone(2, 20);
@@ -78,5 +78,5 @@ let func = () =>
 
    shape.drawTriangles ();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', webglmain);
 }

@@ -14,11 +14,11 @@ function buildCone (nh, ns, dr)
 
    for (let i = 0, [ix, iy, iz] = [0,  1,  2];    i < ns;      i++,  ix += 9,iy += 9,iz += 9)
    {
-      let ps = [[0.0,                                            0.0,                                          (1.0)], //<--points in direction of us
-                [(dr/nh) * Math.cos(2 * Math.PI *      i / ns ), (dr/nh) * Math.sin(2 * Math.PI *     i / ns), (1 - 1/nh)],
-                [(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)],
-                [(dr/nh) * Math.cos(2 * Math.PI *  (i+2) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), (1 - 1/nh)]];
-      let cr = [[0, 0, 0], cross3p (ps[0], ps[1], ps[2]), cross3p (ps[0], ps[2], ps[3])];
+      let ps = [[0.0,                                            0.0,                                          -(0.0)], //<--points in direction of us
+                [(dr/nh) * Math.cos(2 * Math.PI *      i / ns ), (dr/nh) * Math.sin(2 * Math.PI *     i / ns), -(0 - 1/nh)],
+                [(dr/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(0 - 1/nh)],
+                [(dr/nh) * Math.cos(2 * Math.PI *  (i+2) / ns ), (dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), -(0 - 1/nh)]];
+      let cr = [[0, 0, 0], cross3pl (ps[0], ps[1], ps[2]), cross3pl (ps[0], ps[2], ps[3])];
       [verts[ix],     verts[iy],     verts[iz]]     = ps[0]; //tip //3d point
       [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
       [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[2];
@@ -33,17 +33,17 @@ function buildCone (nh, ns, dr)
    {
       for (let i = 0;       i < ns;     i++,  ix += 9,iy += 9,iz += 9)
       {
-         let ps = [[     (h*dr/nh) * Math.cos(2 * Math.PI *     i/ns),     (h*dr/nh) * Math.sin(2 * Math.PI *     i / ns), 1 -     h*1/nh],  //[0] 1  4
-                   [     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 -     h*1/nh],  //[1]    6
-                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI *     i/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI *     i / ns), 1 - (h+1)*1/nh],  //[2] 2
-                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 - (h+1)*1/nh],  //[3] 3  5
+         let ps = [[     (h*dr/nh) * Math.cos(2 * Math.PI *     i/ns),     (h*dr/nh) * Math.sin(2 * Math.PI *     i / ns), -(0.0 -     h*1/nh)],  //[0] 1  4
+                   [     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(0.0 -     h*1/nh)],  //[1]    6
+                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI *     i/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI *     i / ns), -(0.0 - (h+1)*1/nh)],  //[2] 2
+                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(0.0 - (h+1)*1/nh)],  //[3] 3  5
 
-                 //[     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 -     h*1/nh],  //[1]    6
-                   [     (h*dr/nh) * Math.cos(2 * Math.PI * (i+2)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), 1 -     h*1/nh],  //[4] for cross product
-                 //[ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 - (h+1)*1/nh],  //[3] 3  5
-                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+2)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), 1 - (h+1)*1/nh]]; //[5] for cross product
+                 //[     (h*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(0.0 -     h*1/nh)],  //[1]    6
+                   [     (h*dr/nh) * Math.cos(2 * Math.PI * (i+2)/ns),     (h*dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), -(0.0 -     h*1/nh)],  //[4] for cross product
+                 //[ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(0.0 - (h+1)*1/nh)],  //[3] 3  5
+                   [ ((h+1)*dr/nh) * Math.cos(2 * Math.PI * (i+2)/ns), ((h+1)*dr/nh) * Math.sin(2 * Math.PI * (i+2) / ns), -(0.0 - (h+1)*1/nh)]]; //[5] for cross product
 
-         let cr = [cross3p (ps[0], ps[2], ps[3]), cross3p (ps[2], ps[3], ps[0]), cross3p (ps[5], ps[1], ps[3])];
+         let cr = [cross3pl (ps[0], ps[2], ps[3]), cross3pl (ps[2], ps[3], ps[0]), cross3pl (ps[5], ps[1], ps[3])];
 
          [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
          [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[2];
@@ -54,7 +54,7 @@ function buildCone (nh, ns, dr)
          [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr[sm1];
 
          ix += 9;iy += 9;iz += 9;
-         cr = [cross3p (ps[0], ps[3], ps[1]), cross3p (ps[1], ps[5], ps[4]), cross3p (ps[5], ps[4], ps[1])];
+         cr = [cross3pl (ps[0], ps[3], ps[1]), cross3pl (ps[1], ps[5], ps[4]), cross3pl (ps[5], ps[4], ps[1])];
 
          [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
          [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[3];
@@ -66,7 +66,8 @@ function buildCone (nh, ns, dr)
 
       }
    }
-   return {verts:new Float32Array(verts), norms:new Float32Array(norms), topology: 'triangle-list' };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list', cullMode: 'back' }};
+   return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list' }};
 }
 
 let gpumain = (gpuCanvas) =>
@@ -125,7 +126,7 @@ let gpumain = (gpuCanvas) =>
          }]
       },
       //primitive: {  topology: 'triangle-list' },
-      primitive: {  topology: geometry.topology },
+      primitive: geometry.gpu,
       layout: 'auto'
    };
 

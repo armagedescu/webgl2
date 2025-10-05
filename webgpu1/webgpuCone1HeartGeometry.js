@@ -15,7 +15,7 @@ function buildConeHearth (nh, ns, dr)
       let drd =  2 * (i + 1) * (1/ns); // <-- increase from 0 to 2 (PI)
       if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
       if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
-      let ps = [[0.0,                                             0.0,                                            0.0], //<--points in direction of us
+      let ps = [[0.0,                                             0.0,                                            0.0], //<--points in direction to us
                 [(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), (dr /nh) * Math.sin(2 * Math.PI *  i    / ns),  1.0 /nh],
                 [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns),  1.0 /nh],
                 [(drd/nh) * Math.cos(2 * Math.PI *  (i+2) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+2) / ns),  1.0 /nh]];

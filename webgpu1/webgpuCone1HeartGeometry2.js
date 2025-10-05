@@ -28,9 +28,9 @@ function buildConeHearth (nh, ns)
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- next radius
 
-         ps = [[0.0,                  0.0,                  -(0.0)], //<--0 points to us, z lefhanded
-               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(0 - D_H)],
-               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(0 - D_H)]];
+         ps = [[0.0,                  0.0,                  0.0], //<--0 points to us, z lefhanded
+               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   D_H],
+               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   D_H]];
 
          cr = [[0,   0,   0],
                [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   -(1 + fi1)],
@@ -48,9 +48,9 @@ function buildConeHearth (nh, ns)
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- radius
          
-         ps =     [[0.0,                  0.0,                  -(0.0)], //<--0 points to us, z lefhanded
-                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(0 - D_H)],
-                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(0 - D_H)]];
+         ps =     [[0.0,                  0.0,                  0.0], //<--0 points to us, z lefhanded
+                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   D_H],
+                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   D_H]];
 
          cr = [[ 0,  0,  0],
                [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), -(1 + fi2)],
@@ -204,7 +204,7 @@ let gpumain = (gpuCanvas) =>
          }]
       },
       //primitive: {  topology: 'triangle-list' },
-      primitive: geometry.gpu, //{  topology: geometry.topology, cullMode: 'back' },
+      primitive: geometry.gpu,
       layout: 'auto'
    };
 

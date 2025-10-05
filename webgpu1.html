@@ -411,11 +411,11 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
+            const greenColor = vec3(0.0,  1.0,  0.0);
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               let greenColor = vec3(0.0,  1.0,  0.0);
-               let prod      = -dot (normalize(vec3(vsUniforms.lightDirection, -1.0)), normalize(fragData.normal));
+               let prod      = -dot (normalize(vec3(vsUniforms.lightDirection, 1.0)), normalize(fragData.normal));
                return vec4(greenColor * prod,  1.0);
             }
          </script>
@@ -444,11 +444,11 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
+            const greenColor = vec3(0.0,  1.0,  0.0);
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               let greenColor = vec3(0.0,  1.0,  0.0);
-               let prod      = -dot (normalize(vec3(vsUniforms.lightDirection, -1.0)), normalize(fragData.normal));
+               let prod = -dot (normalize(vec3(vsUniforms.lightDirection, 1.0)), normalize(fragData.normal));
                return vec4(greenColor * prod,  1.0);
             }
          </script>
@@ -477,7 +477,7 @@ context      = canvas.getContext('webgpu');
                return ret;
             }
             const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
-            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const lightDirection =  normalize (vec3(-1.0,  -1.0,  1.0)); // Direction -> to left down forward, z lefthanded
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
@@ -507,8 +507,8 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
-            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
-            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);             // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0, 1.0)); // Direction -> to left down forward, z lefthanded
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
@@ -538,8 +538,8 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
-            const greenColor     =  vec3 (0.0,  1.0,  0.0);              // RGB of green
-            const lightDirection =  normalize (vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
+            const greenColor     =  vec3 (0.0,  1.0,  0.0);               // RGB of green
+            const lightDirection =  normalize (vec3(-1.0,  -1.0,   1.0)); // Direction -> to left down forward, z lefthanded
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
