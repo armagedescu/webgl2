@@ -52,7 +52,7 @@ context      = canvas.getContext('webgpu');
       WebGPU triangle 1:<br/>
       Strided<br/>
       <canvas width="160" height="120">
-         <script src="./webgpu1/webgpuBasic.js" defer=""></script>
+         <script src="./webgpu1/basic.js" defer=""></script>
       </canvas>
    </div>
    <div class="sample">
@@ -221,7 +221,7 @@ context      = canvas.getContext('webgpu');
                return vec4f(0.0, 0.0, 0.0, 0.1);
             }
          </script>
-         <script src="./webgpu1/webgpuAnimate.js"></script>
+         <script src="./webgpu1/animate.js"></script>
       </canvas>
    </div>
    <div class="sample" >
@@ -229,7 +229,7 @@ context      = canvas.getContext('webgpu');
       webgl to webgpu space<br/>
       Translate animate 2:<br/>
       <canvas id = "animate second instance" width="120" height="120" class="magenta">
-          <script src="./webgpu1/webgpuAnimate2.js"></script>
+          <script src="./webgpu1/animate2.js"></script>
           <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VSUniforms {
                translation: vec4f,
@@ -406,7 +406,7 @@ context      = canvas.getContext('webgpu');
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./webgpu1/webgpuCone1Animate.js"></script>
+         <script src="./webgpu1/cone1Animate.js"></script>
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VertexOut
             {
@@ -439,7 +439,7 @@ context      = canvas.getContext('webgpu');
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./webgpu1/webgpuCone1Animate2.js"></script>
+         <script src="./webgpu1/cone1Animate2.js"></script>
          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
             struct VertexOut
             {
