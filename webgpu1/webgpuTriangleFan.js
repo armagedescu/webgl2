@@ -27,13 +27,13 @@ function buildGeometryStrip (nh, ns, dnh, dr, format='webgl')
    let realns = ns;
    let start  = ns / 2;
    let z = -1; //cone edge orientation to us
-   if (format == 'webgpu') z = 1;
+   if (format == 'webgpu') z = 0;
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z ];
       [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
       ix += 3,iy += 3,iz += 3;
-      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 0];
+      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 1.0];
       [norms [ix], norms [iy], norms [iz]] = [0, 0, 0];
    }
    let expectedLength = 3 + 3 * 2 * (realns + 1);
@@ -136,8 +136,8 @@ async function gpumain (gpuCanvas)
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
-         //depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
-         depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
+         depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
+         //depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
          format: 'depth24plus',
       },
    };
@@ -166,8 +166,8 @@ async function gpumain (gpuCanvas)
       depthStencilAttachment: { //this is deth stensil aware in renderPipeline:depthStencil
          label            : "Depth Attachment",
          view             : depthTexture.createView(),
-         //depthClearValue  : 0.1,
-         depthClearValue  : 0.0,
+         depthClearValue  : 1.0,
+         //depthClearValue  : 0.0,
          depthLoadOp      : 'clear',
          depthStoreOp     : 'store',
       },
@@ -194,7 +194,7 @@ async function main(event) {
          gpumain (canvasObj);
 	   });
 }
-//document.addEventListener('DOMContentLoaded', event => main (event));
+document.addEventListener('DOMContentLoaded', event => main (event));
 
 let webglmain = () =>
 {
@@ -235,5 +235,5 @@ let webglmain = () =>
 
 };
 
-document.addEventListener('DOMContentLoaded', webglmain);
+//document.addEventListener('DOMContentLoaded', webglmain);
 }

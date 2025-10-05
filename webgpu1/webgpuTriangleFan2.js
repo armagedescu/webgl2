@@ -5,17 +5,17 @@ let clearColor = [0.5, 0.5, 0.5, 0.9];
 function buildGeometryStrip (nh, ns, dnh, dr)
 {
    console.assert (ns % 4 == 0);
-   let verts    = [0.8,  0.8,  0];
+   let verts    = [0.8,  0.8,  1];
    let norms    = [  0,    0,  0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = 1; //1; //not the tip
+   let z = 0; //not the tip
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
       [norms [ix], norms [iy], norms [iz]] = [0, -1, 1]; //all normals point down forward, glowing effect
       ix += 3,iy += 3,iz += 3;
-      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 0]; //back to the tip
+      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 1.0]; //back to the tip
       [norms [ix], norms [iy], norms [iz]] = [0, 0, 0];
    }
    let expectedLength = 3 + 3 * 2 * (realns + 1);
@@ -32,10 +32,10 @@ function buildGeometryTriangles (nh, ns, dnh, dr)
    let norms    = [];
    let realns = ns;
    let start  = ns / 2;
-   let  z = 1;
+   let  z = 0;
    for (let i = start, [ix, iy, iz] = [0, 1, 2]; i < realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
-      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  0.0];
+      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  0.1];
       [norms [ix], norms [iy], norms [iz]] = [0.0,  0.0,  0.0]; //tip of the cone: null norm
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
@@ -61,8 +61,8 @@ async function gpumain (gpuCanvas)
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
    let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
-   //let geometry = buildGeometryStrip(nh, ns, dnh, dr);
-   let geometry = buildGeometryTriangles (nh, ns, dnh, dr);
+   let geometry = buildGeometryStrip(nh, ns, dnh, dr);
+   //let geometry = buildGeometryTriangles (nh, ns, dnh, dr);
    let vertexBuffer, normalBuffer;
    vertexBuffer = device.createBuffer({ //alloc
       label: "Vertex Buffer",
@@ -113,8 +113,8 @@ async function gpumain (gpuCanvas)
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
-         //depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
-         depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
+         depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
+         //depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
          format: 'depth24plus',
       },
    };
@@ -143,8 +143,8 @@ async function gpumain (gpuCanvas)
       depthStencilAttachment: { //this is deth stensil aware in renderPipeline:depthStencil
          label            : "Depth Attachment",
          view             : depthTexture.createView(),
-         //depthClearValue  : 0.1,
-         depthClearValue  : 0.0,
+         depthClearValue  : 1.0,
+         //depthClearValue  : 0.0,
          depthLoadOp      : 'clear',
          depthStoreOp     : 'store',
       },
