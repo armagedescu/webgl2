@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
+
 //not supported by webgpu
 function buildGeometryFan (nh, ns, dnh, dr)
 {
@@ -13,7 +13,7 @@ function buildGeometryFan (nh, ns, dnh, dr)
    for (let i = start,  [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   -1];
-      [norms [ix], norms [iy], norms [iz]] = [0, 1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
    }
    console.assert (verts.length == 2 * 3 +  3 * realns);
    return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_fan:true};
@@ -26,12 +26,12 @@ function buildGeometryStrip (nh, ns, dnh, dr, format='webgl')
    let norms    = [  0,    0,  0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = -1;
+   let z = -1; //cone edge orientation to us
    if (format == 'webgpu') z = 1;
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z ];
-      [norms [ix], norms [iy], norms [iz]] = [0, 1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 0];
       [norms [ix], norms [iy], norms [iz]] = [0, 0, 0];
@@ -48,21 +48,24 @@ function buildGeometryTriangles (nh, ns, dnh, dr, format='webgl')
    let norms    = [];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = -1;
-   if (format == 'webgpu') z = 1;
+   let z = -1; //cone edge orientation to us
+   if (format == 'webgpu') z = 0;
    for (let i = start, [ix, iy, iz] = [0, 1, 2]; i < realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
-      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  0.0];
+      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  1.0];
       [norms [ix], norms [iy], norms [iz]] = [0.0,  0.0,  0.0];
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
-      [norms [ix], norms [iy], norms [iz]] = [0, 1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * (i+1) / ns),   dr * Math.sin(2 * Math.PI * (i+1) / ns),   z];
-      [norms [ix], norms [iy], norms [iz]] = [0, 1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
    }
    console.assert (verts.length == 3 * 3 * realns);
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangles:true, topology: 'triangle-list'};
+   //return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangles:true}; //for webgl, not for webgpu
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'back' } };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'front' } };
+   return {verts:new Float32Array(verts), norms:new Float32Array(norms), triangles:true, gpu:{topology:  'triangle-strip'} };
 }
 
 
@@ -80,9 +83,9 @@ async function gpumain (gpuCanvas)
    //device.createBuffer = alloc buffer
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
-
-   //let geometry = buildGeometryStrip (nh, ns, dnh, dr, 'webgpu');
-   let geometry = buildGeometryTriangles (nh, ns, dnh, dr, 'webgpu');
+   let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
+   let geometry = buildGeometryStrip (nh, ns, dnh, dr, 'webgpu');
+   //let geometry = buildGeometryTriangles (nh, ns, dnh, dr, 'webgpu');
    let vertexBuffer, normalBuffer;
    vertexBuffer = device.createBuffer({ //alloc
       label: "Vertex Buffer",
@@ -173,7 +176,6 @@ async function gpumain (gpuCanvas)
    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     
    //9: Draw the triangle(s)
-
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexBuffer);
    passEncoder.setVertexBuffer(1, normalBuffer);
@@ -192,9 +194,9 @@ async function main(event) {
          gpumain (canvasObj);
 	   });
 }
-document.addEventListener('DOMContentLoaded', event => main (event));
+//document.addEventListener('DOMContentLoaded', event => main (event));
 
-let func = () =>
+let webglmain = () =>
 {
 
    let glCanvas  = new GlCanvas(canvas);
@@ -205,22 +207,23 @@ let func = () =>
    gl.enable(gl.DEPTH_TEST);
    gl.clear (gl.COLOR_BUFFER_BIT);
 
-   //let geometry = buildGeometryFan(nh, ns, dnh, dr);
+   let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
+   let geometry = buildGeometryFan(nh, ns, dnh, dr);
    //let geometry = buildGeometryTriangles(nh, ns, dnh, dr);
-   let geometry = buildGeometryStrip(nh, ns, dnh, dr);
+   //let geometry = buildGeometryStrip(nh, ns, dnh, dr);
 
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.verts), gl.STATIC_DRAW);
 
-   let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
+   let coord = gl.getAttribLocation (glCanvas.program, "vertex");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (glCanvas.program, "inputNormal");
+   let noord = gl.getAttribLocation (glCanvas.program, "normal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord)
    
@@ -231,5 +234,6 @@ let func = () =>
    if (geometry.triangle_strip) gl.drawArrays(gl.TRIANGLE_STRIP, 0, geometry.verts.length / 3);
 
 };
-//document.addEventListener('DOMContentLoaded', func);
+
+document.addEventListener('DOMContentLoaded', webglmain);
 }

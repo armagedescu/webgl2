@@ -333,28 +333,37 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
+            const constLightDirection = vec3 (0.0, 1.2, 0.0);      // Direction -> to center down forward
+            const constColor          = vec4 (0.0, 1.0, 0.0, 0.1); // Green Color
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               return vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(fragData.normal, 0.9);
+               let prod =  -dot (constLightDirection,  fragData.normal );
+               return vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
-             attribute vec4 coordinates;
-             attribute vec3 inputNormal;
-             varying vec3 nm;
-             void main()
-             {
-                gl_Position = coordinates;
-                nm = inputNormal;
-             }
+            #version 300 es
+            layout (location = 0) in vec3 vertex;
+            layout (location = 1) in vec3 normal;
+            out vec3 normalVary;
+            void main(void)
+            {
+               gl_Position = vec4(vertex, 1);
+               normalVary = normal;
+            }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
             precision mediump float;
-            varying vec3 nm;
+            out vec4 fragColor;
+            in  vec3 normalVary;
+            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 0.1);
+            const vec3 constLightDirection = vec3(0.0, 1.2, 0.0);
             void main()
             {
-              gl_FragColor = vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(nm, 0.9);
+               float prod = -dot (constLightDirection,  normalVary );
+               fragColor = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>
@@ -380,10 +389,13 @@ context      = canvas.getContext('webgpu');
                ret.normal   = normal;
                return ret;
             }
+            const constLightDirection = vec3 (0.0, 1.2, 0.0);      // Direction -> to center down forward
+            const constColor          = vec4 (0.0, 1.0, 0.0, 0.1); // Green Color
             @fragment
             fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
             {
-               return vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(fragData.normal, 0.9);
+               let prod =  -dot (constLightDirection,  fragData.normal );
+               return vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>

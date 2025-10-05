@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-let func = () =>
+let webglmain = () =>
 {
    //TODO: Effects research area
    let gl;
@@ -31,5 +31,5 @@ let func = () =>
    shape.drawTriangleFan ();
    return;
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', webglmain);
 }
