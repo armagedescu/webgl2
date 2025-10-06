@@ -342,30 +342,6 @@ context      = canvas.getContext('webgpu');
                return vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
-         <script type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            layout (location = 0) in vec3 vertex;
-            layout (location = 1) in vec3 normal;
-            out vec3 normalVary;
-            void main(void)
-            {
-               gl_Position = vec4(vertex, 1);
-               normalVary = normal;
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 fragColor;
-            in  vec3 normalVary;
-            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 0.1);
-            const vec3 constLightDirection = vec3(0.0, 1.2, 0.0);
-            void main()
-            {
-               float prod = -dot (constLightDirection,  normalVary );
-               fragColor = vec4 (constColor.rgb * prod,  1.0);
-            }
-         </script>
       </canvas>
    </div>
    <div class="sample">

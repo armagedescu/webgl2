@@ -2,32 +2,14 @@
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
 
-//not supported by webgpu
-function buildGeometryFan (nh, ns, dnh, dr)
-{
-   console.assert (ns % 4 == 0);
-   let verts    = [0.8, 0.8, 0];
-   let norms    = [0, 0, 0];//[0.0, 0.0, 1.0];
-   let realns = ns;
-   let start  = ns / 2;
-   for (let i = start,  [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
-   {
-      [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   -1];
-      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
-   }
-   console.assert (verts.length == 2 * 3 +  3 * realns);
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_fan:true};
-}
-
-function buildGeometryStrip (nh, ns, dnh, dr, format='webgl')
+function buildGeometryStrip (nh, ns, dnh, dr)
 {
    console.assert (ns % 4 == 0);
    let verts    = [0.8,  0.8,  0];
    let norms    = [  0,    0,  0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = -1; //cone edge orientation to us
-   if (format == 'webgpu') z = 0;
+   let z = 0; //cone edge orientation to us
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z ];
@@ -41,15 +23,14 @@ function buildGeometryStrip (nh, ns, dnh, dr, format='webgl')
    return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_strip:true, topology: 'triangle-strip'};
 }
 
-function buildGeometryTriangles (nh, ns, dnh, dr, format='webgl')
+function buildGeometryTriangles (nh, ns, dnh, dr)
 {
    console.assert (ns % 4 == 0);
    let verts    = [];
    let norms    = [];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = -1; //cone edge orientation to us
-   if (format == 'webgpu') z = 0;
+   let z = 0; //cone edge orientation to us
    for (let i = start, [ix, iy, iz] = [0, 1, 2]; i < realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  1.0];
@@ -62,10 +43,9 @@ function buildGeometryTriangles (nh, ns, dnh, dr, format='webgl')
       [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
    }
    console.assert (verts.length == 3 * 3 * realns);
-   //return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangles:true}; //for webgl, not for webgpu
-   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'back' } };
-   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'front' } };
-   return {verts:new Float32Array(verts), norms:new Float32Array(norms), triangles:true, gpu:{topology:  'triangle-strip'} };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list', cullMode: 'back' } };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list', cullMode: 'front' } };
+   return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:   'triangle-list'} };
 }
 
 
@@ -84,8 +64,8 @@ async function gpumain (gpuCanvas)
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
    let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
-   let geometry = buildGeometryStrip (nh, ns, dnh, dr, 'webgpu');
-   //let geometry = buildGeometryTriangles (nh, ns, dnh, dr, 'webgpu');
+   let geometry = buildGeometryStrip (nh, ns, dnh, dr);
+   //let geometry = buildGeometryTriangles (nh, ns, dnh, dr);
    let vertexBuffer, normalBuffer;
    vertexBuffer = device.createBuffer({ //alloc
       label: "Vertex Buffer",
@@ -196,44 +176,4 @@ async function main(event) {
 }
 document.addEventListener('DOMContentLoaded', event => main (event));
 
-let webglmain = () =>
-{
-
-   let glCanvas  = new GlCanvas(canvas);
-   let gl = glCanvas.gl;
-   glCanvas.useProgram   ();
-
-   gl.clearColor( ... clearColor);
-   gl.enable(gl.DEPTH_TEST);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-
-   let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
-   let geometry = buildGeometryFan(nh, ns, dnh, dr);
-   //let geometry = buildGeometryTriangles(nh, ns, dnh, dr);
-   //let geometry = buildGeometryStrip(nh, ns, dnh, dr);
-
-   let vertex_buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.verts), gl.STATIC_DRAW);
-
-   let coord = gl.getAttribLocation (glCanvas.program, "vertex");
-   gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (coord);
-
-   let normalBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (glCanvas.program, "normal");
-   gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (noord)
-   
-   /* ==========translation======================================*/
-
-   if (geometry.triangle_fan)   gl.drawArrays(gl.TRIANGLE_FAN,   0, geometry.verts.length / 3);
-   if (geometry.triangles)      gl.drawArrays(gl.TRIANGLES,      0, geometry.verts.length / 3);
-   if (geometry.triangle_strip) gl.drawArrays(gl.TRIANGLE_STRIP, 0, geometry.verts.length / 3);
-
-};
-
-//document.addEventListener('DOMContentLoaded', webglmain);
 }
