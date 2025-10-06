@@ -6,8 +6,8 @@ function getCone (nhe, nse, type = Float32Array)
 {
    let nh = nhe;
    let ns = nse;
-   let verts = []; //new Float32Array ();
-   let norms = []; //new Float32Array ();
+   let verts = [];
+   let norms = [];
    let dr = 0.6;
 
    for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
@@ -37,10 +37,10 @@ let glmain = () =>
    let nh = 1, ns = 5, dr = 0.6;
 
    let geometry = getCone (nh, ns);
+
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
-
    gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (0);
 
@@ -59,7 +59,7 @@ let glmain = () =>
       gl.uniform3fv(lightDirection, [Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]); //<-- change direction of light
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLES, 0, ns * 3);
+      gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
 
       window.requestAnimationFrame(animate);
    }

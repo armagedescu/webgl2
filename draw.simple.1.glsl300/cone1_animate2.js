@@ -59,7 +59,7 @@ let glmain = async () =>
       gl.uniform3fv(lightDirection, [Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]); //<-- change direction of light
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLES, 0, ns * 3);
+      gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
 
       window.requestAnimationFrame(animate);
    }
