@@ -20,7 +20,7 @@ function getCone (nh, ns, type = Float32Array)
    }
    return {verts:new type(verts), norms:new type(norms)};
 }
-let func = () =>
+let glmain = () =>
 {
    let gl, animate;
    let geo = getCone(1, 5);
@@ -31,7 +31,7 @@ let func = () =>
       .withNormals3d  (geo.norms)
       .withLightDirection3f ([1.0, 0.0, 1.0])
       ;
-   //shape.logStrategyShaders ("cone1_animate.js");
+   shape.logStrategyShaders ("cone1_animate.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);
@@ -46,7 +46,7 @@ let func = () =>
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.clear (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       shape.lightDirection3 ([Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]);
       shape.drawTriangles ();
       window.requestAnimationFrame(animate);
@@ -55,5 +55,5 @@ let func = () =>
    return;
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

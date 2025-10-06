@@ -24,7 +24,7 @@ function getCone (nhe, nse, type = Float32Array)
    return {verts:new type(verts), norms:new type(norms)};
 }
 
-let func = () =>
+let glmain = () =>
 {
    let gl, animate;
    let geo = getCone(1, 5);
@@ -50,6 +50,5 @@ let func = () =>
    return;
 };
 
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
-      //gl.enable(gl.DEPTH_TEST);//gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

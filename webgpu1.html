@@ -25,19 +25,19 @@ context      = canvas.getContext('webgpu');
 /////////// device 
 // compiles shaders, create/write buffers,  createBuffer/writeBuffer, uniformBuffers
 // create renderPipeline (~link program), 
-//// while (draw) happens here, can be also a loop, time dependent, animates etc
-//    +   renderPassDescriptor //structure for begin: like glClear/glEnable(?)
-//    |   update uniforms
-//    |   create commandEncoder // like glBegin //is destroyed after use, fresh one needed for each frame
-//    |   passEncoder = commandEncoder.beginRenderPass renderPassDescriptor (starts here with above init structures) :const
-//    |      passEncoder.setPipeline     (renderPipeline);  // bind program?
-//    |      passEncoder.setVertexBuffer (0/2/3..., vertexBuffer); // bind vao?
-//    |      passEncoder.setBindGroup    (0, bindGroup); //  bind uniforms
-//    |      passEncoder.draw(numvertices...);
-//    |      passEncoder.end();
-//    |   commandEncoder.finish()
-//    +   ends with device.queue.submit([commandEncoder.finish()]);
-/////////// end device
+////    while (draw) happens here, can be one time/permanent update/function/time dependent/animates/user input... etc
+//      +   renderPassDescriptor //structure for begin: like glClear/glEnable(?)
+//      |   update uniforms
+//      |   create commandEncoder // like glBegin //is destroyed after use, fresh one needed for each frame
+//      |   passEncoder = commandEncoder.beginRenderPass renderPassDescriptor (starts here with above init structures) :const
+//      |      passEncoder.setPipeline     (renderPipeline);  // bind program?
+//      |      passEncoder.setVertexBuffer (0/2/3..., vertexBuffer); // bind vao?
+//      |      passEncoder.setBindGroup    (0, bindGroup); //  bind uniforms
+//      |      passEncoder.draw(numvertices...);
+//      |      passEncoder.end();
+//      |   commandEncoder.finish()
+//      +   ends with device.queue.submit([commandEncoder.finish()]); //end device
+/////   end while (draw)
    </pre>
    This WebGPU sample migrated from <a href="./draw.simple.1.glsl300.html">this WebGL</a><br/>
    Same WebGL <a href="./draw.simple.1.glsl300.html">using VAO</a><br/>
