@@ -1,7 +1,6 @@
-"use strict";
 {
-
 let canvas = document.currentScript.parentElement;
+
 
 function getCone (nh = 2, ns = 6, type = Float32Array)
 {
@@ -59,24 +58,36 @@ function getCone (nh = 2, ns = 6, type = Float32Array)
    }
    return {verts:new type(verts), norms:new type(norms)};
 }
-let webglmain = () =>
-{
-   let gl;
-   let geo = getCone(2, 20);
-   let shape = new GlShapev1 (canvas)
-      .withConstColor ([0.0, 1.0, 0.0, 1.0])
-      .withVertices3d (geo.verts)
-      .withNormals3d  (geo.norms)
-      .withConstLightDireciton ([-1.0,  -1.0,  1.0])
-      ;
-   //shape.logStrategyShaders ("cone1_geometry.js");
-   gl = shape.gl;
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable (gl.DEPTH_TEST);
-   gl.clear  (gl.COLOR_BUFFER_BIT);
-   gl.clear  (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-   shape.drawTriangles ();
+let glmain = () =>
+{
+   let glCanvas = new GlCanvas(canvas);
+   let gl = glCanvas.gl;
+   glCanvas.useProgram ();
+
+
+   let nh = 20, ns = 20, dr = 1.0;
+   let geometry = getCone (nh, ns);
+
+   let vertex_buffer = gl.createBuffer();
+   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (0);
+
+
+   let normalBuffer = gl.createBuffer();
+   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (1, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (1);
+
+   gl.clearColor(0.5, 0.5, 0.5, 0.9);
+   gl.enable(gl.DEPTH_TEST);
+   gl.clear (gl.COLOR_BUFFER_BIT); // |gl.DEPTH_BUFFER_BIT
+
+   gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
+
 };
-document.addEventListener('DOMContentLoaded', webglmain);
+document.addEventListener('DOMContentLoaded', glmain);
 }

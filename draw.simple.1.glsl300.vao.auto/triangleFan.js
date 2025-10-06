@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-let webglmain = () =>
+let glmain = () =>
 {
    //TODO: Effects research area
    let gl;
@@ -23,7 +23,7 @@ let webglmain = () =>
             .withNormals3d   (geometry.norms)
             .withConstColor  ([ 0.0,  1.0,  0.0,  0.1])
             .withConstLightDireciton ([0.0, 1.2, 0.0], false);
-   //shape.logStrategyShaders ("triangle_fan.js");
+   //shape.logStrategyShaders ("triangleFan.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable(gl.DEPTH_TEST);
@@ -31,5 +31,5 @@ let webglmain = () =>
    shape.drawTriangleFan ();
    return;
 };
-document.addEventListener('DOMContentLoaded', webglmain);
+document.addEventListener('DOMContentLoaded', glmain);
 }

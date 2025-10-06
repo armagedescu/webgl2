@@ -1,13 +1,13 @@
+"use strict";
 {
 let canvas = document.currentScript.parentElement;
-
 
 function getCone (nhe, nse, type = Float32Array)
 {
    let nh = nhe;
    let ns = nse;
-   let verts = [];
-   let norms = [];
+   let verts = []; //new Float32Array ();
+   let norms = []; //new Float32Array ();
    let dr = 0.6;
 
    for (let i = 0, ix = 0,iy = 1,iz = 2; i < ns; i++, ix += 9,iy += 9,iz += 9)
@@ -26,45 +26,29 @@ function getCone (nhe, nse, type = Float32Array)
 
 let glmain = () =>
 {
-   let glCanvas = new GlCanvas(canvas);
-   let gl = glCanvas.gl;
-   glCanvas.useProgram ();
+   let gl, animate;
+   let geo = getCone(1, 5);
+   let shape = new GlShapev1 (canvas)
+      //.withShaderSources (vs, fs)
+      .withConstColor ([0.0, 1.0, 0.0, 1.0])
+      .withVertices3d (geo.verts)
+      .withNormals3d  (geo.norms)
+      .withLightDirection3f ([1.0, 0.0, 1.0])
+      ;
+   //shape.logStrategyShaders ("cone1Animate.js");
+   gl = shape.gl;
 
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-
-   let nh = 1, ns = 5, dr = 0.6;
-
-   let geometry = getCone (nh, ns);
-
-   let vertex_buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
-   gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (0);
-
-   let normalBuffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
-   gl.vertexAttribPointer     (1, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (1);
-   
-
-   let lightDirection = gl.getUniformLocation(glCanvas.program, 'lightDirection');
-
-   let animate = (time) =>
+   animate = (time) =>
    {
-      glCanvas.useProgram ();
-      gl.uniform3fv(lightDirection, [Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]); //<-- change direction of light
-
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
-
+      gl.clearColor(0.5, 0.5, 0.5, 0.9);
+      gl.clear (gl.COLOR_BUFFER_BIT);
+      shape.lightDirection3 ([Math.cos (time * 0.002),  Math.sin (time * 0.002), 1]);
+      shape.drawTriangles ();
       window.requestAnimationFrame(animate);
    }
    animate(0);
-
+   return;
 };
+
 document.addEventListener('DOMContentLoaded', glmain);
 }
