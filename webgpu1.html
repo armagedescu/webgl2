@@ -25,7 +25,7 @@ context      = canvas.getContext('webgpu');
 /////////// device 
 // compiles shaders, create/write buffers,  createBuffer/writeBuffer, uniformBuffers
 // create renderPipeline (~link program), 
-//// draw happens here, can be also a loop, time dependent, animates etc
+//// while (draw) happens here, can be also a loop, time dependent, animates etc
 //    +   renderPassDescriptor //structure for begin: like glClear/glEnable(?)
 //    |   update uniforms
 //    |   create commandEncoder // like glBegin //is destroyed after use, fresh one needed for each frame
