@@ -146,7 +146,7 @@ function getCone (nh, ns, type = Float32Array)
    return {verts:new type(verts), norms:new type(norms)};
 }
 
-let func = () =>
+let glmain = () =>
 {
    let gl;
    let geo = getCone(2, 20);
@@ -156,7 +156,7 @@ let func = () =>
       .withNormals3d  (geo.norms)
       .withConstLightDireciton ([-1.0,  -1.0,  1.0])
       ;
-   //shape.logStrategyShaders ("cone1_heart_geometry2.js");
+   shape.logStrategyShaders ("cone1HeartGeometry2.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);
@@ -167,5 +167,5 @@ let func = () =>
    return;
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

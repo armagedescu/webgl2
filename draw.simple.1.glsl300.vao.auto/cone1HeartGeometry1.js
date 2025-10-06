@@ -40,7 +40,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
          if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
          if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
 
-         let ps = [[( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 -  h   *1/nh)],  // 1  4
+         let ps = [  [( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 -  h   *1/nh)],  // 1  4
                      [( h   *drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ( h   *drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(1 -  h   *1/nh)],  //    6
                      [((h+1)*dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ((h+1)*dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 - (h+1)*1/nh)],  // 2
                      [((h+1)*drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(1 - (h+1)*1/nh)]]; // 3  5
@@ -70,7 +70,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
    }
    return {verts:new type(verts), norms:new type(norms)};
 }
-let func = () =>
+let glmain = () =>
 {
    let gl;
    let geo = getCone(3, 20);
@@ -80,7 +80,7 @@ let func = () =>
       .withNormals3d  (geo.norms)
       .withConstLightDireciton ([-1.0,  -1.0,  1.0])
       ;
-   //shape.logStrategyShaders ("cone1_geometry.js");
+   //shape.logStrategyShaders ("cone1HeartGeometry1.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);
@@ -91,5 +91,5 @@ let func = () =>
    shape.drawTriangles ();
    return;
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

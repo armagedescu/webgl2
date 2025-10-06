@@ -73,7 +73,7 @@ function buildGeometryTriangles (ns, dr)
    return {verts:new Float32Array(verts), norms:new Float32Array(norms), triangles:true };
 }
 
-let webglmain = () =>
+let glmain = () =>
 {
    let glCanvas  = new GlCanvas(canvas);
    let gl        = glCanvas.gl;
@@ -112,5 +112,5 @@ let webglmain = () =>
    if (geometry.triangle_strip) gl.drawArrays(gl.TRIANGLE_STRIP, 0, geometry.verts.length / 3);
 
 };
-document.addEventListener('DOMContentLoaded', webglmain);
+document.addEventListener('DOMContentLoaded', glmain);
 }

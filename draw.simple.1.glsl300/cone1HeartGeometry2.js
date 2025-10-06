@@ -1,7 +1,8 @@
 {
 let canvas = document.currentScript.parentElement;
 
-function getCone (nh = 2, ns = 40, type = Float32Array)
+
+function getCone (nh, ns, type = Float32Array)
 {
    if(ns & 1) ns++;
    let verts    = [];
@@ -18,7 +19,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
       {
          let fi1 = i   * FI_S;
          let fi2 = fi1 + FI_S; //next fi
-
+         
          let rc1 = i   * R_S; //<-- radius coeficient
          let rc2 = rc1 + R_S; //<-- next radius coeficient
 
@@ -32,6 +33,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
          cr = [[0,   0,   0],
                [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   -(1 + fi1)],
                [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   -(1 + fi2)]];
+         //break;
       } else
       {
          let i2 = i - ns / 2;
@@ -86,11 +88,11 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
                   [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ] []    [ ]   [6]
                   [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [3] []    [2]   [ ]
                   [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [2] []    [3]   [5]
-            
-            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
-                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
+         
+            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (-(Math.cos(fi1) - fi1 * Math.sin(fi1))),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (-(Math.cos(fi2) - fi2 * Math.sin(fi2))),  -(1 + fi2)],
+                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (-(Math.cos(fi1) - fi1 * Math.sin(fi1))),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (-(Math.cos(fi2) - fi2 * Math.sin(fi2))),  -(1 + fi2)]
                   ];
 
          } else
@@ -112,7 +114,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
                   [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ]   [6]
                   [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [2]   [ ]
                   [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [3]   [5]
-            
+
             cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
                   [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
                   [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
@@ -129,7 +131,7 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
          [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr[2];
          [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr[3];
 
-         ix += 9; iy += 9; iz += 9;
+         ix += 9;iy += 9;iz += 9;
 
          [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
          [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
@@ -144,25 +146,40 @@ function getCone (nh = 2, ns = 40, type = Float32Array)
    return {verts:new type(verts), norms:new type(norms)};
 }
 
-let func = async () =>
+let glmain = () =>
 {
-   let gl;
-   let geo = getCone(2, 100);
-   let shape = new GlShapev1 (canvas)
-      .withConstColor ([0.0, 1.0, 0.0, 1.0])
-      .withVertices3d (geo.verts)
-      .withNormals3d  (geo.norms)
-      .withConstLightDireciton ([-1.0,  -1.0,  1.0])
-      ;
-   //shape.logStrategyShaders ("cone1_heart_geometry2async.js");
+   let glCanvas = new GlCanvas(canvas);
+   let gl = glCanvas.gl;
+   glCanvas.useProgram ();
 
-   setTimeout( () => {
-         gl = shape.gl;
-         gl.clearColor(0.5, 0.5, 0.5, 0.9);
-         gl.enable (gl.DEPTH_TEST);
-         gl.clear  (gl.COLOR_BUFFER_BIT);
-         gl.clear  (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-         shape.drawTriangles();}, 500 );
+   let nh = 2, ns = 40;
+   if (ns & 1) ns++;
+
+   //let geometry = getCone(2, 20);
+   let geometry = getCone(nh, ns);
+
+   let vertex_buffer = gl.createBuffer();
+   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (0);
+
+
+   let normalBuffer = gl.createBuffer();
+   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (1, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (1);
+
+
+   
+   gl.clearColor(0.5, 0.5, 0.5, 0.9);
+   gl.enable(gl.DEPTH_TEST);
+   //gl.enable(gl.CULL_FACE);
+   gl.clear (gl.COLOR_BUFFER_BIT);
+
+   gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
+
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

@@ -1,32 +1,25 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+
+
+function getCone (nh = 2, ns = 40, type = Float32Array)
 {
-   let glCanvas = new GlCanvas(canvas);
-   let gl = glCanvas.gl;
-   glCanvas.useProgram ();
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   gl.enable(gl.CULL_FACE);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-
-   let nh = 3, ns = 100, dr = 1.0;
    if (ns & 1) ns++;
-
    let verts    = [];
    let norms    = [];
 
+   let dr = 1.0;
+   
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {
       dr      =  2 *  i      * (1/ns); // <-- increase from 0 to 2 (PI)
       let drd =  2 * (i + 1) * (1/ns); // <-- increase from 0 to 2 (PI)
       if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
       if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
-      let ps = [[0.0,                                             0.0,                                           (1.0)], //<--points in direction of us
-                [(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), (dr /nh) * Math.sin(2 * Math.PI *  i    / ns), (1 - 1/nh)],
-                [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), (1 - 1/nh)]];
-      let cr = cross3p (ps[0], ps[1], ps[2]);
-      
+      let ps = [[0.0,                                             0.0,                                           -(1.0)], //<--points in direction of us
+                [(dr /nh) * Math.cos(2 * Math.PI *   i    / ns ), (dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 - 1/nh)],
+                [(drd/nh) * Math.cos(2 * Math.PI *  (i+1) / ns ), (drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(1 - 1/nh)]];
+      let cr = cross3pl (ps[0], ps[1], ps[2]);
       [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
       [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
       [verts[ix + 6], verts[iy + 6], verts[iz + 6]] = ps[2];
@@ -34,6 +27,7 @@ let func = () =>
       [norms[ix],     norms[iy],     norms[iz]]     = cr;
       [norms[ix + 3], norms[iy + 3], norms[iz + 3]] = cr;
       [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr;
+
    }
 
    //1 triangle = 3 points * 3 coordinates
@@ -46,12 +40,12 @@ let func = () =>
          if (dr  > 1) dr  = 2 - dr;  //<-- decrease when greater than PI
          if (drd > 1) drd = 2 - drd; //<-- decrease when greater than PI
 
-         let ps = [[( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), 1 -  h   *1/nh],  // 1  4
-                   [( h   *drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ( h   *drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 -  h   *1/nh],  //    6
-                   [((h+1)*dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ((h+1)*dr /nh) * Math.sin(2 * Math.PI *  i    / ns), 1 - (h+1)*1/nh],  // 2
-                   [((h+1)*drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), 1 - (h+1)*1/nh]]; // 3  5
+         let ps = [  [( h   *dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ( h   *dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 -  h   *1/nh)],  // 1  4
+                     [( h   *drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ( h   *drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(1 -  h   *1/nh)],  //    6
+                     [((h+1)*dr /nh) * Math.cos(2 * Math.PI *  i   /ns), ((h+1)*dr /nh) * Math.sin(2 * Math.PI *  i    / ns), -(1 - (h+1)*1/nh)],  // 2
+                     [((h+1)*drd/nh) * Math.cos(2 * Math.PI * (i+1)/ns), ((h+1)*drd/nh) * Math.sin(2 * Math.PI * (i+1) / ns), -(1 - (h+1)*1/nh)]]; // 3  5
 
-         let cr = cross3p (ps[0], ps[2], ps[3]);
+         let cr = cross3pl (ps[0], ps[2], ps[3]);
 
          [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
          [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[2];
@@ -62,7 +56,7 @@ let func = () =>
          [norms[ix + 6], norms[iy + 6], norms[iz + 6]] = cr;
 
          ix += 9;iy += 9;iz += 9;
-         cr = cross3p (ps[0], ps[3], ps[1]);
+         cr = cross3pl (ps[0], ps[3], ps[1]);
 
          [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
          [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
@@ -74,26 +68,39 @@ let func = () =>
 
       }
    }
+   return {verts:new type(verts), norms:new type(norms)};
+}
+let glmain = () =>
+{
+   let glCanvas = new GlCanvas(canvas);
+   let gl = glCanvas.gl;
+   glCanvas.useProgram ();
 
+   let nh = 3, ns = 100, dr = 1.0;
+
+   //let geometry = getCone(3, 20);
+   let geometry = getCone(nh, ns);
 
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
-
-   let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
-   gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (coord);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (0);
 
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
-   let noord = gl.getAttribLocation (glCanvas.program, "inputNormal");
-   gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray (noord);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
+   gl.vertexAttribPointer     (1, 3, gl.FLOAT, false, 0, 0);
+   gl.enableVertexAttribArray (1);
 
-   gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
+   gl.clearColor(0.5, 0.5, 0.5, 0.9);
+   gl.enable(gl.DEPTH_TEST);
+   gl.enable(gl.CULL_FACE);
+   gl.clear (gl.COLOR_BUFFER_BIT);
+
+   gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3);
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

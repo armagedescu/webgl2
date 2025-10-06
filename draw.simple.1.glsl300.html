@@ -336,15 +336,6 @@
                gl_Position = vec4(vertex, 1);
                normalVary = normal;
             }
-            //#version 300 es
-            //in vec4 coordinates;
-            //in vec3 inputNormal;
-            //out vec3 nm;
-            //void main()
-            //{
-            //   gl_Position = coordinates;
-            //   nm = inputNormal;
-            //}
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
@@ -358,21 +349,6 @@
                float prod = -dot (normalize(constLightDirection),  normalize(normalVary) );
                fragColor = vec4 (constColor.rgb * prod,  1.0);
             }
-            //#version 300 es
-            //precision mediump float;
-//
-            //out vec4 fragColor;
-//
-            //const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
-            //const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-//
-            //in vec3 nm;
-            //void main() 
-            //{
-            //   //find the cos of angle between plane normal and light direction
-            //   float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
-            //   fragColor = vec4 (greenColor * prod,  1.0);
-            //}
          </script>
       </canvas>
    </div><br/>
@@ -381,32 +357,29 @@
       Cone TRIANGLES (cross), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300/cone1_heart_geometry.js"></script>
+         <script src="./draw.simple.1.glsl300/cone1HeartGeometry1.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-
-            out mediump vec3 nm;
-            void main()
+            layout (location = 0) in vec3 vertex;
+            layout (location = 1) in vec3 normal;
+            out vec3 normalVary;
+            void main(void)
             {
-               gl_Position = coordinates;
-               nm = inputNormal;
+               gl_Position = vec4(vertex, 1);
+               normalVary = normal;
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
             precision mediump float;
-
             out vec4 fragColor;
-
-            const vec3  lightDirection = -normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-            in mediump vec3 nm;
-            void main() 
+            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 1.0);
+            in  vec3 normalVary;
+            const vec3 constLightDirection = vec3(-1.0, -1.0, 1.0);
+            void main(void)
             {
-              float prod   =  dot (lightDirection,   normalize(nm));
-              fragColor = vec4 (greenColor * prod,  1.0);
+               float prod = -dot (normalize(constLightDirection),  normalize(normalVary) );
+               fragColor = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>
@@ -416,31 +389,29 @@
       Cone TRIANGLES (grad), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./draw.simple.1.glsl300/cone1_heart_geometry2.js"></script>
+         <script src="./draw.simple.1.glsl300/cone1HeartGeometry2.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-            out mediump vec3 nm;
-            void main()
+            layout (location = 0) in vec3 vertex;
+            layout (location = 1) in vec3 normal;
+            out vec3 normalVary;
+            void main(void)
             {
-               gl_Position = coordinates;
-               nm = inputNormal;
+               gl_Position = vec4(vertex, 1);
+               normalVary = normal;
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
             precision mediump float;
-
             out vec4 fragColor;
-
-            in mediump vec3 nm;
-            
-            const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
-            void main()
+            in  vec3 normalVary;
+            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 1.0);
+            const vec3 constLightDirection = vec3(-1.0, -1.0, 1.0);
+            void main(void)
             {
-               fragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
+               float prod = -dot (normalize(constLightDirection),  normalize(normalVary) );
+               fragColor = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>
