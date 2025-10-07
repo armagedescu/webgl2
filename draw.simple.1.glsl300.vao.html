@@ -86,7 +86,7 @@
    <div class="sample">
       Translate animate 1:<br/>
       <canvas id = "animate"  width = "120" height = "120" class="cyan">
-         <script src="./draw.simple.1.glsl300.vao/animate.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/animate1.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -230,7 +230,7 @@
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1Animate.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Animate1.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -257,7 +257,7 @@
             in vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(ld, 1.0)),   normalize(nm));
                fragColor = vec4 (greenColor * prod,  1.0);
             }
          </script>
@@ -296,18 +296,18 @@
             in vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(ld, 1.0)),   normalize(nm));
                fragColor    = vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
-   </div>
+   </div><br/>
    <div class="sample">
       </br>
       Cone TRIANGLES (correct), </br>
       Normals simple <br/>
       <canvas id = "cone1" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Geometry1.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -325,7 +325,7 @@
             precision mediump float;
 
             out vec4 fragColor;
-            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
+            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0,  1.0)); // Direction -> right up forward
             const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
 
             in vec3 nm;
@@ -342,7 +342,7 @@
       Cone TRIANGLES (correct), </br>
       Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1Geometry.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Geometry2.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -360,14 +360,13 @@
 
             out vec4 fragColor;
 
-            const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
+            const vec3  lightDirection = vec3(-1.0,  -1.0,  1.0); // Direction -> right up forward
             const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
 
             in vec3 nm;
             void main() 
             {
-               //find the cos of angle between plane normal and light direction
-               float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
+               float prod   =  -dot ( normalize(lightDirection),   normalize(nm));
                fragColor = vec4 (greenColor * prod,  1.0);
             }
          </script>
@@ -377,8 +376,8 @@
       </br>
       Cone TRIANGLES (cross), </br>
       Geometry <br/>
-      <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry.js"></script>
+      <canvas id = "cone1 heart geometry" width="400" height="400"   class="yellow">
+         <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry1.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -412,7 +411,7 @@
       </br>
       Cone TRIANGLES (grad), </br>
       Geometry <br/>
-      <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
+      <canvas id = "cone1 heart geometry" width="400" height="400"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry2.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
@@ -434,10 +433,11 @@
             in mediump vec3 nm;
             
             const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
+            const vec3 lightDirection  = normalize(vec3(-1.0,  -1.0,  1.0));
             void main()
             {
-               fragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
+               float prod = -dot(lightDirection, normalize(nm));
+               fragColor = vec4(greenColor.rgb * prod, 1.0);
             }
          </script>
       </canvas>
@@ -468,10 +468,11 @@
             in mediump vec3 nm;
             
             const vec4  greenColor     = vec4( 0.0,   1.0,   0.0, 1.0);
-            const vec3 lightDirection  = -normalize(vec3(-1.0,  -1.0,  -1.0));
+            const vec3  lightDirection  = normalize(vec3(-1.0,  -1.0,  1.0));
             void main()
             {
-               fragColor = vec4(greenColor.rgb * dot(lightDirection, normalize(nm)), 1.0);
+               float prod = -dot(lightDirection, normalize(nm));
+               fragColor = vec4(greenColor.rgb * prod, 1.0);
             }
          </script>
       </canvas>

@@ -339,7 +339,7 @@
             varying vec3 normalVary;
 
             const vec3 constColor          = vec3 ( 0.0,  1.0, 0.0);
-            const vec3 constLightDirection = vec3 (-1.0, -1.0, 1.0); // RGB of green // Direction -> right up forward
+            const vec3 constLightDirection = vec3 (-1.0, -1.0, 1.0); // RGB of green // Direction -> right up forward/lefthanded
             void main() 
             {
                float prod   =  -dot (normalize(constLightDirection),   normalize(normalVary));

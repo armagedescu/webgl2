@@ -264,7 +264,7 @@
             void main() 
             {
                float prod   =  -dot (lightDirection,   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               gl_FragColor =  vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
@@ -321,12 +321,12 @@
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
 
-            const vec3  lightDirection = -normalize(vec3(-1.0,  -1.0,  -1.0)); // Direction -> right up forward
+            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0,  1.0)); // Direction -> right up forward
             const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
             varying mediump vec3 nm;
             void main() 
             {
-              float prod   =  dot (lightDirection,   normalize(nm));
+              float prod   =  -dot (lightDirection,   normalize(nm));
               gl_FragColor = vec4 (greenColor * prod,  1.0);
             }
          </script>

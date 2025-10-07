@@ -46,13 +46,13 @@ class HeartGeometry2 extends GlVAObject
             let r1 = rc1 / nh; //<-- radius
             let r2 = rc2 / nh; //<-- next radius
 
-            ps = [[0.0,                  0.0,                  (1.0)], //<--points in direction of us
-                  [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)],
-                  [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)]];
+            ps = [[0.0,                  0.0,                  -(1.0)], //<--points in direction of us
+                  [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(1 - D_H)],
+                  [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(1 - D_H)]];
 
             cr = [[0,   0,   0],
-                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   1 + fi1],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   1 + fi2]];
+                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   -(1 + fi2)]];
          } else
          {
             let i2 = i - this.#ns / 2;
@@ -65,13 +65,13 @@ class HeartGeometry2 extends GlVAObject
             let r1 = rc1 / nh; //<-- radius
             let r2 = rc2 / nh; //<-- radius
 
-            ps =     [[0.0,                  0.0,                  (1.0)], //<--points to us
-                      [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)],
-                      [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)]];
+            ps =     [[0.0,                  0.0,                  -(1.0)], //<--points to us
+                      [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(1 - D_H)],
+                      [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(1 - D_H)]];
 
             cr = [[ 0,  0,  0],
-                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), 1 + fi2],
-                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), 1 + fi1]];
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), -(1 + fi2)],
+                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), -(1 + fi1)]];
          }
          [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = ps[0];
          [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = ps[1];
@@ -103,15 +103,15 @@ class HeartGeometry2 extends GlVAObject
                let r21 = rc1 * h2n; //<-- radius
                let r22 = rc2 * h2n; //<-- radius
 
-               ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1] []    [1]   [4]
-                     [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ] []    [ ]   [6]
-                     [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [3] []    [2]   [ ]
-                     [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [2] []    [3]   [5]
+               ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(1 - h1n)],  // <-- points [1] []    [1]   [4]
+                     [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ] []    [ ]   [6]
+                     [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [3] []    [2]   [ ]
+                     [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [2] []    [3]   [5]
                
-               cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                     [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                     [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                     [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+               cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                     [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                     [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                     [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                     ];
 
             } else
@@ -129,15 +129,15 @@ class HeartGeometry2 extends GlVAObject
                let r21 = rc1 * h2n; //<-- radius
                let r22 = rc2 * h2n; //<-- radius
 
-               ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1]   [4]
-                     [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ]   [6]
-                     [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [2]   [ ]
-                     [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [3]   [5]
+               ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(1 - h1n)],  // <-- points [1]   [4]
+                     [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ]   [6]
+                     [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [2]   [ ]
+                     [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [3]   [5]
                
-               cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                     [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                     [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                     [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+               cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                     [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                     [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                     [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                     ];
 
             }
