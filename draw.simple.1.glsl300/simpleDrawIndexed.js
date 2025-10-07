@@ -6,10 +6,6 @@ let glmain = () =>
    let gl = glCanvas.gl;
    glCanvas.useProgram ();
 
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   gl.clear (gl.COLOR_BUFFER_BIT);
-
    let vertices  = [ 0.5, -0.5,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
    ////to be changed to
    //let vertices  = [ 1.0, -1.0,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0];
@@ -28,6 +24,9 @@ let glmain = () =>
    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuffer);
    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
 
+   gl.clearColor(0.5, 0.5, 0.5, 0.9);
+   gl.enable(gl.DEPTH_TEST);
+   gl.clear (gl.COLOR_BUFFER_BIT);
    gl.drawElements (gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 
 };

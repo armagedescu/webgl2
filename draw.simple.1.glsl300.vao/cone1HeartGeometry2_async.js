@@ -182,39 +182,10 @@ class HeartGeometry2 extends GlVAObject
    }
 }
 
-//TODO: separate this test
-class basetest 
-{
-   #p  = null;
-   constructor (){this.#p = Promise.resolve(this);}
-   async _bthen (func)
-   {
-      return this.#p.then ( (ths) =>
-      {
-         this.#p = null;
-         if (func) func (ths);
-         return this;
-      });
-   }
-   doHello(a) {console.log("hello: " + a);}
-}
-//TODO: separate this test
-class test extends basetest 
-{
-   constructor(context)
-   {
-      super(context);
-      this.msg = "test: ";
-   }
-   doTest(a) {console.log(this.msg + a);}
-}
+
 let glmain = async () =>
 {
-   //TODO: separate _bthen code with above tests
-   (await new test()._bthen()).doHello("await"); //invoking synchronously
-   (new test())._bthen(a => {a.doHello("then"); a.doTest("then");} ); //invoking asynchronously
-   //let heartGeometry2 = await new HeartGeometry2(canvas); //nh = 2, ns = 40;
-   new HeartGeometry2(canvas).ready().then(vao =>
+   new HeartGeometry2(canvas).ready().then(vao => //nh = 2, ns = 40;
    {
       let gl = vao.gl;
       vao.useProgram ();
