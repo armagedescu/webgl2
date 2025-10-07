@@ -19,7 +19,7 @@ class SimpleDraw extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length / 3);
       // gl.POINTS gl.TRIANGLE_STRIP gl.LINE_STRIP gl.LINE_LOOP gl.TRIANGLE_FAN
    }
 }

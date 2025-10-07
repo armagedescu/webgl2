@@ -49,7 +49,7 @@ class Cone extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#verts.length / 3);
    }
 }
 

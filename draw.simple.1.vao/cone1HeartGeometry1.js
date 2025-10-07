@@ -96,7 +96,8 @@ class HeartGeometry1 extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3 + this.#ns * 6 * (this.#nh - 1));
+      //gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3 + this.#ns * 6 * (this.#nh - 1));
+      gl.drawArrays(gl.TRIANGLES, 0, this.#verts.length / 3);
    }
 }
 

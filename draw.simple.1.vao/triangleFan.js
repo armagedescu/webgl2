@@ -37,7 +37,7 @@ class TriangleFan extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLE_FAN, 0, this.#ns + 2);
+      gl.drawArrays(gl.TRIANGLE_FAN, 0, this.#verts.length / 3);
    }
 }
 

@@ -55,7 +55,7 @@ class Cone1Animate1 extends GlVAObject
       let lightx =  Math.cos (this.#dt * 0.002);
       let lighty =  Math.sin (this.#dt * 0.002);
       gl.uniform2f(this.lightDirection, lightx, lighty);
-      gl.drawArrays(gl.TRIANGLES, 0, this.#ns * 3);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#verts.length / 3);
    }
 }
 

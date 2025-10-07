@@ -32,7 +32,7 @@ class Animate extends GlVAObject
 	  let t = [0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 *  Math.sin(fi)];
 
       gl.uniform3f(this.translation, ... t);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length / 3);
    }
 }
 
