@@ -90,14 +90,12 @@ let glmain = () =>
    let vertexBuffer = gl.createBuffer ();
    gl.bindBuffer (gl.ARRAY_BUFFER, vertexBuffer);
    gl.bufferData (gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
-
    gl.vertexAttribPointer     (0, 3, gl.FLOAT, false, 0, 0); //0:vertex
    gl.enableVertexAttribArray (0);
 
    let normalBuffer = gl.createBuffer ();
    gl.bindBuffer (gl.ARRAY_BUFFER, normalBuffer);
    gl.bufferData (gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
-
    gl.vertexAttribPointer     (1, 3, gl.FLOAT, false, 0, 0); //1:norm
    gl.enableVertexAttribArray (1);
 

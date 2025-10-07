@@ -63,12 +63,11 @@ let glmain = () =>
 {
    let glCanvas = new GlCanvas(canvas);
    let gl = glCanvas.gl;
-   glCanvas.useProgram ();
-
 
    let nh = 20, ns = 20, dr = 1.0;
    let geometry = getCone (nh, ns);
 
+   glCanvas.useProgram ();
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);

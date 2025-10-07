@@ -1,22 +1,23 @@
 {
 let canvas = document.currentScript.parentElement;
+
+function buildGeometry ()
+{
+   return {verts: new Float32Array([   0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
+                                       0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ])};
+}
 let glmain = () =>
 {
    let glCanvas = new GlCanvas('draw');
    let gl = glCanvas.gl;
 
-
-
-   let vertices = new Float32Array([ 0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
-                                     0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 ]);
+   let geometry = buildGeometry ();
 
    glCanvas.useProgram ();
-
    // Create a new buffer object
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
    let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
    gl.vertexAttribPointer     (coord, 2, gl.FLOAT, false, 0, 0); //point an attribute to the currently bound VBO
    gl.enableVertexAttribArray (coord); //Enable the attribute
@@ -26,7 +27,7 @@ let glmain = () =>
    gl.enable     (gl.DEPTH_TEST);
    gl.clear      (gl.COLOR_BUFFER_BIT);
 
-   gl.drawArrays (gl.TRIANGLES, 0, 6);
+   gl.drawArrays (gl.TRIANGLES, 0, geometry.verts.length / 2); //this is 2D
    // gl.POINTS gl.TRIANGLE_STRIP gl.LINE_STRIP gl.LINE_LOOP gl.TRIANGLE_FAN
 
 };

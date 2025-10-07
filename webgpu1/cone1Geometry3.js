@@ -138,8 +138,6 @@ let gpumain = (gpuCanvas) =>
    const commandEncoder = device.createCommandEncoder();
 
    // 8: Create GPURenderPassDescriptor to tell WebGPU which texture to draw into, then initiate render pass
-   let currentTexture = webgpu.getCurrentTexture();
-
    const renderPassDescriptor = {
       colorAttachments: [{
          clearValue:  clearColor,
