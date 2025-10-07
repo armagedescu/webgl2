@@ -26,13 +26,13 @@ class Cone1Animate1 extends GlVAObject
       for (let i = 0, ix = 0,iy = 1,iz = 2; i < this.#ns; i++, ix += 9,iy += 9,iz += 9)
       {
           this.#verts[ix] = 0.0; //<-- tip of the cone
-          [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = [0.0, 0.0, 0.7] ;//<-- tip of the cone, points to us
+          [this.#verts[ix],     this.#verts[iy],     this.#verts[iz]]     = [0.0, 0.0, -0.7] ;//<-- tip of the cone, points to us
           [this.#verts[ix + 3], this.#verts[iy + 3], this.#verts[iz + 3]] = [dr * Math.cos(2 * Math.PI * i / this.#ns),       dr * Math.sin(2 * Math.PI * i / this.#ns),      0] ;
           [this.#verts[ix + 6], this.#verts[iy + 6], this.#verts[iz + 6]] = [dr * Math.cos(2 * Math.PI * (i+1) / this.#ns),   dr * Math.sin(2 * Math.PI * (i+1) / this.#ns),  0] ;
 
           [this.#norms[ix],     this.#norms[iy],     this.#norms[iz]]     = [0, 0, 0] ;//<-- tip of the cone, points to us
-          [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = [this.#verts[ix + 3],   this.#verts[iy + 3],  0.7] ;
-          [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = [this.#verts[ix + 6],   this.#verts[iy + 6],  0.7] ;
+          [this.#norms[ix + 3], this.#norms[iy + 3], this.#norms[iz + 3]] = [this.#verts[ix + 3],   this.#verts[iy + 3],  -0.7] ;
+          [this.#norms[ix + 6], this.#norms[iy + 6], this.#norms[iz + 6]] = [this.#verts[ix + 6],   this.#verts[iy + 6],  -0.7] ;
       }
    }
    init ()

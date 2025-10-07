@@ -19,7 +19,7 @@ class TriangleFan extends GlVAObject
       for (let i = 0, ix = 3,iy = 4,iz = 5; i <= this.#ns; i++, ix += 3,iy += 3,iz += 3)
       {
           [this.#verts [ix], this.#verts [iy], this.#verts [iz]] = [this.#dr * Math.cos(2 * Math.PI * i / this.#ns),   this.#dr * Math.sin(2 * Math.PI * i / this.#ns),   -1];
-          [this.#norms [ix], this.#norms [iy], this.#norms [iz]] = [0, 1, 1];
+          [this.#norms [ix], this.#norms [iy], this.#norms [iz]] = [0, -1, 1];
       }
    }
 
