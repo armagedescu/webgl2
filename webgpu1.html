@@ -256,6 +256,38 @@ context      = canvas.getContext('webgpu');
 
       </canvas>
    </div>
+   <div class="sample" >
+      WebGPU<br/>
+      webgl to webgpu space<br/>
+      Translate animate 1<br/>
+      Combined:<br/>
+      <canvas id = "animate second instance" width="120" height="120" class="magenta">
+          <script src="./webgpu1/animate1_combined.js"></script>
+          <script type="text/wgsl-shader" data-gpu-type="webgpu-shader">
+            struct VSUniforms {
+               translation: vec4f,
+            };
+            @group(0) @binding(0) var<uniform> vsUniforms: VSUniforms;
+            struct VertexOut
+            {
+               @builtin(position) position : vec4f,
+            }
+            @vertex
+            fn vertex_main (@location(0) position: vec3f) -> VertexOut
+            {
+               var ret : VertexOut;
+               ret.position = vec4f (position, 1) + vsUniforms.translation;
+               return ret;
+            }
+            @fragment
+            fn fragment_main () -> @location(0) vec4f
+            {
+               return vec4f(0.0, 0.0, 0.0, 0.1);
+            }
+         </script>
+
+      </canvas>
+   </div><br/>
    <div class="sample">
       WebGPU Normals:<br/>
       Separated Buffers<br/>

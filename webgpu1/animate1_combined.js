@@ -1,9 +1,10 @@
 {
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let vertices   = new Float32Array ([ 0.0, 0.0, 0.0,  -1.0, 0.4, 1.0,   -0.5, -0.6,  1.0,     //lower triangle
-                                     0.0, 0.0, 0.0,   0.4, 0.4, 1.0,   -0.4,  0.5,  0.0  ]); //upper triangle
-
+let vertices    = new Float32Array ( [ 0.0, 0.0, 0.0,   -0.3, -0.5,  1.0,     0.5, -0.6,  1.0  ]); //upper triangle
+let vertices2   = new Float32Array ( [ 0.0, 0.0, 0.0,    0.3,  0.4,  1.0,    -0.5,  0.6,  0.0  ]);
+let vertices3   = new Float32Array ( [ 0.0, 0.0, 0.0,   -1.0,  0.4,  1.0,    -0.5, -0.3,  1.0  ]);
+let vertices4   = new Float32Array ( [ 0.0, 0.0, 0.0,    0.6, -0.3,  1.0,     0.4,  0.3,  0.0  ]);
 
 let gpumain = async () =>
 {
@@ -31,6 +32,27 @@ let gpumain = async () =>
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
    });
    device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
+   let vertexBuffer2;
+   vertexBuffer2 = device.createBuffer({
+      label: "Vertex Buffer",
+      size:  vertices2.byteLength, // malloc size
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+   });
+   device.queue.writeBuffer(vertexBuffer2, 0, vertices2, 0, vertices2.length);
+   let vertexBuffer3;
+   vertexBuffer3 = device.createBuffer({
+      label: "Vertex Buffer",
+      size:  vertices3.byteLength, // malloc size
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+   });
+   let vertexBuffer4;
+   vertexBuffer4 = device.createBuffer({
+      label: "Vertex Buffer",
+      size:  vertices4.byteLength, // malloc size
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+   });
+   //device.queue.writeBuffer(vertexBuffer3, 0, vertices3, 0, vertices3.length);
+
    let vertexBuffers = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
          arrayStride: 4 * 3,
@@ -77,7 +99,7 @@ let gpumain = async () =>
    let animateMain = (time) =>
    {
       let fi = time * 0.005;
-      translation4f.set ([   0.5 *  Math.cos(fi),     0.5 *  Math.sin(fi),    0.5 + (0.5 *  Math.sin(fi) / 2),    0.0])
+      translation4f.set ([0.5 *  Math.cos(fi),  0.5 *  Math.sin(fi),  0.5 + (0.5 *  Math.sin(fi) / 2), 0.0])
       device.queue.writeBuffer(vsUniformBuffer, 0, translation4f, 0, 4);
 
       ////this works without translation4f
@@ -96,10 +118,26 @@ let gpumain = async () =>
       const passEncoder = commandEncoder.beginRenderPass (renderPassDescriptor);
 
       passEncoder.setPipeline     (renderPipeline); 
+
       passEncoder.setBindGroup    (0, bindGroup);
       passEncoder.setVertexBuffer (0, vertexBuffer);
       passEncoder.draw (vertices.length / 3); // len / vertex size
+      //passEncoder.setBindGroup    (0, bindGroup); //same pipeline
+      passEncoder.setVertexBuffer (0, vertexBuffer2);
+      passEncoder.draw (vertices2.length / 3); // len / vertex size
 
+      device.queue.writeBuffer(vertexBuffer3, 0, vertices3, 0, vertices3.length);
+      passEncoder.setVertexBuffer (0, vertexBuffer3);
+      passEncoder.draw (vertices3.length / 3); // len / vertex size
+      device.queue.writeBuffer(vertexBuffer4, 0, vertices4, 0, vertices4.length);
+      passEncoder.setVertexBuffer (0, vertexBuffer4);
+      passEncoder.draw (vertices4.length / 3); // len / vertex size
+      //doesn't work
+      //device.queue.writeBuffer(vertexBuffer3, 0, vertices4, 0, vertices4.length);
+      //passEncoder.setVertexBuffer (0, vertexBuffer3);
+      //passEncoder.draw (vertices4.length / 3); // len / vertex size
+
+    
       // End the render pass
       passEncoder.end ();
       device.queue.submit ([commandEncoder.finish()]);// return;
@@ -109,5 +147,4 @@ let gpumain = async () =>
    window.requestAnimationFrame (animateMain);
 };
 document.addEventListener ('DOMContentLoaded', gpumain);
-
 }
