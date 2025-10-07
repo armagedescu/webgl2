@@ -1,18 +1,20 @@
 {
 let canvas = document.currentScript.parentElement;
 
+
 const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
 const vertices = new Float32Array([
    //verts XYZW                    //colors RGBA
     0.2,    0.5,  -0.1,   1,       0, 0,  0, 1, //tip of triangle 1, goes closer to camera, z=-0.1 = outside z-near view
-   -0.3,   -0.7,   0.7,   1,       0, 1,  0, 1,
+   -0.3,   -0.7,   0.7,   1,       0, 1,  0, 1, //base goes near /righthandly
     0.7,   -0.7,   0.7,   1,       1, 0,  1, 1,
 
     0.0,    0.6,   1.1,   1,       1, 0,  0, 1, //tip of triangle 2, goes farther to camera, z=1.1 = inside z-far view
-   -0.5,   -0.6,   0.3,   1,       0, 1,  0, 1,
+   -0.5,   -0.6,   0.3,   1,       0, 1,  0, 1, //base goes far /righthandly
     0.5,   -0.6,   0.3,   1,       0, 0,  1, 1,
 
 ]);
+
 
 async function gpumain (gpuCanvas)
 {
@@ -49,6 +51,7 @@ async function gpumain (gpuCanvas)
 
    const shaderModule = device.createShaderModule({code: gpuCanvas.shaders});
    const pipelineDescriptor = {
+      label: "Render Pipeline Descriptor",
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
@@ -67,15 +70,15 @@ async function gpumain (gpuCanvas)
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
-         depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
-         //depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
+         //depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
+         depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
          format: 'depth24plus',
       },
    };
 
    // 6: Create the actual render pipeline
    const renderPipeline = device.createRenderPipeline(pipelineDescriptor);
-    
+
    // 7: Create GPUCommandEncoder to issue commands to the GPU
    // Note: render pass descriptor, command encoder, etc. are destroyed after use, fresh one needed for each frame.
    const commandEncoder = device.createCommandEncoder();
@@ -83,12 +86,14 @@ async function gpumain (gpuCanvas)
    // 8: Create GPURenderPassDescriptor to tell WebGPU which texture to draw into, then initiate render pass
    let currentTexture = webgpu.getCurrentTexture();
    let depthTexture = device.createTexture({
-         size: [currentTexture.width, currentTexture.height],
-         format: 'depth24plus',
-         usage: GPUTextureUsage.RENDER_ATTACHMENT,
-      });
+            size: [currentTexture.width, currentTexture.height],
+            format: 'depth24plus',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
    const renderPassDescriptor = {
+      label: "Render Pass Descriptor",
       colorAttachments: [{
+         label      : "Color Attachment",
          clearValue : clearColor,
          loadOp     : 'clear',
          storeOp    : 'store',
@@ -97,7 +102,7 @@ async function gpumain (gpuCanvas)
       depthStencilAttachment: { //this is deth stensil aware in renderPipeline:depthStencil
          label            : "Depth Attachment",
          view             : depthTexture.createView(),
-         depthClearValue  : 1.0,
+         depthClearValue  : 0.0,
          depthLoadOp      : 'clear',
          depthStoreOp     : 'store',
       },
