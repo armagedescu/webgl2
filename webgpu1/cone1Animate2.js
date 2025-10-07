@@ -101,15 +101,11 @@ let gpumain = (gpuCanvas) =>
          { binding: 0, resource: { buffer: vsUniformBuffer } }
       ],
    });
-   let time_old = 0;
 
    let animateMain = (time) =>
    {
-      let fi = time * 0.005;
-      
-      let dt = time - time_old;
-      let lightx =  Math.cos (dt * 0.002);
-      let lighty =  Math.sin (dt * 0.002);
+      let lightx =  Math.cos (time * 0.002);
+      let lighty =  Math.sin (time * 0.002);
       ////same as:
       //translation2f.set ([lightx,  lighty])
       //device.queue.writeBuffer(vsUniformBuffer, 0, translation2f, 0, 2);

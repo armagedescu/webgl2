@@ -6,7 +6,6 @@ class Animate1 extends GlVAObject
    #vertices = [ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,
                  0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ];
    #dt = 0;
-   #timeOld = 0;
    constructor(context)
    {
       super(context);
@@ -23,7 +22,7 @@ class Animate1 extends GlVAObject
 
       this.translation = gl.getUniformLocation(this.program, 'translation');
    }
-   set t(timeNew) { this.#dt = timeNew - this.#timeOld; }
+   set t(timeNew) { this.#dt = timeNew; }
 
    drawVao()
    {
@@ -51,8 +50,8 @@ let glmain = () =>
       gl.enable(gl.DEPTH_TEST);
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	  animate1.t = time;
-	  animate1.draw();
+	   animate1.t = time;
+	   animate1.draw();
 
       window.requestAnimationFrame(animate);
    }

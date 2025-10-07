@@ -7,7 +7,7 @@ class Cone1Animate1 extends GlVAObject
    #norms    = [];
    #nh = null;
    #ns = null;
-   #oldTime = 0;
+
    #dt = 0;
    constructor(context, nh = 1, ns = 5)
    {
@@ -49,7 +49,7 @@ class Cone1Animate1 extends GlVAObject
 
       this.lightDirection = gl.getUniformLocation(this.program, 'lightDirection');
    }
-   set t(t) { this.#dt = t - this.#oldTime; }
+   set t(t) { this.#dt = t; }
    drawVao()
    {
       let gl = this.gl;

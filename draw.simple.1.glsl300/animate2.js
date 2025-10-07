@@ -20,17 +20,14 @@ let glmain = () =>
 
    let translation = gl.getUniformLocation(glCanvas.program, 'translation');
 
-   let time_old = 0;
    let animate = (time) =>
    {
-      let dt = time - time_old;
-
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
 
       gl.useProgram (glCanvas.program);
-	  let t = [0.5 *  Math.cos(dt * 0.005),  0.5 *  Math.sin(dt * 0.005),  0.5 *  Math.sin(dt * 0.005)]
+	   let t = [0.5 *  Math.cos(time * 0.005),  0.5 *  Math.sin(time * 0.005),  0.5 *  Math.sin(time * 0.005)]
 
       gl.uniform3f(translation, ... t);
 
