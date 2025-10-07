@@ -92,7 +92,7 @@ class Cone extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let cone = new Cone (canvas);
    let gl = cone.gl;
@@ -105,5 +105,5 @@ let func = () =>
 
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

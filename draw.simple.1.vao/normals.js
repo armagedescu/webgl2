@@ -30,7 +30,7 @@ class Normals extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let normals = new Normals(canvas);
    let gl = normals.gl;
@@ -41,5 +41,5 @@ let func = () =>
    gl.clear (gl.COLOR_BUFFER_BIT);
    normals.draw();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

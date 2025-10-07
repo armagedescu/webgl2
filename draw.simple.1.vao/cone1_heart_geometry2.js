@@ -175,7 +175,7 @@ class HeartGeometry2 extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let heartGeometry2 = new HeartGeometry2(canvas); //nh = 2, ns = 40;
    let gl = heartGeometry2.gl;
@@ -188,5 +188,5 @@ let func = () =>
    heartGeometry2.draw();
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

@@ -24,7 +24,7 @@ class SimpleDraw extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let simpleDraw = new SimpleDraw('draw');
    let gl = simpleDraw.gl;
@@ -36,4 +36,4 @@ let func = () =>
 
    simpleDraw.draw();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
