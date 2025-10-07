@@ -10,8 +10,8 @@ let glmain = () =>
    let selectSingleNodeText = (xpathStr, element, resolver) =>
       selectSingleNode (xpathStr, element, resolver).textContent;
 
-   console.log (selectSingleNodeText ("./script[@data-gl-type='vertex-shader']",   canvas).trim());
-   console.log (selectSingleNodeText ("./script[@data-gl-type='fragment-shader']", canvas).trim());
+   //console.log (selectSingleNodeText ("./script[@data-gl-type='vertex-shader']",   canvas).trim());
+   //console.log (selectSingleNodeText ("./script[@data-gl-type='fragment-shader']", canvas).trim());
 
    let vertexShader   = gl.createShader (gl.VERTEX_SHADER);
    gl.shaderSource  (vertexShader, selectSingleNodeText ("./script[@data-gl-type='vertex-shader']", canvas).trim());

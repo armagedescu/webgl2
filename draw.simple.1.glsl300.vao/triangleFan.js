@@ -7,7 +7,7 @@ class TriangleFan extends GlVAObject
    #verts    = [0.8, 0.8, 0];
    #norms    = [0.0, 0.0, 1.0];
    #nh = null; #ns = null; #dr = null;
-   constructor(context, nh = 1, ns = 16, dr = 0.6)//, dnh = 0.2,)
+   constructor(context, nh = 1, ns = 16, dr = 0.6) //, dnh = 0.2,)
    {
       super(context);
       this.#nh = nh; this.#ns = ns; this.#dr = dr;
@@ -28,11 +28,11 @@ class TriangleFan extends GlVAObject
       this.bindVertexArray();
       let gl = this.gl;
 
-      this.vertex_buffer = this.arrayBuffer(new Float32Array(this.#verts));
-      this.coord = this.vertex_buffer.attrib ("coordinates",  3, gl.FLOAT);
+      this.vertex_buffer = this.arrayBuffer(new Float32Array(this.#verts)).withAttribLocation(0);
+      this.coord = this.vertex_buffer.attrib (3, gl.FLOAT);
 
-      this.norms_buffer  = this.arrayBuffer(new Float32Array(this.#norms));
-      this.noord = this.norms_buffer.attrib  ("inputNormal", 3, gl.FLOAT);
+      this.norms_buffer  = this.arrayBuffer(new Float32Array(this.#norms)).withAttribLocation(1);
+      this.noord = this.norms_buffer.attrib  (3, gl.FLOAT);
    }
    drawVao()
    {
