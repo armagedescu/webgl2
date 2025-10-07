@@ -35,7 +35,7 @@ let glmain = () =>
       .withNormals3d  (geo.norms)
       .withLightDirection3f ([1.0, 0.0, 1.0])
       ;
-   //shape.logStrategyShaders ("cone1Animate.js");
+   //shape.logStrategyShaders ("cone1Animate1.js");
    gl = shape.gl;
 
    animate = (time) =>
