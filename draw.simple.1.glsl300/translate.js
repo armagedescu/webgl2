@@ -1,5 +1,5 @@
 {
-let func = () =>
+let glmain = () =>
 {
    let canvas = document.getElementById('translate');
 
@@ -24,7 +24,6 @@ let func = () =>
 
    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

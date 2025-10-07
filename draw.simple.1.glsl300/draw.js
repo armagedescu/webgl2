@@ -1,6 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+let glmain = () =>
 {
    let glCanvas = new GlCanvas('draw');
    let gl = glCanvas.gl;
@@ -30,5 +30,5 @@ let func = () =>
    // gl.POINTS gl.TRIANGLE_STRIP gl.LINE_STRIP gl.LINE_LOOP gl.TRIANGLE_FAN
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

@@ -1,6 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+let glmain = () =>
 {
    let glCanvas = new GlCanvas(canvas);
    let gl = glCanvas.gl;
@@ -39,5 +39,5 @@ let func = () =>
    }
    animate(0);
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
