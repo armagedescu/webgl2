@@ -1,6 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
+
 function buildConeHearth (nh, ns)
 {
    if (ns & 1) ns++;
@@ -12,7 +13,6 @@ function buildConeHearth (nh, ns)
    let FI_S = 2 * Math.PI / ns; //angular size of one sector
    let R_S  = 2 / ns;           //Radius = FI normalized (FI / PI)
    let D_H  = 1 / nh;
-
 
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {
