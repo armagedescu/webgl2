@@ -9,7 +9,7 @@
 <body>
    <div class="sample">
       Simple draw:<br/>
-      <canvas id = "simpleDraw"  width = "120" height = "120" class="blue">
+      <canvas id = "simpleDraw"  width="120" height="120" class="blue">
          <script src="./draw.simple.1/simpleDraw.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec2 coordinates;
@@ -29,7 +29,7 @@
    </div>
    <div class="sample">
       Simple draw indexed:<br/>
-      <canvas id = "simpleDrawIndexed"  width = "120" height = "120" class="blue">
+      <canvas id = "simpleDrawIndexed"  width="120" height="120" class="blue">
          <script src="./draw.simple.1/simpleDrawIndexed.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec2 coordinates;
@@ -48,7 +48,7 @@
    </div>
    <div class="sample">
       Translate:<br/>
-      <canvas id = "translate"  width = "120" height = "120" class="yellow" >
+      <canvas id = "translate"  width="120" height="120" class="yellow" >
          <script src="./draw.simple.1/translate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
             attribute vec4 coordinates;
@@ -64,11 +64,11 @@
             }
          </script>
       </canvas>
-   </div><br/>
+   </div>
    <!-- Go big for screen snippets -->
    <div class="sample">
       Translate animate 1:<br/>
-      <canvas id = "animate"  width = "360" height = "360" class="cyan">
+      <canvas id = "animate"   width="120" height="120"  class="cyan">
          <script src="./draw.simple.1/animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -88,7 +88,7 @@
    </div>
    <div class="sample">
       Translate animate 2:<br/>
-      <canvas id = "animate second instance" width = "360" height = "360" class="magenta">
+      <canvas id = "animate second instance" width="120" height="120" class="magenta">
           <script src="./draw.simple.1/animate2.js"></script>
           <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
@@ -122,8 +122,8 @@
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
-            const vec3  lightDirection = normalize(vec3(-1.0,  -1.0, -1.0)); // Direction -> to left down forward
-            const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
+            const vec3  lightDirection = normalize (vec3(-1.0,  -1.0, 1.0)); // Direction -> to left down forward (z lefthanded)
+            const vec3  greenColor     = vec3 (0.0,  1.0,  0.0); // RGB of green
 
             varying vec3 nm;
             void main() 
@@ -163,25 +163,28 @@
       <br/>
       Cone TRIANGLE_FAN<br/>
       (wrong, ab glow effect)</br>
-      <canvas id = "cone" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1/triangle_fan.js"></script>
+      <canvas id = "cone" width="120" height="120"  class="yellow">
+         <script src="./draw.simple.1/triangleFan.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
 
-             varying vec3 nm;
+             varying vec3 normalVary;
              void main()
              {
                 gl_Position = coordinates;
-                nm = inputNormal;
+                normalVary = inputNormal;
              }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
-            varying vec3 nm;
+            varying vec3 normalVary;
+            const vec4 constColor          = vec4 (0.0, 1.0, 0.0, 0.1);
+            const vec3 constLightDirection = vec3 (0.0, 1.2, 0.0);
             void main() 
             {
-              gl_FragColor = vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(nm, 0.9);
+               float prod = -dot (constLightDirection,  normalVary );
+               gl_FragColor  = vec4 (constColor.rgb * prod,  1.0); //cut off alpha
             }
          </script>
       </canvas>
@@ -191,33 +194,29 @@
       Normals simple, smooth gradient<br/>
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
-      <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./draw.simple.1/cone1_animate.js"></script>
+      <canvas id = "cone1_animate" width="200" height="200"  class="yellow">
+         <script src="./draw.simple.1/cone1Animate.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
-             uniform vec2  lightDirection; // Direction -> right up forward
 
-             varying vec2 ld;
              varying vec3 nm;
              void main()
              {
                 gl_Position = coordinates;
-                ld  = lightDirection;
                 nm = inputNormal;
              }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            //precision lowp float;
-            //precision highp float;
-            precision mediump float;
+            precision mediump float; // highp float; // lowp float;
+            varying vec3 nm;
+            uniform vec2  lightDirection; // Direction -> right up forward
+
             const vec3  greenColor = vec3(0.0,  1.0,  0.0);
 
-            varying vec2 ld;
-            varying vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(lightDirection, 1.0)),   normalize(nm));
                gl_FragColor = vec4 (greenColor * prod,  1.0);
             }
          </script>
@@ -228,30 +227,28 @@
       Normals simple, no gradient, <br/>
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
-      <canvas id = "cone1_animate" width = "360" height = "360"  class="yellow">
-         <script src="./draw.simple.1/cone1_animate2.js"></script>
+      <canvas id = "cone1_animate" width="200" height="200"  class="yellow">
+         <script src="./draw.simple.1/cone1Animate2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
-             uniform vec2  lightDirection; // Direction -> changing
 
-             varying vec2 ld;
              varying vec3 nm;
              void main()
              {
                 gl_Position = coordinates;
-                ld  = lightDirection;
                 nm = inputNormal;
              }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
             const vec3  greenColor = vec3(0.0,  1.0,  0.0);
-            varying vec2 ld;
+            uniform vec2  lightDirection; // Direction -> changing
+
             varying vec3 nm;
             void main()
             {
-               float prod   =  -dot ( normalize(vec3(ld, -1.0)),   normalize(nm));
+               float prod   =  -dot ( normalize(vec3(lightDirection, 1.0)),   normalize(nm));
                gl_FragColor =  vec4 (greenColor * prod,  1.0);
             }
          </script>
@@ -263,8 +260,8 @@
       Cone 1 geometry 1, </br>
       Smooth, </br>
       Normals borow previous <br/>
-      <canvas id = "cone1" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1/cone1_geometry1.js"></script>
+      <canvas id = "cone1" width="200" height="200"  class="yellow">
+         <script src="./draw.simple.1/cone1Geometry1.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
@@ -295,29 +292,28 @@
       Cone 1 geometry 2, </br>
       Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1/cone1_geometry2.js"></script>
+         <script src="./draw.simple.1/cone1Geometry2.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
-             varying vec3 nm;
+             varying vec3 normalVary;
              void main()
              {
                 gl_Position = coordinates;
-                nm = inputNormal;
+                normalVary = inputNormal;
              }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
+            varying vec3 normalVary;
 
-            const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
+            const vec3  greenColor          = vec3( 0.0,   1.0,   0.0); // RGB of green
+            const vec3  constLightDirection = vec3(-1.0,  -1.0,   1.0); // Direction -> right up forward
 
-            varying vec3 nm;
             void main() 
             {
-               //find the cos of angle between plane normal and light direction
-               float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               float prod   =  -dot (normalize(constLightDirection),   normalize(normalVary));
+               gl_FragColor =  vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
@@ -327,30 +323,29 @@
       Cone 1 geometry 3, </br>
       Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1/cone1_geometry3.js"></script>
+         <script src="./draw.simple.1/cone1Geometry3.js"></script>
          <script type="text/glsl-shader" data-gl-type="vertex-shader">
              attribute vec4 coordinates;
              attribute vec3 inputNormal;
-             varying vec3 nm;
+             varying vec3 normalVary;
              void main()
              {
                 gl_Position = coordinates;
-                nm = inputNormal;
+                normalVary = inputNormal;
              }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             precision mediump float;
+            varying vec3 normalVary;
 
-            const vec3  lightDirection = vec3(-1.0,  -1.0,  -1.0); // Direction -> right up forward
-            const vec3  greenColor     = vec3( 0.0,   1.0,   0.0); // RGB of green
-
-            varying vec3 nm;
+            const vec3 constColor          = vec3 ( 0.0,  1.0, 0.0);
+            const vec3 constLightDirection = vec3 (-1.0, -1.0, 1.0); // RGB of green // Direction -> right up forward
             void main() 
             {
-               //find the cos of angle between plane normal and light direction
-               float prod   =  dot (-1.0 * normalize(lightDirection),   normalize(nm));
-               gl_FragColor = vec4 (greenColor * prod,  1.0);
+               float prod   =  -dot (normalize(constLightDirection),   normalize(normalVary));
+               gl_FragColor =  vec4 (constColor * prod,  1.0);
             }
+
          </script>
       </canvas>
    </div><br/>

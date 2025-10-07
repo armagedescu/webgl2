@@ -151,13 +151,13 @@
             out vec4 fragColor;
 
             const vec3  lightDirection = normalize(vec3(-1.0,  -1.0, 1.0)); // Direction -> to left down forward
-            const vec3  greenColor     = vec3(0.0,  1.0,  0.0); // RGB of green
+            const vec3  constColor     = vec3 (0.0,  1.0,  0.0); // RGB of green
 
             in vec3 nm;
             void main() 
             {
-               float prod   =  -dot (lightDirection,   normalize(nm));
-               fragColor = vec4 (greenColor * prod,  1.0);
+               float prod =  -dot (lightDirection,   normalize(nm));
+               fragColor  =  vec4 (constColor * prod,  1.0);
             }
          </script>
       </canvas>
@@ -180,10 +180,8 @@
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
-            //precision mediump float;
-            out mediump vec4 fragColor;
-            //precision mediump float; varying vec4 fragColor; <-- without lowp??
-            in lowp vec4 passcolor;
+            out mediump vec4 fragColor; //instead of predeclaring precision mediump // <-- without lowp??
+            in lowp vec4 passcolor;     //instead of predeclaring precision mediump ..., individual declare
             void main(void)
             {
                fragColor = passcolor;
@@ -311,7 +309,7 @@
             precision mediump float;
             out vec4 fragColor;
             in  vec3 normalVary;
-            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 1.0);
+            const vec4 constColor          = vec4 (0.0, 1.0, 0.0, 1.0);
             const vec3 constLightDirection = vec3(-1.0, -1.0, 1.0);
             void main(void)
             {
@@ -342,9 +340,10 @@
             #version 300 es
             precision mediump float;
             out vec4 fragColor;
-            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 1.0);
             in  vec3 normalVary;
-            const vec3 constLightDirection = vec3(-1.0, -1.0, 1.0);
+
+            const vec4 constColor          = vec4 ( 0.0,  1.0, 0.0, 1.0);
+            const vec3 constLightDirection = vec3 (-1.0, -1.0, 1.0);
             void main(void)
             {
                float prod = -dot (normalize(constLightDirection),  normalize(normalVary) );
@@ -380,7 +379,7 @@
             void main(void)
             {
                float prod = -dot (normalize(constLightDirection),  normalize(normalVary) );
-               fragColor = vec4 (constColor.rgb * prod,  1.0);
+               fragColor  = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>

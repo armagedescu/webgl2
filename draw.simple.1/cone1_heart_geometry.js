@@ -1,14 +1,10 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+let glmain = () =>
 {
    let glCanvas = new GlCanvas(canvas);
    let gl = glCanvas.gl;
    glCanvas.useProgram ();
-   gl.clearColor(0.5, 0.5, 0.5, 0.9);
-   gl.enable(gl.DEPTH_TEST);
-   gl.enable(gl.CULL_FACE);
-   gl.clear (gl.COLOR_BUFFER_BIT);
 
    let nh = 3, ns = 100, dr = 1.0;
    if (ns & 1) ns++;
@@ -94,8 +90,13 @@ let func = () =>
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
 
+
+   gl.clearColor(0.5, 0.5, 0.5, 0.9);
+   gl.enable(gl.DEPTH_TEST);
+   gl.enable(gl.CULL_FACE);
+   gl.clear (gl.COLOR_BUFFER_BIT);
    gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

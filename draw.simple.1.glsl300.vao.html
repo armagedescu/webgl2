@@ -215,11 +215,11 @@
             out vec4 fragColor;
             in  vec3 normalVary;
             const vec4 constColor          = vec4 (0.0, 1.0, 0.0, 0.1);
-            const vec3 constLightDirection = vec3(0.0, 1.2, 0.0);
+            const vec3 constLightDirection = vec3 (0.0, 1.2, 0.0);
             void main()
             {
                float prod = -dot (constLightDirection,  normalVary );
-               fragColor  = vec4 (constColor.rgb * prod,  1.0);
+               fragColor  = vec4 (constColor.rgb * prod,  1.0); //cut off alpha
             }
          </script>
       </canvas>
@@ -248,12 +248,9 @@
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
-            precision mediump float;
-            //precision lowp float;
-            //precision highp float;
+            precision mediump float; //lowp float;//highp float;
 
             out vec4 fragColor;
-
             const vec3  greenColor = vec3(0.0,  1.0,  0.0);
 
             in vec2 ld;
@@ -335,7 +332,7 @@
             void main() 
             {
                float prod   =  -dot (lightDirection,   normalize(nm));
-               fragColor = vec4 (greenColor * prod,  1.0);
+               fragColor    =  vec4 (greenColor * prod,  1.0);
             }
          </script>
       </canvas>
