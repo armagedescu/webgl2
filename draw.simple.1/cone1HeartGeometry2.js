@@ -1,27 +1,20 @@
 {
 let canvas = document.currentScript.parentElement;
-let glmain = () =>
+
+function buildConeHeart (nh, ns)
 {
-   let glCanvas = new GlCanvas(canvas);
-   let gl = glCanvas.gl;
-   glCanvas.useProgram ();
-
-   let nh = 2, ns = 40;
    if (ns & 1) ns++;
-
    let verts    = [];
    let norms    = [];
-
    let PI_2 = 2 * Math.PI;      //2 * Pi
    let FI_S = 2 * Math.PI / ns; //angular size of one sector
    let R_S  = 2 / ns;           //Radius = FI normalized (FI / PI)
    let D_H  = 1 / nh;
 
-
    for (let i = 0,   ix = 0, iy = 1, iz = 2;    i < ns; i++,     ix += 9,iy += 9,iz += 9)
    {
       let ps, cr;
-      if (i < ns/2)
+      if (i < ns / 2)
       {
          let fi1 = i   * FI_S;
          let fi2 = fi1 + FI_S; //next fi
@@ -32,13 +25,13 @@ let glmain = () =>
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- next radius
 
-         ps = [[0.0,                  0.0,                  (1.0)], //<--points in direction of us
-               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)],
-               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)]];
+         ps = [[0.0,                  0.0,                  -(1.0)], //<--points in direction of us
+               [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(1 - D_H)],
+               [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(1 - D_H)]];
 
          cr = [[0,   0,   0],
-               [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   1 + fi1],
-               [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   1 + fi2]];
+               [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),   -(1 + fi1)],
+               [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),   -(1 + fi2)]];
 
       } else
       {
@@ -52,13 +45,13 @@ let glmain = () =>
          let r1 = rc1 / nh; //<-- radius
          let r2 = rc2 / nh; //<-- radius
          
-         ps =     [[0.0,                  0.0,                  (1.0)], //<--points to us
-                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   (1 - D_H)],
-                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   (1 - D_H)]];
+         ps =     [[0.0,                  0.0,                  -(1.0)], //<--points to us
+                   [r2 * Math.cos(fi2),   r2 * Math.sin(fi2),   -(1 - D_H)],
+                   [r1 * Math.cos(fi1),   r1 * Math.sin(fi1),   -(1 - D_H)]];
 
          cr = [[ 0,  0,  0],
-               [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), 1 + fi2],
-               [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), 1 + fi1]];
+               [-(Math.sin(fi2) + fi2 * Math.cos(fi2)), (Math.cos(fi2) - fi2 * Math.sin(fi2)), -(1 + fi2)],
+               [-(Math.sin(fi1) + fi1 * Math.cos(fi1)), (Math.cos(fi1) - fi1 * Math.sin(fi1)), -(1 + fi1)]];
       }
       [verts[ix],     verts[iy],     verts[iz]]     = ps[0];
       [verts[ix + 3], verts[iy + 3], verts[iz + 3]] = ps[1];
@@ -90,15 +83,15 @@ let glmain = () =>
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1] []    [1]   [4]
-                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ] []    [ ]   [6]
-                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [3] []    [2]   [ ]
-                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [2] []    [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(1 - h1n)],  // <-- points [1] []    [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ] []    [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [3] []    [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [2] []    [3]   [5]
 
-            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+            cr = [[(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                  [(Math.sin(fi1) + fi1 * Math.cos(fi1)),  -(Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [(Math.sin(fi2) + fi2 * Math.cos(fi2)),  -(Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                  ];
          } else
          {
@@ -115,15 +108,15 @@ let glmain = () =>
             let r21 = rc1 * h2n; //<-- radius
             let r22 = rc2 * h2n; //<-- radius
 
-            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  1 - h1n],  // <-- points [1]   [4]
-                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  1 - h1n],  // <-- points [ ]   [6]
-                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  1 - h2n],  // <-- points [2]   [ ]
-                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  1 - h2n]]; // <-- points [3]   [5]
+            ps = [[r11 * Math.cos(fi1),  r11 * Math.sin(fi1),  -(1 - h1n)],  // <-- points [1]   [4]
+                  [r12 * Math.cos(fi2),  r12 * Math.sin(fi2),  -(1 - h1n)],  // <-- points [ ]   [6]
+                  [r21 * Math.cos(fi1),  r21 * Math.sin(fi1),  -(1 - h2n)],  // <-- points [2]   [ ]
+                  [r22 * Math.cos(fi2),  r22 * Math.sin(fi2),  -(1 - h2n)]]; // <-- points [3]   [5]
 
-            cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2],
-                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  1 + fi1],
-                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  1 + fi2]
+            cr = [[-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)],
+                  [-(Math.sin(fi1) + fi1 * Math.cos(fi1)),  (Math.cos(fi1) - fi1 * Math.sin(fi1)),  -(1 + fi1)],
+                  [-(Math.sin(fi2) + fi2 * Math.cos(fi2)),  (Math.cos(fi2) - fi2 * Math.sin(fi2)),  -(1 + fi2)]
                  ];
          }
 
@@ -148,10 +141,26 @@ let glmain = () =>
       }
    }
 
+   let expectedVertsLength =  ns * 3 * 3 + ns * 6 * 3 *(nh - 1);
+   console.assert (verts.length == expectedVertsLength);
+   return {verts: new Float32Array (verts), norms: new Float32Array (norms)};
+}
 
+
+let glmain = () =>
+{
+   let glCanvas = new GlCanvas(canvas);
+   let gl = glCanvas.gl;
+
+   let nh = 2, ns = 40;
+   //let nh = 1, ns = 40;
+   let geometry = buildConeHeart (nh, ns);
+
+
+   glCanvas.useProgram ();
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
 
    let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
@@ -160,7 +169,7 @@ let glmain = () =>
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
+   gl.bufferData(gl.ARRAY_BUFFER, geometry.norms, gl.STATIC_DRAW);
    let noord = gl.getAttribLocation (glCanvas.program, "inputNormal");
    gl.vertexAttribPointer     (noord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (noord);
@@ -169,7 +178,7 @@ let glmain = () =>
    gl.enable(gl.DEPTH_TEST);
    //gl.enable(gl.CULL_FACE);
    gl.clear (gl.COLOR_BUFFER_BIT);
-   gl.drawArrays(gl.TRIANGLES, 0, ns * 3 + ns * 6 * (nh - 1));
+   gl.drawArrays(gl.TRIANGLES, 0, geometry.verts.length / 3); //ns * 3 + ns * 6 * (nh - 1));
 
 };
 document.addEventListener('DOMContentLoaded', glmain);
