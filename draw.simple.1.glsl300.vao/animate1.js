@@ -34,7 +34,7 @@ class Animate1 extends GlVAObject
 
       gl.uniform4f(this.translation, Tx, Ty, Tz, 0.0);
 
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length / 3);
    }
 }
 

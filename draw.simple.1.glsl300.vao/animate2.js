@@ -34,7 +34,7 @@ class Animate2 extends GlVAObject
 
       gl.uniform3f(this.translation, Tx, Ty, Tz);
 
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length / 3);
    }
 }
 
@@ -46,7 +46,7 @@ let glmain = () =>
    let animate = (time) =>
    {
       animate2.useProgram ();
-	  gl.clearColor(0.5, 0.5, 0.5, 0.9);
+	   gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.enable(gl.DEPTH_TEST);
       gl.clear (gl.COLOR_BUFFER_BIT);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

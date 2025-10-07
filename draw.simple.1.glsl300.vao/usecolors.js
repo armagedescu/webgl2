@@ -26,7 +26,7 @@ class UseColors extends GlVAObject
    drawVao()
    {
       let gl = this.gl;
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length / 3);
    }
 }
 
