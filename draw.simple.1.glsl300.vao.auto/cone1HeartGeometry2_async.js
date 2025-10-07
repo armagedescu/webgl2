@@ -154,7 +154,7 @@ let glmain = async () =>
       .withNormals3d  (geo.norms)
       .withConstLightDireciton ([-1.0,  -1.0,  1.0])
       ;
-   //shape.logStrategyShaders ("cone1HeartGeometry2Async.js");
+   //shape.logStrategyShaders ("cone1HeartGeometry2_async.js");
 
    setTimeout( () => {
          gl = shape.gl;
