@@ -87,7 +87,7 @@ async function gpumain (gpuCanvas)
    //9: Draw the triangle(s)
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexColorBuffer);
-   passEncoder.draw(6);
+   passEncoder.draw(verticesColors.length / 7); //strided verts 3D + colors 4D
 
    // End the render pass
    passEncoder.end();

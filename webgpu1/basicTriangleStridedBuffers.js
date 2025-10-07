@@ -111,7 +111,7 @@ async function init() {
    // 9: Draw the triangle
    passEncoder.setPipeline     (renderPipeline);  // bind program?
    passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
-   passEncoder.draw(3);
+   passEncoder.draw(vertices.length / 8);  //Strided 4D verts + 4D colors
 
    // End the render pass
    passEncoder.end();

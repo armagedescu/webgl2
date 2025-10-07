@@ -128,7 +128,7 @@ async function init() {
    passEncoder.setPipeline     (renderPipeline);      // bind program?
    passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
    passEncoder.setVertexBuffer (1, colorBuffer); // bind vao?
-   passEncoder.draw(3);
+   passEncoder.draw(vertices.length / 4); //4D
 
    // End the render pass
    passEncoder.end();

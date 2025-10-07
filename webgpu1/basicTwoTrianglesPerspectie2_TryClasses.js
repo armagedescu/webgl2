@@ -114,7 +114,7 @@ async function gpumain (gpuCanvas)
 
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexBuffer);
-   passEncoder.draw(6);
+   passEncoder.draw(vertices.length / 8); //strided verts 4D + colors 4D
 
    // End the render pass
    passEncoder.end();

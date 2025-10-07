@@ -103,7 +103,7 @@ async function gpumain (gpuCanvas)
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexBuffer);
    passEncoder.setVertexBuffer(1, normalBuffer);
-   passEncoder.draw(6);
+   passEncoder.draw(vertices.length / 3);
 
    // End the render pass
    passEncoder.end();
