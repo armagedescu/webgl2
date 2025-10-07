@@ -9,7 +9,7 @@ function buildGeometryStrip (nh, ns, dnh, dr)
    let norms    = [  0,    0,  0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = 0; //not the tip
+   let z = 0; //cone edge orientation to us, not the tip
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
@@ -22,7 +22,7 @@ function buildGeometryStrip (nh, ns, dnh, dr)
    console.assert (verts.length ==  expectedLength, `vets length ${verts.length} != ${expectedLength}`);
    //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'back' } };
    //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'front' } };
-   return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip'} };
+   return {verts: new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip'} };
 }
 
 function buildGeometryTriangles (nh, ns, dnh, dr)
@@ -32,10 +32,10 @@ function buildGeometryTriangles (nh, ns, dnh, dr)
    let norms    = [];
    let realns = ns;
    let start  = ns / 2;
-   let  z = 0;
+   let z = 0; //cone edge orientation to us, not the tip
    for (let i = start, [ix, iy, iz] = [0, 1, 2]; i < realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
-      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  0.1];
+      [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  1.0];
       [norms [ix], norms [iy], norms [iz]] = [0.0,  0.0,  0.0]; //tip of the cone: null norm
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
@@ -113,8 +113,8 @@ async function gpumain (gpuCanvas)
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
-         depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
-         //depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
+         //depthCompare: 'less',      //Non Inverted the z axis depthStencilAttachment.depthClearValue = 1.0
+         depthCompare: 'greater', //Inverted the z axis depthStencilAttachment.depthClearValue = 0.0
          format: 'depth24plus',
       },
    };
@@ -143,8 +143,8 @@ async function gpumain (gpuCanvas)
       depthStencilAttachment: { //this is deth stensil aware in renderPipeline:depthStencil
          label            : "Depth Attachment",
          view             : depthTexture.createView(),
-         depthClearValue  : 1.0,
-         //depthClearValue  : 0.0,
+         //depthClearValue  : 1.0,
+         depthClearValue  : 0.0,
          depthLoadOp      : 'clear',
          depthStoreOp     : 'store',
       },

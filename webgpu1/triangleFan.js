@@ -5,42 +5,44 @@ let clearColor = [0.5, 0.5, 0.5, 0.9];
 function buildGeometryStrip (nh, ns, dnh, dr)
 {
    console.assert (ns % 4 == 0);
-   let verts    = [0.8,  0.8,  0];
+   let verts    = [0.8,  0.8,  1];
    let norms    = [  0,    0,  0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
-   let z = 0; //cone edge orientation to us
+   let z = 0; //cone edge orientation to us, not the tip
    for (let i = start, [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z ];
-      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1]; //all normals point down forward, glowing effect
       ix += 3,iy += 3,iz += 3;
-      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 1.0];
+      [verts [ix], verts [iy], verts [iz]] = [0.8, 0.8, 1.0]; //back to the tip
       [norms [ix], norms [iy], norms [iz]] = [0, 0, 0];
    }
    let expectedLength = 3 + 3 * 2 * (realns + 1);
    console.assert (verts.length ==  expectedLength, `vets length ${verts.length} != ${expectedLength}`);
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_strip:true, topology: 'triangle-strip'};
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'back' } };
+   //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip', cullMode: 'front' } };
+   return {verts: new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology:  'triangle-strip'} };
 }
 
 function buildGeometryTriangles (nh, ns, dnh, dr)
 {
    console.assert (ns % 4 == 0);
-   let verts    = [];
-   let norms    = [];//[0.0, 0.0, 1.0];
+   let verts    = [];//triangle list topology, each triangle has its own tip
+   let norms    = [];
    let realns = ns;
    let start  = ns / 2;
-   let z = 0; //cone edge orientation to us
+   let z = 0; //cone edge orientation to us, not the tip
    for (let i = start, [ix, iy, iz] = [0, 1, 2]; i < realns + start; i++, ix += 3,iy += 3,iz += 3)
    {
       [verts [ix], verts [iy], verts [iz]] = [0.8,  0.8,  1.0];
-      [norms [ix], norms [iy], norms [iz]] = [0.0,  0.0,  0.0];
+      [norms [ix], norms [iy], norms [iz]] = [0.0,  0.0,  0.0]; //tip of the cone: null norm
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * i / ns),   dr * Math.sin(2 * Math.PI * i / ns),   z];
-      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1]; //all normals point down forward, glowing effect
       ix += 3,iy += 3,iz += 3;
       [verts [ix], verts [iy], verts [iz]] = [dr * Math.cos(2 * Math.PI * (i+1) / ns),   dr * Math.sin(2 * Math.PI * (i+1) / ns),   z];
-      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
+      [norms [ix], norms [iy], norms [iz]] = [0, -1, 1]; //all normals point down forward, glowing effect
    }
    console.assert (verts.length == 3 * 3 * realns);
    //return {verts:new Float32Array(verts), norms:new Float32Array(norms), gpu:{topology: 'triangle-list', cullMode: 'back' } };
@@ -51,11 +53,6 @@ function buildGeometryTriangles (nh, ns, dnh, dr)
 
 async function gpumain (gpuCanvas)
 {
-   //let selectSingleNode = (xpathStr, element, resolver) =>
-   //   document.evaluate(xpathStr, element, resolver, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
-   //let selectSingleNodeText = (xpathStr, element, resolver) =>
-   //   selectSingleNode (xpathStr, element, resolver).textContent;
-   //console.log (selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas));
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
 
@@ -64,8 +61,8 @@ async function gpumain (gpuCanvas)
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
    let nh = 1, ns = 16, dnh = 0.2, dr = 0.6;
-   let geometry = buildGeometryStrip (nh, ns, dnh, dr);
-   //let geometry = buildGeometryTriangles (nh, ns, dnh, dr);
+   //let geometry = buildGeometryStrip (nh, ns, dnh, dr);
+   let geometry = buildGeometryTriangles (nh, ns, dnh, dr);
    let vertexBuffer, normalBuffer;
    vertexBuffer = device.createBuffer({ //alloc
       label: "Vertex Buffer",
@@ -112,7 +109,7 @@ async function gpumain (gpuCanvas)
          }]
       },
       //primitive: {  topology: 'triangle-list' },
-      primitive: {  topology: geometry.topology },
+      primitive: geometry.gpu,
       layout: 'auto',
       depthStencil: {
          depthWriteEnabled: true,
