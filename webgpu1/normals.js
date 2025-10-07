@@ -112,12 +112,12 @@ async function gpumain (gpuCanvas)
    device.queue.submit([commandEncoder.finish()]);
 	return 0;
 }
-async function main(event) {
+async function gpustartup (event) {
    new GpuCanvas ({canvas:canvas, newAdapter: false}).ready().then (
       canvasObj =>{
          gpumain (canvasObj);
 	   });
 }
-document.addEventListener('DOMContentLoaded', event => main (event));
+document.addEventListener('DOMContentLoaded', event => gpustartup (event));
 
 }

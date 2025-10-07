@@ -165,13 +165,13 @@ let gpumain = (gpuCanvas) =>
    device.queue.submit ([commandEncoder.finish()]);
 
 }
-async function main(event)
+async function gpustartup(event)
 {
    new GpuCanvas ({canvas:canvas, newAdapter: false}).ready().then (
       canvasObj => {
          gpumain (canvasObj);
 	   });
 }
-document.addEventListener('DOMContentLoaded', main);
+document.addEventListener('DOMContentLoaded', gpustartup);
 
 }
