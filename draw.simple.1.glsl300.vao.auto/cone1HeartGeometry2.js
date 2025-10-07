@@ -156,7 +156,7 @@ let glmain = () =>
       .withNormals3d  (geo.norms)
       .withConstLightDireciton ([-1.0,  -1.0,  1.0])
       ;
-   shape.logStrategyShaders ("cone1HeartGeometry2.js");
+   //shape.logStrategyShaders ("cone1HeartGeometry2.js");
    gl = shape.gl;
    gl.clearColor(0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);

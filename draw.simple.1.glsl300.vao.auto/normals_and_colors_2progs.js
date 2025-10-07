@@ -1,6 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+
+let glmain = () =>
 {
    let shape = new GlShapev1 (canvas)
       .withConstColor ([0.0, 1.0, 0.0, 1.0])
@@ -10,6 +11,7 @@ let func = () =>
       .withNormals3d  (
             [ 1.0,  1.0, -1.0,   1.0, 1.0, -1.0,     1.0,  1.0, -1.0,
               1.0,  0.0, -1.0,   1.0, 0.0, -1.0,     1.0,  0.0, -1.0  ]);
+   //shape.logStrategyShaders ("normals_and_colors_2progs.js shape normals");
 
    let shape2 = new GlShapev1 (canvas)
       .withVertices3d (
@@ -20,10 +22,9 @@ let func = () =>
       //         1.0, 0.0, 0.0, 1.0,      1.0, 0.0, 0.0, 1.0,       1.0, 0.0, 0.0, 1.0 ]);
       .withColors3d  (
             [  0.0, 1.0, 0.0,      0.0, 1.0, 0.0,      0.0, 1.0, 0.0,
-               1.0, 0.0, 0.0,      1.0, 0.0, 0.0,      1.0, 0.0, 0.0,]);
+               1.0, 0.0, 0.0,      1.0, 0.0, 0.0,      1.0, 0.0, 0.0]);
    //shape2.logStrategyShaders("normals_and_colors_2progs.js shape2 colors");
 
-   //shape.logStrategyShaders ("normals_and_colors_2progs.js shape normals");
    let gl = shape.gl;
    gl.clearColor (0.5, 0.5, 0.5, 0.9);
    gl.enable (gl.DEPTH_TEST);
@@ -32,5 +33,5 @@ let func = () =>
    shape.drawTriangles  (); //full bind here
    shape2.drawTriangles (); //full bind here
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
