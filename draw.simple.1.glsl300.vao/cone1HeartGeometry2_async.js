@@ -208,7 +208,7 @@ class test extends basetest
    }
    doTest(a) {console.log(this.msg + a);}
 }
-let func = async () =>
+let glmain = async () =>
 {
    //TODO: separate _bthen code with above tests
    (await new test()._bthen()).doHello("await"); //invoking synchronously
@@ -226,5 +226,5 @@ let func = async () =>
       vao.draw();
    } );
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

@@ -6,7 +6,7 @@ function buildGeometryFan (ns, dr)
 {
    console.assert (ns % 4 == 0);
    let verts    = [0.8, 0.8, 0];
-   let norms    = [0, 0, 0];//[0.0, 0.0, 1.0];
+   let norms    = [0, 0, 1.0];//[0.0, 0.0, 1.0];
    let realns = ns;
    let start  = ns / 2;
    for (let i = start,  [ix, iy, iz] = [3, 4, 5]; i <= realns + start; i++, ix += 3,iy += 3,iz += 3)

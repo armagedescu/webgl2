@@ -26,7 +26,7 @@ class Translate extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let translate = new Translate('translate');
    let gl = translate.gl;
@@ -36,5 +36,5 @@ let func = () =>
    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
    translate.draw ();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

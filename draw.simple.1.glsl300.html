@@ -213,12 +213,12 @@
             precision mediump float;
             out vec4 fragColor;
             in  vec3 normalVary;
-            const vec4 constColor = vec4 (0.0, 1.0, 0.0, 0.1);
+            const vec4 constColor          = vec4 (0.0, 1.0, 0.0, 0.1);
             const vec3 constLightDirection = vec3(0.0, 1.2, 0.0);
             void main()
             {
                float prod = -dot (constLightDirection,  normalVary );
-               fragColor = vec4 (constColor.rgb * prod,  1.0);
+               fragColor  = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>

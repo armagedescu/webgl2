@@ -198,27 +198,28 @@
       (wrong)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
          <script src="./draw.simple.1.glsl300.vao/triangleFan.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
+         <script type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
-            in vec4 coordinates;
-            in vec3 inputNormal;
-			
-            out vec3 nm;
-            void main()
+            layout (location = 0) in vec3 vertex;
+            layout (location = 1) in vec3 normal;
+            out vec3 normalVary;
+            void main(void)
             {
-               gl_Position = coordinates;
-               nm = inputNormal;
+               gl_Position = vec4(vertex, 1);
+               normalVary = normal;
             }
          </script>
          <script type="text/glsl-shader" data-gl-type="fragment-shader">
             #version 300 es
             precision mediump float;
             out vec4 fragColor;
-
-            in vec3 nm;
-            void main() 
+            in  vec3 normalVary;
+            const vec4 constColor          = vec4 (0.0, 1.0, 0.0, 0.1);
+            const vec3 constLightDirection = vec3(0.0, 1.2, 0.0);
+            void main()
             {
-              fragColor = vec4(2.0 * vec3(0.0, 0.5, 0.0), 1.0) * vec4(nm, 0.9);
+               float prod = -dot (constLightDirection,  normalVary );
+               fragColor  = vec4 (constColor.rgb * prod,  1.0);
             }
          </script>
       </canvas>

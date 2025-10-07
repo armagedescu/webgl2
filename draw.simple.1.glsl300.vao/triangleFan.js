@@ -19,7 +19,7 @@ class TriangleFan extends GlVAObject
       for (let i = 0, ix = 3,iy = 4,iz = 5; i <= this.#ns; i++, ix += 3,iy += 3,iz += 3)
       {
           [this.#verts [ix], this.#verts [iy], this.#verts [iz]] = [this.#dr * Math.cos(2 * Math.PI * i / this.#ns),   this.#dr * Math.sin(2 * Math.PI * i / this.#ns),   -1];
-          [this.#norms [ix], this.#norms [iy], this.#norms [iz]] = [0, 1, 1];
+          [this.#norms [ix], this.#norms [iy], this.#norms [iz]] = [0, -1, 1];
       }
    }
 
@@ -42,7 +42,7 @@ class TriangleFan extends GlVAObject
 }
 
 
-let func = () =>
+let glmain = () =>
 {
    let triangleFan = new TriangleFan(canvas); //nh = 1, ns = 16, dr = 0.6;// dnh = 0.2,
    let gl   = triangleFan.gl;
@@ -53,5 +53,5 @@ let func = () =>
    gl.clear (gl.COLOR_BUFFER_BIT);
    triangleFan.draw();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }

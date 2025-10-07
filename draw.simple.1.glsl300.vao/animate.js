@@ -39,7 +39,7 @@ class Animate1 extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let animate1 = new Animate1(canvas);
    let gl = animate1.gl;
@@ -58,5 +58,5 @@ let func = () =>
    }
    animate(0);
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
