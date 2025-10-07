@@ -15,7 +15,7 @@ function buildGeometryFan (ns, dr)
       [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
    }
    console.assert (verts.length == 2 * 3 +  3 * realns);
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_fan:true};
+   return {verts: new Float32Array(verts), norms: new Float32Array(norms), topology: WebGL2RenderingContext.TRIANGLE_FAN };
 }
 function buildGeometryFan2 (ns, dr)
 {
@@ -26,7 +26,7 @@ function buildGeometryFan2 (ns, dr)
       [verts [ix], verts [iy], verts [iz],  norms [ix], norms [iy], norms [iz]] =
          [... sect2coord (dr, i / ns), -1,                             ...norm]; 
 
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_fan:true };
+   return {verts: new Float32Array(verts), norms: new Float32Array(norms), topology: WebGL2RenderingContext.TRIANGLE_FAN};
 }
 
 function buildGeometryStrip (ns, dr)
@@ -47,7 +47,7 @@ function buildGeometryStrip (ns, dr)
    }
    let expectedLength = 3 + 3 * 2 * (realns + 1);
    console.assert (verts.length ==  expectedLength, `vets length ${verts.length} != ${expectedLength}`);
-   return {verts: new Float32Array(verts), norms: new Float32Array(norms), triangle_strip:true};
+   return {verts: new Float32Array(verts), norms: new Float32Array(norms), topology: WebGL2RenderingContext.TRIANGLE_STRIP};
 }
 
 function buildGeometryTriangles (ns, dr)
@@ -70,7 +70,7 @@ function buildGeometryTriangles (ns, dr)
       [norms [ix], norms [iy], norms [iz]] = [0, -1, 1];
    }
    console.assert (verts.length == 3 * 3 * realns);
-   return {verts:new Float32Array(verts), norms:new Float32Array(norms), triangles:true };
+   return {verts:new Float32Array(verts), norms:new Float32Array(norms), topology: WebGL2RenderingContext.TRIANGLES};
 }
 
 let glmain = () =>
@@ -80,9 +80,9 @@ let glmain = () =>
 
    const ns = 16, dr = 0.6; //number of sectors and radius
 
+   let geometry = buildGeometryFan (ns, dr);
    //let geometry = buildGeometryFan2 (ns, dr);
-   //let geometry = buildGeometryFan (ns, dr);
-   let geometry = buildGeometryStrip (ns, dr);
+   //let geometry = buildGeometryStrip (ns, dr);
    //let geometry = buildGeometryTriangles (ns, dr);
 
    //initialize buffers
@@ -106,10 +106,7 @@ let glmain = () =>
    gl.enable     (gl.DEPTH_TEST);
    gl.clear      (gl.COLOR_BUFFER_BIT);
 
-   //gl.drawArrays(gl.TRIANGLE_FAN, 0, ns + 2);
-   if (geometry.triangle_fan)   gl.drawArrays(gl.TRIANGLE_FAN,   0, geometry.verts.length / 3);
-   if (geometry.triangles)      gl.drawArrays(gl.TRIANGLES,      0, geometry.verts.length / 3);
-   if (geometry.triangle_strip) gl.drawArrays(gl.TRIANGLE_STRIP, 0, geometry.verts.length / 3);
+   gl.drawArrays(geometry.topology,   0, geometry.verts.length / 3);
 
 };
 document.addEventListener('DOMContentLoaded', glmain);
