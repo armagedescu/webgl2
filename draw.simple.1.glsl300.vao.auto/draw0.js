@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-let func = () =>
+let glmain = () =>
 {
    if (true)
    {
@@ -26,5 +26,5 @@ let func = () =>
    shape2.drawTriangles ();
 };
 
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
