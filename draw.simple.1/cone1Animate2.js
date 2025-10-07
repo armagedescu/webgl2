@@ -22,6 +22,8 @@ function buildCone (nh, ns, dr)
    return {verts : new Float32Array (verts), norms : new Float32Array (norms)};
 
 }
+
+
 let glmain = () =>
 {
    let glCanvas  = new GlCanvas(canvas);
@@ -35,7 +37,6 @@ let glmain = () =>
    let vertex_buffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
    gl.bufferData(gl.ARRAY_BUFFER, geometry.verts, gl.STATIC_DRAW);
-
    let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);

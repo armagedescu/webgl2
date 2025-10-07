@@ -12,14 +12,13 @@ function buildGeometry ()
                   1.0,  0.0,  -1.0,      1.0,  0.0,  -1.0,     1.0,  0.0,  -1.0  ])
       };
 }
+
 let glmain = () =>
 {
    let glCanvas = new GlCanvas(canvas);
    let gl = glCanvas.gl;
 
-
    let geometry = buildGeometry ();
-
 
    glCanvas.useProgram ();
    /* Step2: Define the geometry and store it in buffer objects */
@@ -29,7 +28,6 @@ let glmain = () =>
    let coord = gl.getAttribLocation (glCanvas.program, "coordinates");
    gl.vertexAttribPointer     (coord, 3, gl.FLOAT, false, 0, 0);
    gl.enableVertexAttribArray (coord);
-
 
    let normalBuffer = gl.createBuffer();
    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);

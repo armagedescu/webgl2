@@ -16,7 +16,6 @@ let glmain = () =>
    let gl = glCanvas.gl;
    glCanvas.useProgram ();
 
-
    let geometry = buildGeometry ();
 
    let vertex_buffer = gl.createBuffer ();
