@@ -13,12 +13,12 @@ class HeartGeometry2 extends GlVAObject
       super(context);
       this.initGeometry(nh, ns);
       this.init();
-      this.#p = new Promise (   (resolve, reject) => { setTimeout( resolve, 10000, this ); }   );
+      this.#p = new Promise (   (resolve, reject) => { setTimeout( resolve, 2000, this ); }   );
    }
    async ready ()
    {
       await this.#p.then (o => {});
-	  return this;
+	   return this;
    }
    initGeometry(nh, ns)
    {

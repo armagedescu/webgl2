@@ -12,32 +12,9 @@
    The WebGL with VAO migrated from <a href="./draw.simple.1.glsl300.html">WebGL</a><br/>
    <div class="sample">
       Simple draw:<br/>
+      Triangles, lowlevel:<br/>
       <canvas id = "draw0"  width = "120" height = "120" class="blue">
-         <script src="./draw.simple.1.glsl300.vao/draw0.js"></script>
-         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
-            #version 300 es
-            in vec2 coordinates; //layout (location = 10) in vec2 coordinates
-            void main(void)
-            {
-               gl_Position = vec4(coordinates, 0.0, 1.0);
-               //gl_PointSize = 10.0;\n' +
-            }
-         </script>
-         <script type="text/glsl-shader" data-gl-type="fragment-shader">
-            #version 300 es
-            precision mediump float;
-            out vec4 buzzColor;
-            void main(void)
-            {
-               buzzColor = vec4(0.0, 0.0, 0.0, 0.1);
-            }
-         </script>
-      </canvas>
-   </div><br/>
-   <div class="sample">
-      Simple draw:<br/>
-      <canvas id = "draw"  width = "120" height = "120" class="blue">
-         <script src="./draw.simple.1.glsl300.vao/draw.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/drawTriangles_lowlevel.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec2 coordinates; //layout (location = 10) in vec2 coordinates
@@ -58,6 +35,31 @@
          </script>
       </canvas>
    </div>
+   <div class="sample">
+      Simple draw:<br/>
+      Triangles, use lib<br/>
+      <canvas id = "draw"  width = "120" height = "120" class="blue">
+         <script src="./draw.simple.1.glsl300.vao/drawTriangles_useClasses.js"></script>
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader">
+            #version 300 es
+            in vec2 coordinates; //layout (location = 10) in vec2 coordinates
+            void main(void)
+            {
+               gl_Position = vec4(coordinates, 0.0, 1.0);
+               //gl_PointSize = 10.0;\n' +
+            }
+         </script>
+         <script type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            out vec4 buzzColor;
+            void main(void)
+            {
+               buzzColor = vec4(0.0, 0.0, 0.0, 0.1);
+            }
+         </script>
+      </canvas>
+   </div><br/>
    <div class="sample">
       Translate:<br/>
       <canvas id = "translate"  width = "120" height = "120" class="yellow" >
@@ -195,7 +197,7 @@
       Cone TRIANGLE_FAN<br/>
       (wrong)</br>
       <canvas id = "cone" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/triangle_fan.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/triangleFan.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -227,7 +229,7 @@
       Tip normal set to 0,0,0<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_animate.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Animate.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -269,7 +271,7 @@
       Tip normal set to one side normal.<br/>
       Light change direction<br/>
       <canvas id = "cone1_animate" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_animate2.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Animate2.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -342,7 +344,7 @@
       Cone TRIANGLES (correct), </br>
       Geometry <br/>
       <canvas id = "cone1_geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_geometry.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1Geometry.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -378,7 +380,7 @@
       Cone TRIANGLES (cross), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "200" height = "200"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_heart_geometry.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -413,7 +415,7 @@
       Cone TRIANGLES (grad), </br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_heart_geometry2.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry2.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;
@@ -447,7 +449,7 @@
       Cone TRIANGLES (grad), asynchronous, delayed by 10 seconds</br>
       Geometry <br/>
       <canvas id = "cone1 heart geometry" width = "400" height = "400"  class="yellow">
-         <script src="./draw.simple.1.glsl300.vao/cone1_heart_geometry2async.js"></script>
+         <script src="./draw.simple.1.glsl300.vao/cone1HeartGeometry2_async.js"></script>
          <script  type="text/glsl-shader" data-gl-type="vertex-shader">
             #version 300 es
             in vec4 coordinates;

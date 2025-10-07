@@ -1,6 +1,6 @@
 {
 let canvas = document.currentScript.parentElement;
-let func = () =>
+let glmain = () =>
 {
    let gl = canvas.getContext('webgl2');
 
@@ -58,5 +58,5 @@ let func = () =>
    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
