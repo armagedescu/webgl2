@@ -30,7 +30,7 @@ class UseColors extends GlVAObject
    }
 }
 
-let func = () =>
+let glmain = () =>
 {
    let useColors = new UseColors (canvas);
    let gl = useColors.gl;
@@ -42,5 +42,5 @@ let func = () =>
 
    useColors.draw();
 };
-document.addEventListener('DOMContentLoaded', func);
+document.addEventListener('DOMContentLoaded', glmain);
 }
