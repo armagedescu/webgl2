@@ -4,12 +4,7 @@ canvas.addEventListener("wheel", (event) => { if (event.ctrlKey) event.preventDe
 
 //const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
 const clearColor = [  0.0,  0.5,   1.0,  1.0 ];
-const vertices = new Float32Array([
-   //verts XYZW             //colors RGBA
-    0.0,   0.6,  0,  1,     1,  0,  0,  1,
-   -0.5,  -0.6,  0,  1,     0,  1,  0,  1,
-    0.5,  -0.6,  0,  1,     0,  0,  1,  1
-]);
+
 const shaders = `
 struct VertexOut {
    @builtin(position) position : vec4f, //builtin = gl_Position in GLSL
@@ -32,6 +27,15 @@ fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
    return fragData.color;
 }
 `;
+function buildGeometry ()
+{
+   return {verts: new Float32Array([
+      //verts XYZW             //colors RGBA
+       0.0,   0.6,  0,  1,     1,  0,  0,  1,
+      -0.5,  -0.6,  0,  1,     0,  1,  0,  1,
+       0.5,  -0.6,  0,  1,     0,  0,  1,  1
+   ])};
+}
 
 async function init() {
 
@@ -50,17 +54,16 @@ async function init() {
       alphaMode :  'premultiplied' //wtf?
    });
 
+   let geometry = buildGeometry ();
    //// 4: Create vertex buffer to contain vertex data
-   let vertexBuffer;
-   vertexBuffer = device.createBuffer({
-      size:  vertices.byteLength, // make it big enough to store vertices in
+   let vertexBuffer = device.createBuffer({
+      size:  geometry.verts.byteLength, // make it big enough to store vertices in
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
    });
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length);
 
    // 5: Create a GPUVertexBufferLayout and GPURenderPipelineDescriptor to provide a definition of our render pipline
-   let vertexBuffers;
-   vertexBuffers = [ // GPUVertexBufferLayout []
+   let vertexBuffersDesciptor = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1,2
          arrayStride: 32,
          attributes: [
@@ -75,7 +78,7 @@ async function init() {
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -94,7 +97,6 @@ async function init() {
    const commandEncoder = device.createCommandEncoder();
 
    // 8: Create GPURenderPassDescriptor to tell WebGPU which texture to draw into, then initiate render pass
-
    const renderPassDescriptor = {
       colorAttachments: [{
          clearValue:  clearColor,
@@ -111,7 +113,7 @@ async function init() {
    // 9: Draw the triangle
    passEncoder.setPipeline     (renderPipeline);  // bind program?
    passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
-   passEncoder.draw(vertices.length / 8);  //Strided 4D verts + 4D colors
+   passEncoder.draw(geometry.verts.length / 8);  //Strided 4D verts + 4D colors
 
    // End the render pass
    passEncoder.end();

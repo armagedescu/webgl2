@@ -3,38 +3,42 @@ let canvas = document.currentScript.parentElement;
 
 
 const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
-const vertices = new Float32Array([
-   //verts XYZW                    //colors RGBA
-    0.2,    0.5,  -0.1,   1,       0, 0,  0, 1, //tip of triangle 1, goes closer to camera, z=-0.1 = outside z-near view
-   -0.3,   -0.7,   0.7,   1,       0, 1,  0, 1, //base goes near /righthandly
-    0.7,   -0.7,   0.7,   1,       1, 0,  1, 1,
 
-    0.0,    0.6,   1.1,   1,       1, 0,  0, 1, //tip of triangle 2, goes farther to camera, z=1.1 = inside z-far view
-   -0.5,   -0.6,   0.3,   1,       0, 1,  0, 1, //base goes far /righthandly
-    0.5,   -0.6,   0.3,   1,       0, 0,  1, 1,
+function buildGeometry ()
+{
+   return {
+      verts: new Float32Array([
+             //verts XYZW                   //colors RGBA
+             0.2,    0.5,  -0.1,   1,       0, 0,  0, 1, //tip of triangle 1, goes closer to camera, z=-0.1 = outside z-near view
+            -0.3,   -0.7,   0.7,   1,       0, 1,  0, 1, //base goes near /righthandly
+             0.7,   -0.7,   0.7,   1,       1, 0,  1, 1,
 
-]);
-
+             0.0,    0.6,   1.1,   1,       1, 0,  0, 1, //tip of triangle 2, goes farther to camera, z=1.1 = inside z-far view
+            -0.5,   -0.6,   0.3,   1,       0, 1,  0, 1, //base goes far /righthandly
+             0.5,   -0.6,   0.3,   1,       0, 0,  1, 1,
+         ])};
+}
 
 async function gpumain (gpuCanvas)
 {
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
 
+   let geometry = buildGeometry ();
    // 4: Create vertex buffer to contain vertex data
    //device.createBuffer = alloc buffer
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
    const vertexBuffer = device.createBuffer({ //alloc
-      size:  vertices.byteLength, // make it big enough to store vertices in
+      size:  geometry.verts.byteLength, // make it big enough to store vertices in
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
    });
 
    // Copy the vertex data over to the GPUBuffer using the writeBuffer() utility function
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length); //write
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length); //write
 
    // 5: Create a GPUVertexBufferLayout and GPURenderPipelineDescriptor to provide a definition of our render pipline
-   const vertexBuffers = [{
+   const vertexBuffersDesciptor = [{
       attributes: [{
          shaderLocation: 0, // position
          offset: 0,
@@ -55,7 +59,7 @@ async function gpumain (gpuCanvas)
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -114,7 +118,7 @@ async function gpumain (gpuCanvas)
 
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexBuffer);
-   passEncoder.draw(vertices.length / 8); //strided verts 4D + colors 4D
+   passEncoder.draw(geometry.verts.length / 8); //strided verts 4D + colors 4D
 
    // End the render pass
    passEncoder.end();

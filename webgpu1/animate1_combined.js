@@ -1,10 +1,17 @@
 {
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let vertices    = new Float32Array ( [ 0.0, 0.0, 0.0,   -0.3, -0.5,  1.0,     0.5, -0.6,  1.0  ]); //upper triangle
-let vertices2   = new Float32Array ( [ 0.0, 0.0, 0.0,    0.3,  0.4,  1.0,    -0.5,  0.6,  0.0  ]);
-let vertices3   = new Float32Array ( [ 0.0, 0.0, 0.0,   -1.0,  0.4,  1.0,    -0.5, -0.3,  1.0  ]);
-let vertices4   = new Float32Array ( [ 0.0, 0.0, 0.0,    0.6, -0.3,  1.0,     0.4,  0.3,  0.0  ]);
+
+function buildGeometry ()
+{
+   return {
+            verts:
+            [  new Float32Array ( [ 0.0, 0.0, 0.0,   -0.3, -0.5,  1.0,     0.5, -0.6,  1.0  ]),
+               new Float32Array ( [ 0.0, 0.0, 0.0,    0.3,  0.4,  1.0,    -0.5,  0.6,  0.0  ]),
+               new Float32Array ( [ 0.0, 0.0, 0.0,   -1.0,  0.4,  1.0,    -0.5, -0.3,  1.0,
+                                    0.0, 0.0, 0.0,    0.6, -0.3,  1.0,     0.4,  0.3,  0.0  ])]
+      };
+}
 
 let gpumain = async () =>
 {
@@ -25,35 +32,22 @@ let gpumain = async () =>
       selectSingleNode (xpathStr, element, resolver).textContent;
 
    const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
-   let vertexBuffer;
-   vertexBuffer = device.createBuffer({
-      label: "Vertex Buffer",
-      size:  vertices.byteLength, // malloc size
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-   });
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
-   let vertexBuffer2;
-   vertexBuffer2 = device.createBuffer({
-      label: "Vertex Buffer",
-      size:  vertices2.byteLength, // malloc size
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-   });
-   device.queue.writeBuffer(vertexBuffer2, 0, vertices2, 0, vertices2.length);
-   let vertexBuffer3;
-   vertexBuffer3 = device.createBuffer({
-      label: "Vertex Buffer",
-      size:  vertices3.byteLength, // malloc size
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-   });
-   let vertexBuffer4;
-   vertexBuffer4 = device.createBuffer({
-      label: "Vertex Buffer",
-      size:  vertices4.byteLength, // malloc size
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-   });
-   //device.queue.writeBuffer(vertexBuffer3, 0, vertices3, 0, vertices3.length);
 
-   let vertexBuffers = [ // GPUVertexBufferLayout []
+   let geometry = buildGeometry ();
+
+   let vertexBuffers = [];
+   for (let verts of geometry.verts)
+   {
+      let buffer = device.createBuffer({
+         label: "Vertex Buffer",
+         size:  verts.byteLength, // malloc size
+         usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+      });
+      vertexBuffers.push (buffer);
+      device.queue.writeBuffer(buffer, 0, verts, 0, verts.length);      
+   }
+
+   let vertexBuffersDesciptor = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
          arrayStride: 4 * 3,
          attributes: [
@@ -62,13 +56,14 @@ let gpumain = async () =>
          stepMode: 'vertex'
       }
    ];
+
    //  Write range (bufferOffset: 0, size: 64) does not fit in [Buffer (unlabeled)] size (16).
    //  - While calling [Queue].WriteBuffer([Buffer (unlabeled)], (0 bytes), data, (64 bytes))
    const pipelineDescriptor = {
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -117,27 +112,14 @@ let gpumain = async () =>
       const commandEncoder = device.createCommandEncoder();
       const passEncoder = commandEncoder.beginRenderPass (renderPassDescriptor);
 
-      passEncoder.setPipeline     (renderPipeline); 
+      passEncoder.setPipeline     (renderPipeline); //bind program
 
       passEncoder.setBindGroup    (0, bindGroup);
-      passEncoder.setVertexBuffer (0, vertexBuffer);
-      passEncoder.draw (vertices.length / 3); // len / vertex size
-      //passEncoder.setBindGroup    (0, bindGroup); //same pipeline
-      passEncoder.setVertexBuffer (0, vertexBuffer2);
-      passEncoder.draw (vertices2.length / 3); // len / vertex size
-
-      device.queue.writeBuffer(vertexBuffer3, 0, vertices3, 0, vertices3.length);
-      passEncoder.setVertexBuffer (0, vertexBuffer3);
-      passEncoder.draw (vertices3.length / 3); // len / vertex size
-      device.queue.writeBuffer(vertexBuffer4, 0, vertices4, 0, vertices4.length);
-      passEncoder.setVertexBuffer (0, vertexBuffer4);
-      passEncoder.draw (vertices4.length / 3); // len / vertex size
-      //doesn't work
-      //device.queue.writeBuffer(vertexBuffer3, 0, vertices4, 0, vertices4.length);
-      //passEncoder.setVertexBuffer (0, vertexBuffer3);
-      //passEncoder.draw (vertices4.length / 3); // len / vertex size
-
-    
+      for (let i = 0; i < vertexBuffers.length; i++)
+      {
+         passEncoder.setVertexBuffer (0, vertexBuffers[i]);
+         passEncoder.draw (geometry.verts[i].length / 3)
+      }
       // End the render pass
       passEncoder.end ();
       device.queue.submit ([commandEncoder.finish()]);// return;

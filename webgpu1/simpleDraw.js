@@ -3,10 +3,14 @@
 let canvas = document.currentScript.parentElement;
 
 const clearColor = [ 0.5, 0.5, 0.5, 0.9 ];
-const vertices = new Float32Array([
-    0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
-    0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 
-]);
+
+function buildGeometry ()
+{
+   return {verts: new Float32Array([
+      0.0, -0.5,   -0.5, 0.3,   -0.5, -0.6,
+      0.0, -0.5,    0.8, 0.4,   -0.4,  0.5 
+   ])};
+}
 
 let func = async () =>
 {
@@ -28,14 +32,13 @@ let func = async () =>
 
    const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
 
-   let vertexBuffer;
-   vertexBuffer = device.createBuffer({
-      size:  vertices.byteLength, // malloc size
+   let geometry = buildGeometry ();
+   let vertexBuffer = device.createBuffer({
+      size:  geometry.verts.byteLength, // malloc size
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
    });
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
-   let vertexBuffers;
-   vertexBuffers = [ // GPUVertexBufferLayout []
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length);
+   let vertexBuffersDesciptor  = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
          arrayStride: 4 * 2,
          attributes: [
@@ -48,7 +51,7 @@ let func = async () =>
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -74,7 +77,7 @@ let func = async () =>
    // 9: Draw the triangle
    passEncoder.setPipeline     (renderPipeline);  // bind program?
    passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
-   passEncoder.draw(vertices.length / 2);
+   passEncoder.draw(geometry.verts.length / 2);
 
    // End the render pass
    passEncoder.end();

@@ -1,9 +1,13 @@
 {
+"use strict";
 let canvas = document.currentScript.parentElement;
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let vertices   = new Float32Array ([ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,     //lower triangle
-                                     0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ]); //upper triangle
 
+function buildGeometry ()
+{
+   return {verts:new Float32Array ([ 0.0, 0.0, 0.0,  -1.0, 0.4, 2.0,   -0.5, -0.6,  2.0,     //lower triangle
+                                     0.0, 0.0, 0.0,   0.4, 0.4, 2.0,   -0.4,  0.5, -0.0  ])}; //upper triangle
+}
 let gpumain = async () =>
 {
    let context = canvas.getContext('webgpu');
@@ -23,14 +27,15 @@ let gpumain = async () =>
       selectSingleNode (xpathStr, element, resolver).textContent;
 
    const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
-   let vertexBuffer;
-   vertexBuffer = device.createBuffer({
+
+   let geometry = buildGeometry ();
+   let vertexBuffer = device.createBuffer({
       label: "Vertex Buffer",
-      size:  vertices.byteLength, // malloc size
+      size:  geometry.verts.byteLength, // malloc size
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
    });
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
-   let vertexBuffers = [ // GPUVertexBufferLayout []
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length);
+   let vertexBuffersDesciptor = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
          arrayStride: 4 * 3,
          attributes: [
@@ -45,7 +50,7 @@ let gpumain = async () =>
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -97,7 +102,7 @@ let gpumain = async () =>
       passEncoder.setPipeline     (renderPipeline); 
       passEncoder.setBindGroup    (0, bindGroup);
       passEncoder.setVertexBuffer (0, vertexBuffer);
-      passEncoder.draw (vertices.length / 3); // len / vertex size
+      passEncoder.draw (geometry.verts.length / 3); // len / vertex size
 
       // End the render pass
       passEncoder.end ();

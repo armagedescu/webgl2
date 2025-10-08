@@ -3,13 +3,17 @@ let canvas = document.currentScript.parentElement;
 
 
 const clearColor = { r: 0.5, g: 0.5, b: 0.5, a: 0.9 };
-let vertices = new Float32Array(
-               [  0.0,  0.0,  0.0,      -1.0,  0.4,  2.0,    -0.5, -0.6,  2.0,
-                  0.0,  0.0,  0.0,       0.4,  0.4,  2.0,    -0.4,  0.5, -0.0  ]);
-let normals  = new Float32Array(
-               [  1.0,  1.0,  -1.0,      1.0,  1.0,  -1.0,    1.0,  1.0,  -1.0,
-                  1.0,  0.0,  -1.0,      1.0,  0.0,  -1.0,    1.0,  0.0,  -1.0  ]);
 
+function buildGeometry ()
+{
+   return {
+      verts: new Float32Array(
+               [  0.0,  0.0,  0.0,      -1.0,  0.4,  2.0,    -0.5, -0.6,  2.0,
+                  0.0,  0.0,  0.0,       0.4,  0.4,  2.0,    -0.4,  0.5, -0.0  ]),
+      norms: new Float32Array(
+               [  1.0,  1.0,  -1.0,      1.0,  1.0,  -1.0,    1.0,  1.0,  -1.0,
+                  1.0,  0.0,  -1.0,      1.0,  0.0,  -1.0,    1.0,  0.0,  -1.0  ])};
+}
 
 
 async function gpumain (gpuCanvas)
@@ -17,6 +21,7 @@ async function gpumain (gpuCanvas)
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
 
+   let geometry = buildGeometry ();
    // 4: Create vertex buffer to contain vertex data
    //device.createBuffer = alloc buffer
    //device.writeBuffer  = write buffer
@@ -24,27 +29,25 @@ async function gpumain (gpuCanvas)
    let vertexBuffer, normalBuffer;
    vertexBuffer = device.createBuffer({ //alloc
       label: "Vertex Buffer",
-      size:  vertices.byteLength, // make it big enough to store vertices in
+      size:  geometry.verts.byteLength, // make it big enough to store vertices in
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
    });
-
-   // Copy the vertex data over to the GPUBuffer using the writeBuffer() utility function
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length); //write
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length); //write
 
    normalBuffer = device.createBuffer({
       label: "Normal Buffer",
-      size:  normals.byteLength,      // make it big enough to store vertices in
-       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, // COPY_DST is not needed if we map the buffer ?? by copilot
+      size:  geometry.norms.byteLength,      // make it big enough to store vertices in
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, // COPY_DST is not needed if we map the buffer ?? by copilot
       //usage: GPUBufferUsage.VERTEX , //| GPUBufferUsage.COPY_DST // COPY_DST is not needed if we map the buffer ?? by copilot
       //mappedAtCreation: true         //required for getMappedRange, requires unmap after writing
    });
    //const dst =  new normals.constructor(normalBuffer.getMappedRange()); //Float32Array::constructor with range mapped to GPU //GPUBuffer::getMappedRange
    //dst.set(normals);     // Float32Array::TypedArray::set
    //normalBuffer.unmap();
-   device.queue.writeBuffer(normalBuffer, 0, normals, 0, normals.length); //write
+   device.queue.writeBuffer(normalBuffer, 0, geometry.norms, 0, geometry.norms.length); //write
 
    // 5: Create a GPUVertexBufferLayout and GPURenderPipelineDescriptor to provide a definition of our render pipline
-   let vertexBuffers = [
+   let vertexBuffersDesciptor = [
       {  //buffer1 attribute 1 GPUVertexBufferLayout
          label: "Vertex Position",
          arrayStride: 4 * 3,
@@ -64,7 +67,7 @@ async function gpumain (gpuCanvas)
          label: "Vertex Shader",
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          label: "Fragment Shader",
@@ -103,7 +106,7 @@ async function gpumain (gpuCanvas)
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexBuffer);
    passEncoder.setVertexBuffer(1, normalBuffer);
-   passEncoder.draw(vertices.length / 3);
+   passEncoder.draw(geometry.verts.length / 3);
 
    // End the render pass
    passEncoder.end();

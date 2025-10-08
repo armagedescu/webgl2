@@ -3,9 +3,12 @@
 let canvas = document.currentScript.parentElement;
 
 let clearColor = [0.5, 0.5, 0.5, 0.9];
-let vertices  = new Float32Array ([ 0.5, -0.5,    1.0, 1.0,   -1.0,  1.0,  -1.0, -1.0]);
-let indices   = new Uint16Array ([0, 1, 2, 0, 2, 3]);
 
+function buildGeometry ()
+{
+   return { verts:   new Float32Array ([ 0.5, -0.5,    1.0, 1.0,   -1.0,  1.0,   -1.0, -1.0]),
+            indices: new Uint16Array  ([0, 1, 2, 0, 2, 3])};
+}
 let func = async () =>
 {
    let context = canvas.getContext('webgpu');
@@ -25,21 +28,20 @@ let func = async () =>
       selectSingleNode (xpathStr, element, resolver).textContent;
    const shaderModule = device.createShaderModule({code: selectSingleNodeText("./script[@type='text/wgsl-shader']", canvas)});
 
-
+   let geometry = buildGeometry ();
    let vertexBuffer = device.createBuffer({
-      size:  vertices.byteLength, // malloc size
+      size:  geometry.verts.byteLength, // malloc size
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
    });
-   device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
+   device.queue.writeBuffer(vertexBuffer, 0, geometry.verts, 0, geometry.verts.length);
    let indexBuffer = device.createBuffer({
-      size:  indices.byteLength, // malloc size
+      size:  geometry.indices.byteLength, // malloc size
       usage: GPUBufferUsage.INDEX  | GPUBufferUsage.COPY_DST
    });
-   device.queue.writeBuffer(indexBuffer, 0, indices);//, 0, indices.length);
+   device.queue.writeBuffer(indexBuffer, 0, geometry.indices);//, 0, indices.length);
 
 
-   let vertexBuffers;
-   vertexBuffers = [ // GPUVertexBufferLayout []
+   let vertexBuffersDesciptor = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1
          arrayStride: 4 * 2,
          attributes: [
@@ -52,7 +54,7 @@ let func = async () =>
       vertex: {
          module: shaderModule,
          entryPoint: 'vertex_main',
-         buffers: vertexBuffers
+         buffers: vertexBuffersDesciptor
       },
       fragment: {
          module: shaderModule,
@@ -79,7 +81,7 @@ let func = async () =>
    passEncoder.setVertexBuffer (0, vertexBuffer); // bind vao?
    passEncoder.setIndexBuffer  (indexBuffer, "uint16");
    //passEncoder.draw(vertices.length / 2);
-   passEncoder.drawIndexed(indices.length);
+   passEncoder.drawIndexed(geometry.indices.length);
 
    // End the render pass
    passEncoder.end();

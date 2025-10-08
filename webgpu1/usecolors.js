@@ -3,35 +3,37 @@ let canvas = document.currentScript.parentElement;
 
 const clearColor = [0.5, 0.5, 0.5, 0.9];
 
-let verticesColors = new Float32Array(             
+function buildGeometry ()
+{
+   return  {verts: new Float32Array(             
                [  //Vertices XYZ           //Colors RGBA
                    0.0,  0.0,  0.0,        0.0, 1.0, 0.0, 1.0, 
                   -1.0,  0.4,  0.0,        0.0, 1.0, 0.0, 1.0,      
                   -0.5, -0.6,  0.0,        0.0, 1.0, 0.0, 1.0,
                    0.0,  0.0,  0.0,        1.0, 0.0, 0.0, 1.0,
                    0.4,  0.4,  2.0,        1.0, 0.0, 0.0, 1.0,
-                  -0.4,  0.5, -0.0,        1.0, 0.0, 0.0, 1.0  ]);
+                  -0.4,  0.5, -0.0,        1.0, 0.0, 0.0, 1.0  ])};
+}
 
 async function gpumain (gpuCanvas)
 {
    let   device = gpuCanvas.device; //DPUDevice
    const webgpu = gpuCanvas.webgpu; //GPUCanvasContext
 
+   let geometry = buildGeometry ();
    // 4: Create vertex buffer to contain vertex data
    //device.createBuffer = alloc buffer
    //device.writeBuffer  = write buffer
    //vertexBuffers       = buffer descriptor
-   let vertexColorBuffer;
-   vertexColorBuffer = device.createBuffer({ //alloc
+   let vertexColorBuffer = device.createBuffer({ //alloc
       label: "Vertex+Color Buffer",
-      size:  verticesColors.byteLength, // make it big enough to store vertices in
+      size:  geometry.verts.byteLength, // make it big enough to store vertices in
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
    });
-   device.queue.writeBuffer(vertexColorBuffer, 0, verticesColors, 0, verticesColors.length); //write
+   device.queue.writeBuffer(vertexColorBuffer, 0, geometry.verts, 0, geometry.verts.length); //write
 
    //// 5: Create a GPUVertexBufferLayout and GPURenderPipelineDescriptor to provide a definition of our render pipline
-   let vertexColorBuffers;
-   vertexColorBuffers = [ // GPUVertexBufferLayout []
+   let vertexColorBuffersDescriptor  = [ // GPUVertexBufferLayout []
       {  //buffer1 attrbute 1,2
          arrayStride: 28, //32,
          attributes: [
@@ -50,7 +52,7 @@ async function gpumain (gpuCanvas)
          module: shaderModule,
          entryPoint: 'vertex_main',
          //buffers: vertexBuffers
-         buffers: vertexColorBuffers 
+         buffers: vertexColorBuffersDescriptor
       },
       fragment: {
          label: "Fragment Shader",
@@ -87,7 +89,7 @@ async function gpumain (gpuCanvas)
    //9: Draw the triangle(s)
    passEncoder.setPipeline(renderPipeline);
    passEncoder.setVertexBuffer(0, vertexColorBuffer);
-   passEncoder.draw(verticesColors.length / 7); //strided verts 3D + colors 4D
+   passEncoder.draw(geometry.verts.length / 7); //strided verts 3D + colors 4D
 
    // End the render pass
    passEncoder.end();
