@@ -2,7 +2,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-function getCone (nh, ns, type = Float32Array)
+function buildCone (nh, ns, type = Float32Array)
 {
    let verts    = [];
    let norms    = [];
@@ -23,12 +23,12 @@ function getCone (nh, ns, type = Float32Array)
 let glmain = () =>
 {
    let gl, animate;
-   let geo = getCone(1, 5);
+   let geometry = buildCone (1, 5);
    let shape = new GlShapev1 (canvas)
       //.withShaderSources (vs, fs)
       .withConstColor ([0.0, 1.0, 0.0, 1.0])
-      .withVertices3d (geo.verts)
-      .withNormals3d  (geo.norms)
+      .withVertices3d (geometry.verts)
+      .withNormals3d  (geometry.norms)
       .withLightDirection3f ([1.0, 0.0, 1.0])
       ;
    //shape.logStrategyShaders ("cone1Animate2.js");

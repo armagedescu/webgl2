@@ -1,8 +1,8 @@
 {
+"use strict";
 let canvas = document.currentScript.parentElement;
 
-
-function getCone (nh = 2, ns = 40, type = Float32Array)
+function buildConeHeart (nh = 2, ns = 40, type = Float32Array)
 {
    if (ns & 1) ns++;
    let verts    = [];

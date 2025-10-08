@@ -1,4 +1,5 @@
 {
+"use strict";
 let canvas = document.currentScript.parentElement;
 
 
@@ -154,7 +155,7 @@ let glmain = () =>
    let nh = 2, ns = 40;
    if (ns & 1) ns++;
 
-   //let geometry = getCone(2, 20);
+   //let geometry = buildConeHeart (2, 20);
    let geometry = buildConeHeart (nh, ns);
 
 
