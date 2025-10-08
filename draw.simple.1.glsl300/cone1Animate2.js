@@ -1,7 +1,7 @@
 {
 let canvas = document.currentScript.parentElement;
 
-function getCone (nh, ns, type = Float32Array)
+function buildCone (nh, ns, type = Float32Array)
 {
    let verts    = [];
    let norms    = [];
@@ -27,7 +27,7 @@ let glmain = async () =>
 
    let nh = 1, ns = 5, dr = 0.6;
 
-   let geometry = getCone (nh, ns);
+   let geometry = buildCone (nh, ns);
 
    glCanvas.useProgram ();
    let vertex_buffer = gl.createBuffer();

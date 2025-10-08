@@ -77,8 +77,8 @@ let glmain = () =>
 
    let nh = 3, ns = 100, dr = 1.0;
 
-   //let geometry = getCone(3, 20);
-   let geometry = getCone(nh, ns);
+   //let geometry = buildConeHeart (3, 20);
+   let geometry = buildConeHeart (nh, ns);
 
    glCanvas.useProgram ();
    let vertex_buffer = gl.createBuffer();

@@ -2,7 +2,7 @@
 let canvas = document.currentScript.parentElement;
 
 
-function getCone (nh, ns, type = Float32Array)
+function buildConeHeart (nh, ns, type = Float32Array)
 {
    if(ns & 1) ns++;
    let verts    = [];
@@ -155,7 +155,7 @@ let glmain = () =>
    if (ns & 1) ns++;
 
    //let geometry = getCone(2, 20);
-   let geometry = getCone(nh, ns);
+   let geometry = buildConeHeart (nh, ns);
 
 
    glCanvas.useProgram ();
