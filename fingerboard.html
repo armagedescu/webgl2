@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Fingerboard - WebGL2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h3>3D Fingerboard</h3>
+        <p>Drag to rotate | Scroll to zoom</p>
+    </div>
+    <canvas id="glcanvas"></canvas>
+
+    <!-- Vertex Shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+        in vec3 a_position;
+        in vec3 a_normal;
+        in vec3 a_color;
+
+        uniform mat4 u_matrix;
+        uniform mat4 u_normalMatrix;
+
+        out vec3 v_normal;
+        out vec3 v_color;
+
+        void main() {
+            gl_Position = u_matrix * vec4(a_position, 1.0);
+            v_normal = mat3(u_normalMatrix) * a_normal;
+            v_color = a_color;
+        }
+    </script>
+
+    <!-- Fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+
+        in vec3 v_normal;
+        in vec3 v_color;
+
+        out vec4 outColor;
+
+        void main() {
+            vec3 lightDirection = normalize(vec3(1.0, 2.0, 3.0));
+            float light = dot(normalize(v_normal), lightDirection) * 0.5 + 0.5;
+            outColor = vec4(v_color * light, 1.0);
+        }
+    </script>
+
+    <script src="3rdparty/twgl/js/m4.js"></script>
+    <script src="fingerboard/fingerboard.js"></script>
+    <script src="fingerboard/main.js"></script>
+</body>
+</html>

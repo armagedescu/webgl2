@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    <div id="output"></div>
+
+    <script src="../3rdparty/twgl/js/m4.js"></script>
+    <script>
+        const output = document.getElementById('output');
+
+        // Test 1: Check if m4.js loaded
+        if (typeof m4 !== 'undefined') {
+            output.innerHTML += '<p style="color: green;">✓ m4.js loaded successfully</p>';
+        } else {
+            output.innerHTML += '<p style="color: red;">✗ m4.js failed to load</p>';
+        }
+
+        // Test 2: Check WebGL2 support
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2');
+        if (gl) {
+            output.innerHTML += '<p style="color: green;">✓ WebGL2 is supported</p>';
+        } else {
+            output.innerHTML += '<p style="color: red;">✗ WebGL2 is NOT supported</p>';
+        }
+    </script>
+
+    <script src="fingerboard.js"></script>
+    <script>
+        // Test 3: Check if Fingerboard class exists
+        if (typeof Fingerboard !== 'undefined') {
+            output.innerHTML += '<p style="color: green;">✓ Fingerboard class loaded</p>';
+
+            // Test 4: Try to create geometry
+            try {
+                const fb = new Fingerboard();
+                const data = fb.getData();
+                output.innerHTML += '<p style="color: green;">✓ Fingerboard created: ' +
+                    data.vertices.length/3 + ' vertices, ' +
+                    data.indices.length/3 + ' triangles</p>';
+            } catch(e) {
+                output.innerHTML += '<p style="color: red;">✗ Error creating fingerboard: ' + e.message + '</p>';
+            }
+        } else {
+            output.innerHTML += '<p style="color: red;">✗ Fingerboard class failed to load</p>';
+        }
+    </script>
+</body>
+</html>

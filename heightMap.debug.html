@@ -1,0 +1,72 @@
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Height map DEBUG - Performance Testing</title>
+   <link rel="stylesheet" href="./lib/css/default.css">
+   <script src="./3rdparty/twgl/js/m4.js"></script> <!-- copied from "https://twgljs.org/dist/3.x/twgl-full.min.js", copyright included -->
+   <script src="./lib/js/general/api.js"></script>
+   <script src="./lib/js/math/3dmath.js"></script>
+   <script src="./lib/js/gl2js/glcanvas.js"></script>
+   <script src="./lib/js/gl2js/glcontroller.js"></script>
+</head>
+<body>
+   <div class="sample" style="background: #ffeb3b; padding: 10px; font-weight: bold;">
+      ⚠️ DEBUG VERSION - Performance Testing & Analysis
+   </div><br/>
+   <canvas class="green" id="HeightMapButuceni" width="400" height = "300">
+      Height map, no texture, no framebuffer<br/>
+      <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+         #version 300 es
+         layout (location = 0) in vec3 vert;
+         layout (location = 1) in vec3 norm;
+         layout (location = 2) in vec4 vertColor;
+            
+         out vec4 terrainColor;
+         out vec3 terrainNormal;
+         out vec3 lightDirection;
+         
+         uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+         uniform mat4 view;       //moves world space objects around based on camera
+         uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+         
+         void main()
+         {
+            gl_Position    = projection * view * model * vec4(vert, 1.0);
+            terrainColor   = vertColor;
+            terrainNormal  = norm;
+            lightDirection = vec3(0.f, -1., 0.);
+         }
+      </script>
+      <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+         #version 300 es
+         precision mediump float;
+         in vec4 terrainColor;
+         in vec3 terrainNormal;
+         in vec3 lightDirection;
+         out vec4 FragColor;
+         void main()
+         {
+            float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
+            FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+         }
+      </script>
+	   <script src="./heightMap.debug/heightMap.js"></script>
+   </canvas><br/>
+   <div  class="sample">
+      Offscreen heightmap, no texture, no framebuffer<br/>
+      TODO: Investigate big performance problems<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas><!-- br/ -->
+   </div>
+   <br/>
+
+   <a href="./tutorials.html">Tutorials</a>
+
+
+
+</body>
+</html>
