@@ -192,20 +192,7 @@ class HeightMap extends GlVAObjectAsync
    // Update LOD for all chunks based on current transformation matrices
    updateChunkLODs()
    {
-      // DEBUG: Track frame count for logging
-      if (!this._lodFrameCount) this._lodFrameCount = 0;
-      this._lodFrameCount++;
-
       // First pass: Calculate desired LOD for each chunk based on distance
-      let minDist = Infinity, maxDist = 0;
-      const allDistances = [];
-
-      // DEBUG: Check if matrices are set
-      if (this._lodFrameCount === 1) {
-         console.log('🔍 Model matrix:', this.#modelMatrix ? 'SET' : 'NULL');
-         console.log('🔍 View matrix:', this.#viewMatrix ? 'SET' : 'NULL');
-      }
-
       for (let chunk of this.#chunks) {
          // Transform chunk center same way as shader: model * vertex, then view * result
          const chunkCenter = [chunk.centerX, chunk.centerY, chunk.centerZ];
@@ -227,20 +214,6 @@ class HeightMap extends GlVAObjectAsync
          // Normalize distance to fundamental scale (divide by model scale)
          const distance = distanceTransformed / modelScale;
 
-         // DEBUG: Log first chunk transformation
-         if (this._lodFrameCount === 1 && chunk.row === 0 && chunk.col === 0) {
-            console.log('🔍 Chunk[0,0] model space:', chunkCenter);
-            console.log('🔍 Chunk[0,0] world space:', worldPos);
-            console.log('🔍 Chunk[0,0] camera space:', cameraPos);
-            console.log('🔍 Distance (transformed):', distanceTransformed);
-            console.log('🔍 Model scale:', modelScale);
-            console.log('🔍 Distance (normalized):', distance);
-         }
-
-         minDist = Math.min(minDist, distance);
-         maxDist = Math.max(maxDist, distance);
-         allDistances.push({row: chunk.row, col: chunk.col, dist: distance});
-
          // Select LOD based on distance
          let targetLOD = this.#lodConfigs.length - 1;
          for (let i = 0; i < this.#lodConfigs.length; i++) {
@@ -252,18 +225,6 @@ class HeightMap extends GlVAObjectAsync
 
          chunk.desiredLOD = targetLOD;
          chunk.currentLOD = targetLOD;
-      }
-
-      // DEBUG: Log distance ranges and all chunk LODs
-      if (this._lodFrameCount === 1 || this._lodFrameCount % 60 === 0) {
-         console.log(`📏 Distance range: ${minDist.toFixed(2)} - ${maxDist.toFixed(2)}`);
-         console.log('🎯 LOD thresholds:', this.#lodConfigs.map(c => c.distance));
-         const lodCounts = [0,0,0,0];
-         this.#chunks.forEach(c => lodCounts[c.currentLOD]++);
-         console.log('📊 Chunks per LOD:', lodCounts);
-         if (this._lodFrameCount === 1) {
-            console.log('All distances:', allDistances.sort((a,b) => a.dist - b.dist).slice(0, 5));
-         }
       }
 
       // Second pass: Constrain LOD differences between adjacent chunks
