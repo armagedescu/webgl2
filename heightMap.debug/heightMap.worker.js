@@ -25,6 +25,10 @@ class HeightMap extends GlVAObjectAsync
    #htmap = null;
    #wireframeMode = true; // Set to true for line rendering (wireframe)
 
+   // Store matrices for LOD calculations
+   #modelMatrix = null;
+   #viewMatrix = null;
+
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
@@ -106,33 +110,34 @@ class HeightMap extends GlVAObjectAsync
 
    init()
    {
-      console.log("vao async init - chunked version with 16 VAOs");
+      console.log("vao async init - 64 VAOs (one per LOD per chunk)");
       let gl = this.gl;
 
-      // Create one VAO per chunk (16 total)
-      // Each LOD level has its own vertex/normal/index buffers
+      const vertLoc = gl.getAttribLocation(this.program, "vert");
+      const normLoc = gl.getAttribLocation(this.program, "norm");
+
+      // Create one VAO per LOD level per chunk (64 total)
       for (let chunk of this.#chunks) {
-         // Create single VAO for this chunk
-         const vao = gl.createVertexArray();
-         gl.bindVertexArray(vao);
-
-         // Store VAO and LOD buffers
-         chunk.vao = vao;
-         chunk.lodBuffers = [];
-
-         const vertLoc = gl.getAttribLocation(this.program, "vert");
-         const normLoc = gl.getAttribLocation(this.program, "norm");
+         chunk.vaos = [];
 
          for (let lod of chunk.lodLevels) {
+            // Create VAO for this specific LOD level
+            const vao = gl.createVertexArray();
+            gl.bindVertexArray(vao);
+
             // Vertex buffer for this LOD
             const vertexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lod.vertices), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(vertLoc);
+            gl.vertexAttribPointer(vertLoc, 3, gl.FLOAT, false, 0, 0);
 
             // Normal buffer for this LOD
             const normalBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lod.norms), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(normLoc);
+            gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
 
             // Index buffer (triangles)
             const indexBuffer = gl.createBuffer();
@@ -145,15 +150,12 @@ class HeightMap extends GlVAObjectAsync
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lineIndexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lineIndices), gl.STATIC_DRAW);
 
-            chunk.lodBuffers.push({
-               vertexBuffer: vertexBuffer,
-               normalBuffer: normalBuffer,
+            chunk.vaos.push({
+               vao: vao,
                indexBuffer: indexBuffer,
                indexCount: lod.indices.length,
                lineIndexBuffer: lineIndexBuffer,
-               lineIndexCount: lineIndices.length,
-               vertLoc: vertLoc,
-               normLoc: normLoc
+               lineIndexCount: lineIndices.length
             });
          }
       }
@@ -187,16 +189,57 @@ class HeightMap extends GlVAObjectAsync
       return lineIndices;
    }
 
-   // Update LOD for all chunks based on camera position
-   updateChunkLODs(cameraPos)
+   // Update LOD for all chunks based on current transformation matrices
+   updateChunkLODs()
    {
+      // DEBUG: Track frame count for logging
+      if (!this._lodFrameCount) this._lodFrameCount = 0;
+      this._lodFrameCount++;
+
       // First pass: Calculate desired LOD for each chunk based on distance
+      let minDist = Infinity, maxDist = 0;
+      const allDistances = [];
+
+      // DEBUG: Check if matrices are set
+      if (this._lodFrameCount === 1) {
+         console.log('🔍 Model matrix:', this.#modelMatrix ? 'SET' : 'NULL');
+         console.log('🔍 View matrix:', this.#viewMatrix ? 'SET' : 'NULL');
+      }
+
       for (let chunk of this.#chunks) {
-         // Calculate distance from camera to chunk center (in world space, after 3x scale)
-         const dx = (cameraPos[0] / 3) - chunk.centerX;
-         const dy = (cameraPos[1] / 3) - chunk.centerY;
-         const dz = (cameraPos[2] / 3) - chunk.centerZ;
-         const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+         // Transform chunk center same way as shader: model * vertex, then view * result
+         const chunkCenter = [chunk.centerX, chunk.centerY, chunk.centerZ];
+         const worldPos = m4.transformPoint(this.#modelMatrix, chunkCenter);
+         const cameraPos = m4.transformPoint(this.#viewMatrix, worldPos);
+
+         // Calculate distance from camera origin (0,0,0) in camera space
+         // Use Z-distance (depth) which is most relevant for LOD
+         const distanceTransformed = Math.abs(cameraPos[2]);
+
+         // Extract scale from model matrix to normalize distance back to fundamental scale
+         // Model matrix scale is in diagonal elements (assuming uniform scale)
+         const modelScale = Math.sqrt(
+            this.#modelMatrix[0] * this.#modelMatrix[0] +
+            this.#modelMatrix[1] * this.#modelMatrix[1] +
+            this.#modelMatrix[2] * this.#modelMatrix[2]
+         );
+
+         // Normalize distance to fundamental scale (divide by model scale)
+         const distance = distanceTransformed / modelScale;
+
+         // DEBUG: Log first chunk transformation
+         if (this._lodFrameCount === 1 && chunk.row === 0 && chunk.col === 0) {
+            console.log('🔍 Chunk[0,0] model space:', chunkCenter);
+            console.log('🔍 Chunk[0,0] world space:', worldPos);
+            console.log('🔍 Chunk[0,0] camera space:', cameraPos);
+            console.log('🔍 Distance (transformed):', distanceTransformed);
+            console.log('🔍 Model scale:', modelScale);
+            console.log('🔍 Distance (normalized):', distance);
+         }
+
+         minDist = Math.min(minDist, distance);
+         maxDist = Math.max(maxDist, distance);
+         allDistances.push({row: chunk.row, col: chunk.col, dist: distance});
 
          // Select LOD based on distance
          let targetLOD = this.#lodConfigs.length - 1;
@@ -209,6 +252,18 @@ class HeightMap extends GlVAObjectAsync
 
          chunk.desiredLOD = targetLOD;
          chunk.currentLOD = targetLOD;
+      }
+
+      // DEBUG: Log distance ranges and all chunk LODs
+      if (this._lodFrameCount === 1 || this._lodFrameCount % 60 === 0) {
+         console.log(`📏 Distance range: ${minDist.toFixed(2)} - ${maxDist.toFixed(2)}`);
+         console.log('🎯 LOD thresholds:', this.#lodConfigs.map(c => c.distance));
+         const lodCounts = [0,0,0,0];
+         this.#chunks.forEach(c => lodCounts[c.currentLOD]++);
+         console.log('📊 Chunks per LOD:', lodCounts);
+         if (this._lodFrameCount === 1) {
+            console.log('All distances:', allDistances.sort((a,b) => a.dist - b.dist).slice(0, 5));
+         }
       }
 
       // Second pass: Constrain LOD differences between adjacent chunks
@@ -267,8 +322,8 @@ class HeightMap extends GlVAObjectAsync
       return this.#chunks[row * this.#chunkGridSize + col];
    }
 
-   set model      (mtx)  {this.gl.uniformMatrix4fv (this.modelLocation,      false,  mtx) ;}
-   set view       (mtx)  {this.gl.uniformMatrix4fv (this.viewLocation,       false,  mtx) ;}
+   set model      (mtx)  {this.#modelMatrix = mtx; this.gl.uniformMatrix4fv (this.modelLocation,      false,  mtx) ;}
+   set view       (mtx)  {this.#viewMatrix = mtx; this.gl.uniformMatrix4fv (this.viewLocation,       false,  mtx) ;}
    set projection (mtx)  {this.gl.uniformMatrix4fv (this.projectionLocation, false,  mtx) ;}
    set color      (vec4) {this.gl.vertexAttrib4fv  (this.vertColorLocation,         vec4) ;}
 
@@ -419,30 +474,20 @@ class HeightMap extends GlVAObjectAsync
 
       // Draw each chunk with its current LOD
       for (let chunk of this.#chunks) {
-         // Bind the chunk's VAO once
-         gl.bindVertexArray(chunk.vao);
+         // Get the VAO for the current LOD level
+         const vaoData = chunk.vaos[chunk.currentLOD];
 
-         // Get the LOD buffers for the current LOD level
-         const lodBuffers = chunk.lodBuffers[chunk.currentLOD];
-
-         // Bind vertex buffer
-         gl.bindBuffer(gl.ARRAY_BUFFER, lodBuffers.vertexBuffer);
-         gl.enableVertexAttribArray(lodBuffers.vertLoc);
-         gl.vertexAttribPointer(lodBuffers.vertLoc, 3, gl.FLOAT, false, 0, 0);
-
-         // Bind normal buffer
-         gl.bindBuffer(gl.ARRAY_BUFFER, lodBuffers.normalBuffer);
-         gl.enableVertexAttribArray(lodBuffers.normLoc);
-         gl.vertexAttribPointer(lodBuffers.normLoc, 3, gl.FLOAT, false, 0, 0);
+         // Bind the VAO (contains all vertex attribute configuration)
+         gl.bindVertexArray(vaoData.vao);
 
          if (this.#wireframeMode) {
             // Wireframe mode: draw lines
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lodBuffers.lineIndexBuffer);
-            gl.drawElements(gl.LINES, lodBuffers.lineIndexCount, gl.UNSIGNED_INT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vaoData.lineIndexBuffer);
+            gl.drawElements(gl.LINES, vaoData.lineIndexCount, gl.UNSIGNED_INT, 0);
          } else {
             // Solid mode: draw triangles
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lodBuffers.indexBuffer);
-            gl.drawElements(gl.TRIANGLES, lodBuffers.indexCount, gl.UNSIGNED_INT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vaoData.indexBuffer);
+            gl.drawElements(gl.TRIANGLES, vaoData.indexCount, gl.UNSIGNED_INT, 0);
          }
       }
 
@@ -545,8 +590,6 @@ async function heightMapDraw (vao)
          let aspect = gl.canvas.width / gl.canvas.height;
          let projectionMatrix = m4.perspective (fieldOfViewRadians, aspect, 1, 2000);
 
-         let viewProjectionMatrix = m4.multiply(projectionMatrix, controller.camera.matrix);
-
          // Animate the rotation
          controller.model.deltat = deltaTime;
 
@@ -554,35 +597,30 @@ async function heightMapDraw (vao)
          let modelMatrix = controller.model.matrix;
          modelMatrix = m4.scale(modelMatrix, 3, 3, 3); // Scale 3x to make it bigger
 
-         // View matrix: Move camera back so we can see the terrain
-         let cameraPos = [0, 2, 5]; // Camera at (0, 2, 5) - back and up
-         let targetPos = [0, -0.5, 0]; // Look at terrain center (y ~ -0.7 to -0.5)
-         let upVector = [0, 1, 0];
-         let cameraMatrix = m4.lookAt(cameraPos, targetPos, upVector);
-         let viewMatrix = m4.inverse(cameraMatrix);
+         // Set up controller camera position (needed for proper viewing)
+         controller.camera.pos = [0, 2, 5];
+         controller.camera.target = [0, -0.5, 0];
 
-         // Apply controller transformations on top
-         viewMatrix = m4.multiply(viewMatrix, controller.camera.matrix);
-
-         // Update LOD for all chunks based on camera position
-         vao.updateChunkLODs(cameraPos);
+         // View matrix: Use controller's view matrix (which now uses our camera setup)
+         let viewMatrix = controller.camera.matrix;
 
          // DEBUG: Log on first frame
          if (frameCount === undefined) {
             var frameCount = 0;
          }
          frameCount++;
-         if (frameCount === 1) {
-            console.log('🎥 Worker Camera Pos:', cameraPos);
-            console.log('🎯 Worker Target:', targetPos);
-            console.log('📐 Worker Aspect:', aspect);
-            console.log('📊 Worker FOV:', fieldOfViewRadians);
+         if (frameCount === 1 || frameCount % 60 === 0) {
+            console.log('🎥 Controller Camera Pos:', controller.camera.pos);
+            console.log('🎯 Controller Target:', controller.camera.target);
          }
 
          // Use perspective projection
          vao.model      = modelMatrix;
          vao.view       = viewMatrix;
          vao.projection = projectionMatrix;
+
+         // Update LOD based on current matrices
+         vao.updateChunkLODs();
 
          vao.draw();
       }
