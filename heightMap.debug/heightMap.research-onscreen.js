@@ -35,10 +35,10 @@ class HeightMap extends GlVAObject
       return this;
    }
 
-   // Build all chunks with LOD levels - NO CRACKS (boundary overlap version)
+   // Build all chunks with LOD levels - WITH CRACKS (research version)
    buildAllChunks()
    {
-      console.log("🔨 Building chunked LOD system (onscreen - no cracks)...");
+      console.log("🔨 Building chunked LOD system (onscreen - WITH CRACKS for research)...");
       const buildStart = performance.now();
 
       const heightmap = this.heightmap;
@@ -168,7 +168,7 @@ class HeightMap extends GlVAObject
    set projection (mtx)  {this.gl.uniformMatrix4fv (this.projectionLocation, false,  mtx) ;}
    set color      (vec4) {this.gl.vertexAttrib4fv  (this.vertColorLocation,         vec4) ;}
 
-   // Build geometry for a specific chunk with specific LOD level - WITH boundary overlap (no cracks)
+   // Build geometry for a specific chunk with specific LOD level - WITHOUT boundary overlap (shows cracks)
    buildChunkGeometryLOD(chunk, DOWNSAMPLE)
    {
       let heightmap = this.heightmap;
@@ -180,21 +180,11 @@ class HeightMap extends GlVAObject
       const rfi = 2.0 / heightmap.height, rfj = 2.0 / heightmap.width;
       let viter = 0;
 
-      // Extend chunk bounds to create overlap with adjacent chunks
+      // NO boundary extension - chunks don't overlap (this creates visible cracks!)
       let startI = chunk.baseStartX;
       let startJ = chunk.baseStartZ;
       let endI = chunk.baseEndX;
       let endJ = chunk.baseEndZ;
-
-      // Extend right boundary if not the last column
-      if (chunk.col < this.#chunkGridSize - 1 && endI + DOWNSAMPLE < heightmap.width) {
-         endI += DOWNSAMPLE;
-      }
-
-      // Extend bottom boundary if not the last row
-      if (chunk.row < this.#chunkGridSize - 1 && endJ + DOWNSAMPLE < heightmap.height) {
-         endJ += DOWNSAMPLE;
-      }
 
       // Calculate actual dimensions based on loop iterations
       // Loop: for i from startI to (endI - DOWNSAMPLE) inclusive, step DOWNSAMPLE

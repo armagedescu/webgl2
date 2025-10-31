@@ -1,4 +1,4 @@
-// VERSION: 3.0 - Completely independent patch geometries
+// VERSION: RESEARCH - Chunked LOD System with visible cracks (for study)
 "use strict";
 importScripts('../lib/js/gl2js/glcanvas.js');
 importScripts('../lib/js/math/3dmath.js');
@@ -14,17 +14,15 @@ class HeightMap extends GlVAObjectAsync
    #chunks = []; // Array of chunk objects, each with {centerX, centerZ, lodLevels[], buffers[], currentLOD}
    #chunkGridSize = 4; // 4x4 grid = 16 chunks
 
-   // LOD configuration - All levels use large triangles for clear visualization
+   // LOD configuration
    #lodConfigs = [
-      { downsample: 32, name: "LOD 0", distance: 1.0 },   // Close - large triangles
-      { downsample: 48, name: "LOD 1", distance: 2.0 },   // Medium - larger triangles
-      { downsample: 64, name: "LOD 2", distance: 4.0 },   // Far - very large triangles
-      { downsample: 96, name: "LOD 3", distance: Infinity } // Very far - huge triangles
+      { downsample: 2, name: "LOD 0 (Half)", distance: 5 },
+      { downsample: 4, name: "LOD 1 (Quarter)", distance: 10 },
+      { downsample: 8, name: "LOD 2 (Eighth)", distance: 20 },
+      { downsample: 16, name: "LOD 3 (Sixteenth)", distance: Infinity }
    ];
 
    #htmap = null;
-   #wireframeMode = true; // Set to true for line rendering (wireframe)
-
    constructor (context, src, crossOrigin)
    {
       super (context); //GlVAObjectAsync
@@ -56,30 +54,24 @@ class HeightMap extends GlVAObjectAsync
 
       let totalTriangles = 0;
 
-      // Build each chunk - store base boundaries for LOD calculations
+      // Build each chunk
       for (let chunkRow = 0; chunkRow < this.#chunkGridSize; chunkRow++) {
          for (let chunkCol = 0; chunkCol < this.#chunkGridSize; chunkCol++) {
-            // Base chunk bounds (will be extended per LOD level)
-            const baseStartX = chunkCol * chunkWidth;
-            const baseStartZ = chunkRow * chunkHeight;
-            const baseEndX = Math.min((chunkCol + 1) * chunkWidth, heightmap.width - 1);
-            const baseEndZ = Math.min((chunkRow + 1) * chunkHeight, heightmap.height - 1);
-
             const chunk = {
                row: chunkRow,
                col: chunkCol,
-               baseStartX: baseStartX,
-               baseStartZ: baseStartZ,
-               baseEndX: baseEndX,
-               baseEndZ: baseEndZ,
+               startX: chunkCol * chunkWidth,
+               startZ: chunkRow * chunkHeight,
+               endX: Math.min((chunkCol + 1) * chunkWidth, heightmap.width - 1),
+               endZ: Math.min((chunkRow + 1) * chunkHeight, heightmap.height - 1),
                lodLevels: [],
                buffers: [],
                currentLOD: 1 // Default to LOD 1
             };
 
             // Calculate chunk center in world space (after transformation)
-            const centerX = ((chunk.baseStartX + chunk.baseEndX) / 2) * (2.0 / heightmap.width) - 1.0;
-            const centerZ = ((chunk.baseStartZ + chunk.baseEndZ) / 2) * (2.0 / heightmap.height) - 1.0;
+            const centerX = ((chunk.startX + chunk.endX) / 2) * (2.0 / heightmap.width) - 1.0;
+            const centerZ = ((chunk.startZ + chunk.endZ) / 2) * (2.0 / heightmap.height) - 1.0;
             chunk.centerX = centerX;
             chunk.centerZ = centerZ;
             chunk.centerY = -0.5; // Approximate terrain center height
@@ -106,54 +98,45 @@ class HeightMap extends GlVAObjectAsync
 
    init()
    {
-      console.log("vao async init - chunked version with 16 VAOs");
+      console.log("vao async init - chunked version");
       let gl = this.gl;
 
-      // Create one VAO per chunk (16 total)
-      // Each LOD level has its own vertex/normal/index buffers
+      // Create buffers for each chunk
       for (let chunk of this.#chunks) {
-         // Create single VAO for this chunk
-         const vao = gl.createVertexArray();
-         gl.bindVertexArray(vao);
-
-         // Store VAO and LOD buffers
-         chunk.vao = vao;
-         chunk.lodBuffers = [];
-
-         const vertLoc = gl.getAttribLocation(this.program, "vert");
-         const normLoc = gl.getAttribLocation(this.program, "norm");
+         chunk.buffers = [];
 
          for (let lod of chunk.lodLevels) {
-            // Vertex buffer for this LOD
+            // Create VAO and buffers for this LOD level
+            const vao = gl.createVertexArray();
+            gl.bindVertexArray(vao);
+
+            // Vertex buffer
             const vertexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lod.vertices), gl.STATIC_DRAW);
+            const vertLoc = gl.getAttribLocation(this.program, "vert");
+            gl.enableVertexAttribArray(vertLoc);
+            gl.vertexAttribPointer(vertLoc, 3, gl.FLOAT, false, 0, 0);
 
-            // Normal buffer for this LOD
+            // Normal buffer
             const normalBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lod.norms), gl.STATIC_DRAW);
+            const normLoc = gl.getAttribLocation(this.program, "norm");
+            gl.enableVertexAttribArray(normLoc);
+            gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
 
-            // Index buffer (triangles)
+            // Index buffer
             const indexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lod.indices), gl.STATIC_DRAW);
 
-            // Wireframe index buffer (lines)
-            const lineIndices = this.#trianglesToLines(lod.indices);
-            const lineIndexBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lineIndexBuffer);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lineIndices), gl.STATIC_DRAW);
-
-            chunk.lodBuffers.push({
+            chunk.buffers.push({
+               vao: vao,
                vertexBuffer: vertexBuffer,
                normalBuffer: normalBuffer,
                indexBuffer: indexBuffer,
-               indexCount: lod.indices.length,
-               lineIndexBuffer: lineIndexBuffer,
-               lineIndexCount: lineIndices.length,
-               vertLoc: vertLoc,
-               normLoc: normLoc
+               indexCount: lod.indices.length
             });
          }
       }
@@ -167,30 +150,9 @@ class HeightMap extends GlVAObjectAsync
       gl.bindVertexArray(null);
    }
 
-   // Convert triangle indices to line indices for wireframe rendering
-   #trianglesToLines(triangleIndices)
-   {
-      const lineIndices = [];
-      // Each triangle (3 indices) becomes 3 lines (6 indices)
-      for (let i = 0; i < triangleIndices.length; i += 3) {
-         const i0 = triangleIndices[i];
-         const i1 = triangleIndices[i + 1];
-         const i2 = triangleIndices[i + 2];
-
-         // Line 1: i0 -> i1
-         lineIndices.push(i0, i1);
-         // Line 2: i1 -> i2
-         lineIndices.push(i1, i2);
-         // Line 3: i2 -> i0
-         lineIndices.push(i2, i0);
-      }
-      return lineIndices;
-   }
-
    // Update LOD for all chunks based on camera position
    updateChunkLODs(cameraPos)
    {
-      // First pass: Calculate desired LOD for each chunk based on distance
       for (let chunk of this.#chunks) {
          // Calculate distance from camera to chunk center (in world space, after 3x scale)
          const dx = (cameraPos[0] / 3) - chunk.centerX;
@@ -207,64 +169,8 @@ class HeightMap extends GlVAObjectAsync
             }
          }
 
-         chunk.desiredLOD = targetLOD;
          chunk.currentLOD = targetLOD;
       }
-
-      // Second pass: Constrain LOD differences between adjacent chunks
-      // This prevents cracks by ensuring neighbors don't differ by more than 1 LOD level
-      let changed = true;
-      let iterations = 0;
-      const maxIterations = 10; // Prevent infinite loops
-      let adjustmentsMade = 0;
-
-      while (changed && iterations < maxIterations) {
-         changed = false;
-         iterations++;
-
-         for (let chunk of this.#chunks) {
-            const row = chunk.row;
-            const col = chunk.col;
-
-            // Check all 4 neighbors (up, down, left, right)
-            const neighbors = [
-               this.#getChunk(row - 1, col), // top
-               this.#getChunk(row + 1, col), // bottom
-               this.#getChunk(row, col - 1), // left
-               this.#getChunk(row, col + 1)  // right
-            ];
-
-            for (let neighbor of neighbors) {
-               if (!neighbor) continue;
-
-               // If neighbor has lower detail (higher LOD number), we might need to reduce our detail
-               if (neighbor.currentLOD > chunk.currentLOD + 1) {
-                  // Neighbor is too low detail, increase our LOD (reduce detail) to match closer
-                  const oldLOD = chunk.currentLOD;
-                  chunk.currentLOD = neighbor.currentLOD - 1;
-                  changed = true;
-                  adjustmentsMade++;
-                  if (iterations === 1 && adjustmentsMade <= 5) {
-                     console.log(`🔧 Adjusted chunk [${row},${col}] from LOD ${oldLOD} to ${chunk.currentLOD} (neighbor at LOD ${neighbor.currentLOD})`);
-                  }
-               }
-               // If we have lower detail than neighbor, neighbor will adjust to us
-            }
-         }
-      }
-
-      if (adjustmentsMade > 0) {
-         console.log(`✅ LOD constraint pass: ${adjustmentsMade} adjustments in ${iterations} iterations`);
-      }
-   }
-
-   // Helper to get chunk by grid position
-   #getChunk(row, col)
-   {
-      if (row < 0 || row >= this.#chunkGridSize || col < 0 || col >= this.#chunkGridSize) {
-         return null;
-      }
-      return this.#chunks[row * this.#chunkGridSize + col];
    }
 
    set model      (mtx)  {this.gl.uniformMatrix4fv (this.modelLocation,      false,  mtx) ;}
@@ -284,70 +190,30 @@ class HeightMap extends GlVAObjectAsync
       const rfi = 2.0 / heightmap.height, rfj = 2.0 / heightmap.width;
       let viter = 0;
 
-      // Extend boundaries leaving a small fixed gap for visualization
-      // Ensure fresh copies to prevent contamination from previous LOD iterations
-      const startI = chunk.baseStartX;
-      const startJ = chunk.baseStartZ;
-      const endI = chunk.baseEndX;
-      const endJ = chunk.baseEndZ;
+      // Work within chunk bounds
+      const startI = chunk.startX;
+      const startJ = chunk.startZ;
+      const endI = chunk.endX;
+      const endJ = chunk.endZ;
 
-      // Each patch is completely independent - pure linear approach
-      // Simple gap: actualEnd = boundary - gapSize
-      // Don't extend - the gap IS the visible separation between patches
+      // Calculate actual dimensions based on how the loop will iterate
+      // The loop goes from start to (end - DOWNSAMPLE) inclusive, stepping by DOWNSAMPLE
+      const chunkWidth = Math.floor((endI - startI) / DOWNSAMPLE);
+      const chunkLength = Math.floor((endJ - startJ) / DOWNSAMPLE);
 
-      const gapSize = 10; // Small fixed gap (25% wider)
-
-      // Calculate actualEnd independently for each LOD - no state carryover
-      const actualEndI = (chunk.col < this.#chunkGridSize - 1) ? (endI - gapSize) : endI;
-      const actualEndJ = (chunk.row < this.#chunkGridSize - 1) ? (endJ - gapSize) : endJ;
-
-      if (chunk.row === 0 && chunk.col === 0) {
-         console.log(`🔧 VERSION 3.24: Simple gap, no extension, actualEndI=${actualEndI}, gap=${gapSize}px, DOWNSAMPLE=${DOWNSAMPLE}`);
-      }
-
-      // Calculate how many vertices fit in this chunk
-      const chunkWidth = Math.floor((actualEndI - startI) / DOWNSAMPLE) + 1;
-      const chunkLength = Math.floor((actualEndJ - startJ) / DOWNSAMPLE) + 1;
-
-      // Build vertices for this chunk - independent grid
-      // Calculate positions using size / partition formula
-      const partitionSizeI = (actualEndI - startI) / (chunkWidth - 1);
-      const partitionSizeJ = (actualEndJ - startJ) / (chunkLength - 1);
-
-      for (let jIdx = 0; jIdx < chunkLength; jIdx++)
+      // Build vertices for this chunk only
+      for (let j = startJ; j <= endJ - DOWNSAMPLE; j += DOWNSAMPLE)
       {
-         const j = Math.round(startJ + jIdx * partitionSizeJ);
-         for (let iIdx = 0; iIdx < chunkWidth; iIdx++)
+         for (let i = startI; i <= endI - DOWNSAMPLE; i += DOWNSAMPLE)
          {
-            const i = Math.round(startI + iIdx * partitionSizeI);
-            // Sample heightmap at current position
-            // For normal calculation, use actual partition size or clamp to valid neighbors
-            const deltaI = Math.round(partitionSizeI);
-            const deltaJ = Math.round(partitionSizeJ);
+            let [x,  y,  z]  = [i,              heightmap.data[j]              [i]              ,  j];
+            let [x1, y1, z1] = [i + DOWNSAMPLE, heightmap.data[j]              [i + DOWNSAMPLE] ,  j];
+            let [x2, y2, z2] = [i + DOWNSAMPLE, heightmap.data[j + DOWNSAMPLE] [i + DOWNSAMPLE] ,  j + DOWNSAMPLE];
 
-            const i1 = Math.min(i + deltaI, heightmap.width - 1);
-            const j1 = Math.min(j + deltaJ, heightmap.height - 1);
+            let nms = cross3p ( [x,  y,  z], [x2, y2, z2],  [x1, y1, z1]);
+            nms = normv (nms);
 
-            // Get vertex position
-            let [x,  y,  z] = [i, heightmap.data[j][i], j];
-
-            // For boundary vertices, calculate normal from valid neighboring points
-            // Use previous positions if at boundary (for proper normal calculation)
-            const i0_norm = (i1 === i) ? Math.max(i - deltaI, 0) : i;
-            const j0_norm = (j1 === j) ? Math.max(j - deltaJ, 0) : j;
-            const i1_norm = (i1 === i) ? i : i1;
-            const j1_norm = (j1 === j) ? j : j1;
-
-            let [x0, y0, z0] = [i0_norm, heightmap.data[j0_norm][i0_norm], j0_norm];
-            let [x1, y1, z1] = [i1_norm, heightmap.data[j0_norm][i1_norm], j0_norm];
-            let [x2, y2, z2] = [i1_norm, heightmap.data[j1_norm][i1_norm], j1_norm];
-
-            // Calculate normal using cross product of valid triangle
-            let nms = cross3p([x0, y0, z0], [x2, y2, z2], [x1, y1, z1]);
-            nms = normv(nms);
-
-            // Transform vertex to world space
-            [x,  y,  z] = resizev([x, y, z], [rfi, maxheight, rfj]);
+            [x,  y,  z]   = resizev ([ x,  y,  z], [rfi, maxheight, rfj]);
             [x,  y,  z]  = offsetv([x,  y,  z],  [-1., bottom, -1.]);
 
             vertices[viter] = x;
@@ -419,31 +285,9 @@ class HeightMap extends GlVAObjectAsync
 
       // Draw each chunk with its current LOD
       for (let chunk of this.#chunks) {
-         // Bind the chunk's VAO once
-         gl.bindVertexArray(chunk.vao);
-
-         // Get the LOD buffers for the current LOD level
-         const lodBuffers = chunk.lodBuffers[chunk.currentLOD];
-
-         // Bind vertex buffer
-         gl.bindBuffer(gl.ARRAY_BUFFER, lodBuffers.vertexBuffer);
-         gl.enableVertexAttribArray(lodBuffers.vertLoc);
-         gl.vertexAttribPointer(lodBuffers.vertLoc, 3, gl.FLOAT, false, 0, 0);
-
-         // Bind normal buffer
-         gl.bindBuffer(gl.ARRAY_BUFFER, lodBuffers.normalBuffer);
-         gl.enableVertexAttribArray(lodBuffers.normLoc);
-         gl.vertexAttribPointer(lodBuffers.normLoc, 3, gl.FLOAT, false, 0, 0);
-
-         if (this.#wireframeMode) {
-            // Wireframe mode: draw lines
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lodBuffers.lineIndexBuffer);
-            gl.drawElements(gl.LINES, lodBuffers.lineIndexCount, gl.UNSIGNED_INT, 0);
-         } else {
-            // Solid mode: draw triangles
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lodBuffers.indexBuffer);
-            gl.drawElements(gl.TRIANGLES, lodBuffers.indexCount, gl.UNSIGNED_INT, 0);
-         }
+         const buffer = chunk.buffers[chunk.currentLOD];
+         gl.bindVertexArray(buffer.vao);
+         gl.drawElements(gl.TRIANGLES, buffer.indexCount, gl.UNSIGNED_INT, 0);
       }
 
       gl.bindVertexArray(null);

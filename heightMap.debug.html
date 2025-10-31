@@ -53,16 +53,149 @@
       </script>
 	   <script src="./heightMap.debug/heightMap.js"></script>
    </canvas><br/>
-   <div  class="sample">
-      Offscreen heightmap, no texture, no framebuffer<br/>
-      TODO: Investigate big performance problems<br/>
+
+   <div class="sample" style="border: 3px dashed #2196f3; background: #e3f2fd;">
+      🔬 RESEARCH: Onscreen Chunked LOD with visible cracks (for study)<br/>
+      <canvas class="green" id="HeightMapButuceniOnscreenResearch" width="400" height = "300">
+         Height map onscreen - with cracks<br/>
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in vec3 vert;
+            layout (location = 1) in vec3 norm;
+            layout (location = 2) in vec4 vertColor;
+
+            out vec4 terrainColor;
+            out vec3 terrainNormal;
+            out vec3 lightDirection;
+
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
+
+            void main()
+            {
+               gl_Position    = projection * view * model * vec4(vert, 1.0);
+               terrainColor   = vertColor;
+               terrainNormal  = norm;
+               lightDirection = vec3(0.f, -1., 0.);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec4 terrainColor;
+            in vec3 terrainNormal;
+            in vec3 lightDirection;
+            out vec4 FragColor;
+            void main()
+            {
+               float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;
+               FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+            }
+         </script>
+         <script src="./heightMap.debug/heightMap.research-onscreen.js"></script>
+      </canvas>
+   </div><br/>
+
+   <div class="sample">
+      Offscreen Worker #1<br/>
       <canvas class="green" id="HeightMapButuceniOffscreen" width="400" height = "300">
          <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
          <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
          <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
-      </canvas><!-- br/ -->
+      </canvas>
    </div>
    <br/>
+
+   <div class="sample" style="border: 3px dashed #ff5722; background: #fff3e0;">
+      🔬 RESEARCH: Chunked LOD with visible cracks (for study)<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreenResearch" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.research.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <!-- div class="sample">
+      Offscreen Worker #2<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen2" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #3<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen3" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #4<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen4" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #5<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen5" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #6<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen6" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #7<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen7" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #8<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen8" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/>
+
+   <div class="sample">
+      Offscreen Worker #9<br/>
+      <canvas class="green" id="HeightMapButuceniOffscreen9" width="400" height = "300">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
+      </canvas>
+   </div>
+   <br/ -->
 
    <a href="./tutorials.html">Tutorials</a>
 
