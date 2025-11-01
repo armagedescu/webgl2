@@ -570,10 +570,10 @@ async function heightMapDraw (vao)
             var frameCount = 0;
          }
          frameCount++;
-         if (frameCount === 1 || frameCount % 60 === 0) {
-            console.log('🎥 Controller Camera Pos:', controller.camera.pos);
-            console.log('🎯 Controller Target:', controller.camera.target);
-         }
+         //if (frameCount === 1 || frameCount % 60 === 0) {
+         //   console.log('🎥 Controller Camera Pos:', controller.camera.pos);
+         //   console.log('🎯 Controller Target:', controller.camera.target);
+         //}
 
          // Use perspective projection
          vao.model      = modelMatrix;

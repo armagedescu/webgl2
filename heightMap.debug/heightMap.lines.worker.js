@@ -23,7 +23,6 @@ class HeightMap extends GlVAObjectAsync
    ];
 
    #htmap = null;
-   #wireframeMode = true; // Set to true for line rendering (wireframe)
 
    // Store matrices for LOD calculations
    #modelMatrix = null;
@@ -139,11 +138,6 @@ class HeightMap extends GlVAObjectAsync
             gl.enableVertexAttribArray(normLoc);
             gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
 
-            // Index buffer (triangles)
-            const indexBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lod.indices), gl.STATIC_DRAW);
-
             // Wireframe index buffer (lines)
             const lineIndices = this.#trianglesToLines(lod.indices);
             const lineIndexBuffer = gl.createBuffer();
@@ -152,8 +146,6 @@ class HeightMap extends GlVAObjectAsync
 
             chunk.vaos.push({
                vao: vao,
-               indexBuffer: indexBuffer,
-               indexCount: lod.indices.length,
                lineIndexBuffer: lineIndexBuffer,
                lineIndexCount: lineIndices.length
             });
@@ -433,7 +425,7 @@ class HeightMap extends GlVAObjectAsync
       let gl = this.gl;
       this.color = new Float32Array([1, 0, 0, 1]);
 
-      // Draw each chunk with its current LOD
+      // Draw each chunk with its current LOD as wireframe lines
       for (let chunk of this.#chunks) {
          // Get the VAO for the current LOD level
          const vaoData = chunk.vaos[chunk.currentLOD];
@@ -441,15 +433,9 @@ class HeightMap extends GlVAObjectAsync
          // Bind the VAO (contains all vertex attribute configuration)
          gl.bindVertexArray(vaoData.vao);
 
-         if (this.#wireframeMode) {
-            // Wireframe mode: draw lines
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vaoData.lineIndexBuffer);
-            gl.drawElements(gl.LINES, vaoData.lineIndexCount, gl.UNSIGNED_INT, 0);
-         } else {
-            // Solid mode: draw triangles
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vaoData.indexBuffer);
-            gl.drawElements(gl.TRIANGLES, vaoData.indexCount, gl.UNSIGNED_INT, 0);
-         }
+         // Draw lines
+         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vaoData.lineIndexBuffer);
+         gl.drawElements(gl.LINES, vaoData.lineIndexCount, gl.UNSIGNED_INT, 0);
       }
 
       gl.bindVertexArray(null);
