@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Testing JavaScript Modules - All Patterns</h1>
+
+<!-- h2>Option 1: Simple Script Include</h2>
+<div id="output1"></div>
+<script>
+   // This is a "library"
+   class Calculator {
+      add(a, b) { return a + b; }
+   }
+</script>
+<script>
+   // This uses the library
+   let calc = new Calculator();
+   let output1 = document.getElementById('output1');
+   output1.textContent = "Calculator: 1 + 2 = " + calc.add(1, 2);
+   console.log("1 + 2 =", calc.add(1, 2));
+</script>
+
+<h2>Option 2: IIFE Pattern (your current approach)</h2>
+<div id="output2"></div>
+<script>
+{
+   let output = document.currentScript.previousElementSibling;
+   class Counter {
+      constructor() { this.count = 0; }
+      increment() { this.count++; }
+   }
+   let counter = new Counter();
+   counter.increment();
+   counter.increment();
+   output.textContent = "Counter: " + counter.count;
+}
+</script -->
+
+<h2>Option 3: ES6 Modules</h2>
+<div id="output3"></div>
+<script type="module">
+   import { MathLib, square } from './test-lib/math-lib.js';
+
+   let math = new MathLib();
+   let output3 = document.getElementById('output3');
+   output3.textContent = "MathLib: 5 * 3 = " + math.multiply(5, 3) + ", square(4) = " + square(4);
+</script>
+
+</body>
+</html>

@@ -11,50 +11,51 @@
    <script src="./lib/js/gl2js/glcontroller.js"></script>
 </head>
 <body>
+   On screen div holder: yet to be implemented properly<br/>
    <div class="sample" style="background: #ffeb3b; padding: 10px; font-weight: bold;">
-      ⚠️ DEBUG VERSION - Performance Testing & Analysis
-   </div><br/>
-   <canvas class="green" id="HeightMapButuceni" width="400" height = "300">
-      Height map, no texture, no framebuffer<br/>
-      <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
-         #version 300 es
-         layout (location = 0) in vec3 vert;
-         layout (location = 1) in vec3 norm;
-         layout (location = 2) in vec4 vertColor;
+      ⚠️ DEBUG VERSION - Performance Testing & Analysis<br/>
+      <canvas class="green" id="HeightMapButuceni" width="400" height = "300">
+         Height map, no texture, no framebuffer<br/>
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in vec3 vert;
+            layout (location = 1) in vec3 norm;
+            layout (location = 2) in vec4 vertColor;
+               
+            out vec4 terrainColor;
+            out vec3 terrainNormal;
+            out vec3 lightDirection;
             
-         out vec4 terrainColor;
-         out vec3 terrainNormal;
-         out vec3 lightDirection;
-         
-         uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
-         uniform mat4 view;       //moves world space objects around based on camera
-         uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
-         
-         void main()
-         {
-            gl_Position    = projection * view * model * vec4(vert, 1.0);
-            terrainColor   = vertColor;
-            terrainNormal  = norm;
-            lightDirection = vec3(0.f, -1., 0.);
-         }
-      </script>
-      <script  type="text/glsl-shader" data-gl-type="fragment-shader">
-         #version 300 es
-         precision mediump float;
-         in vec4 terrainColor;
-         in vec3 terrainNormal;
-         in vec3 lightDirection;
-         out vec4 FragColor;
-         void main()
-         {
-            float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
-            FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
-         }
-      </script>
-	   <script src="./heightMap.debug/heightMap.js"></script>
-   </canvas><br/>
-
-   <div class="sample" style="border: 3px dashed #2196f3; background: #e3f2fd;">
+            uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+            uniform mat4 view;       //moves world space objects around based on camera
+            uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+            
+            void main()
+            {
+               gl_Position    = projection * view * model * vec4(vert, 1.0);
+               terrainColor   = vertColor;
+               terrainNormal  = norm;
+               lightDirection = vec3(0.f, -1., 0.);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec4 terrainColor;
+            in vec3 terrainNormal;
+            in vec3 lightDirection;
+            out vec4 FragColor;
+            void main()
+            {
+               float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
+               FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+            }
+         </script>
+	      <script src="./heightMap.debug/heightMap.js"></script>
+      </canvas>
+   </div><br/>
+   Onscreen div holder: basic chunked LOD height map rendering
+   <!-- div class="sample" style="border: 3px dashed #2196f3; background: #e3f2fd;">
       🔬 RESEARCH: Onscreen Chunked LOD with visible cracks (for study)<br/>
       <canvas class="green" id="HeightMapButuceniOnscreenResearch" width="400" height = "300">
          Height map onscreen - with cracks<br/>
@@ -95,24 +96,89 @@
          </script>
          <script src="./heightMap.debug/heightMap.research-onscreen.js"></script>
       </canvas>
-   </div><br/>
-
-   <div class="sample">
+   </div--><br/>
+   Offscreen div holder: ui proxy, yet to be researched properly
+   <!-- div class="sample">
       Offscreen Worker #1<br/>
       <canvas class="green" id="HeightMapButuceniOffscreen" width="400" height = "300">
          <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
          <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
          <script  src="./heightMap.debug/heightMap.uiproxy.js"></script>
       </canvas>
-   </div>
+   </div -->
    <br/>
-
-   <div class="sample" style="border: 3px dashed #ff5722; background: #fff3e0;">
+   Offscreen div holder: ui proxy research, yet to be researched properly
+   <!-- div class="sample" style="border: 3px dashed #ff5722; background: #fff3e0;">
       🔬 RESEARCH: Chunked LOD with visible cracks (for study)<br/>
       <canvas class="green" id="HeightMapButuceniOffscreenResearch" width="400" height = "300">
          <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
          <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
          <script  src="./heightMap.debug/heightMap.uiproxy.research.js"></script>
+      </canvas>
+   </div -->
+   <br/>
+   Offscreen div holder: strong point, lines worker multiple VAOs, lod levels
+   <!-- div class="sample" style="border: 3px solid #4caf50; background: #e8f5e9;">
+      ✅ COMPLETE: Chunked LOD with wireframe and dynamic distance-based level selection<br/>
+      <canvas class="green" id="HeightMapButuceniLines" width="400" height = "300" tabindex="0">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.lines.uiproxy.js"></script>
+      </canvas>
+   </div -->
+   <br/>
+   Offscreen div holder: strong point, triangles, wireframe, worker multiple VAOs, lod levels
+   <!-- div class="sample" style="border: 3px solid #2196f3; background: #e3f2fd;">
+      🔷 TRIANGLES WORKER: Chunked LOD with filled triangles rendering (offscreen worker)<br/>
+      <canvas class="green" id="HeightMapButuceniTriangles" width="400" height = "300" tabindex="0">
+         <script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script>
+         <script  src="./heightMap.debug/heightMap.triangles.uiproxy.js"></script>
+      </canvas>
+   </div -->
+   <br/>
+   Onscreen div holder: strong point, triangles, wireframe, worker multiple VAOs, lod levels
+   <div class="sample" style="border: 3px solid #9c27b0; background: #f3e5f5;">
+      🎨 TRIANGLES ONSCREEN: Chunked LOD with filled triangles rendering (onscreen)<br/>
+      <canvas class="green" id="HeightMapButuceniTrianglesOnscreen" width="400" height = "300" tabindex="0">
+         <!-- script  type="text/glsl-shader" data-gl-type="vertex-shader"   data-gl-src="./heightMap.debug/height-map.vs" ></script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader" data-gl-src="./heightMap.debug/height-map.fs" ></script -->
+         <script  type="text/glsl-shader"   data-gl-type="vertex-shader">
+            #version 300 es
+            layout (location = 0) in vec3 vert;
+            layout (location = 1) in vec3 norm;
+            layout (location = 2) in vec4 vertColor;
+               
+            out vec4 terrainColor;
+            out vec3 terrainNormal;
+            out vec3 lightDirection;
+            
+            uniform mat4 model;      //takes local coordinates for thing and moves it into world coordinates
+            uniform mat4 view;       //moves world space objects around based on camera
+            uniform mat4 projection; //converts values to normalised device coordinates (use sweet math for perspective)
+            
+            void main()
+            {
+               gl_Position    = projection * view * model * vec4(vert, 1.0);
+               terrainColor   = vertColor;
+               terrainNormal  = norm;
+               lightDirection = vec3(0.f, -1., 0.);
+            }
+         </script>
+         <script  type="text/glsl-shader" data-gl-type="fragment-shader">
+            #version 300 es
+            precision mediump float;
+            in vec4 terrainColor;
+            in vec3 terrainNormal;
+            in vec3 lightDirection;
+            out vec4 FragColor;
+            void main()
+            {
+               float strength = dot(normalize(-lightDirection), normalize(terrainNormal)) * 1.2;//* 0.75;//1.0;//0.75;//
+               FragColor = vec4( terrainColor.rgb * strength, terrainColor.a);
+            }
+         </script>
+         <script  src="./heightMap.debug/heightMap.triangles.js"></script>
       </canvas>
    </div>
    <br/>

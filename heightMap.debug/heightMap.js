@@ -345,7 +345,7 @@ async function heightMapDraw (vao)
       // DEBUG: FPS calculation
       if (time - lastFpsUpdate > 1.0) {
          fps = frameCount / (time - lastFpsUpdate);
-         console.log('📊 FPS:', fps.toFixed(1), '| Frame:', frameCount);
+         //console.log('📊 FPS:', fps.toFixed(1), '| Frame:', frameCount);
          frameCount = 0;
          lastFpsUpdate = time;
       }
@@ -399,7 +399,7 @@ async function heightMapDraw (vao)
          const drawEnd = performance.now();
 
          if (frameCount < 5 || frameCount % 30 === 0) {
-            console.log('🎨 Draw call time:', (drawEnd - drawStart).toFixed(2), 'ms');
+            //console.log('🎨 Draw call time:', (drawEnd - drawStart).toFixed(2), 'ms');
          }
       }
 

@@ -1,0 +1,94 @@
+Understood! I'll leave the file as you have it - with the commented out sections preserved for your future experiments with document.currentScript. The file now focuses on ES6 modules while keeping the other examples commented for later reference. Is there anything else you'd like to work on with the ES6 modules or the test examples?
+So, if I use libs, I should create the script as module?
+Yes, for ES6 modules you must use type="module":
+<script type="module">
+   import { MathLib } from './test-lib/math-lib.js';
+</script>
+Why type="module" is required:
+Tells browser this script uses import/export
+Without it, import statements will fail
+Enables strict mode automatically
+Scripts run deferred (after DOM loads)
+Key differences: Regular script (no modules):
+<script src="mycode.js"></script>
+<!-- Can't use import/export -->
+Module script:
+<script type="module" src="mycode.js"></script>
+<!-- Can use import/export -->
+Inline module:
+<script type="module">
+   import { something } from './lib.js';
+</script>
+Bottom line: If you want to use import to load libraries, you must add type="module" to your <script> tag!
+Just curious, is this a browser feature only? Or it is fundamental to v8?
+It's a browser feature, not V8! V8 (the engine):
+Executes JavaScript code
+Handles classes, functions, async, etc.
+Does NOT handle import/export or file loading
+Browser (Chrome, Firefox, etc.):
+Uses V8 to execute code
+Handles module loading, fetching files, resolving paths
+Implements <script type="module">
+Manages the module cache
+Think of it this way:
+V8 = calculator (does the math)
+Browser = librarian (fetches the books and hands them to the calculator)
+In Node.js:
+Also uses V8 engine
+But Node.js (not V8) handles module loading
+Node.js implements import/export and file system access
+So:
+V8 understands the syntax of import/export (ES6 syntax)
+But the browser (or Node.js) actually loads the files
+The module system is part of the runtime environment (browser/Node.js), not the engine (V8)!
+Good. Now, how does the import work?
+How import works - step by step: 1. You write:
+import { MathLib, square } from './test-lib/math-lib.js';
+2. Browser does this:
+Step 1: Parse the import statement
+   - "I need MathLib and square"
+   - "They're in './test-lib/math-lib.js'"
+
+Step 2: Resolve the path
+   - Current page: http://example.com/test-lib.html
+   - Relative path: ./test-lib/math-lib.js
+   - Full URL: http://example.com/test-lib/math-lib.js
+
+Step 3: Fetch the file (HTTP request)
+   - GET http://example.com/test-lib/math-lib.js
+   - Download the JavaScript file
+
+Step 4: Parse the module file
+   export class MathLib { ... }
+   export function square(x) { ... }
+
+Step 5: Execute the module
+   - Create MathLib class
+   - Create square function
+
+Step 6: Import what you asked for
+   - Give you MathLib
+   - Give you square
+
+Step 7: Cache it
+   - If another file imports the same module, reuse it (no re-download)
+Key points: Named exports (what you're using):
+// In library file:
+export class MathLib { }
+export function square(x) { }
+
+// In your code:
+import { MathLib, square } from './lib.js';  // Must match names exactly
+Default export:
+// In library file:
+export default class MathLib { }
+
+// In your code:
+import MathLib from './lib.js';  // Can use any name
+import MyMath from './lib.js';   // Also works!
+Import everything:
+import * as Math from './lib.js';
+// Use: Math.MathLib, Math.square
+Bottom line: Browser fetches, parses, executes, and caches the module for you!
+Nice!, short succint and laconic info. That's exactly that I need!
+Perfect! I'm glad that style works for you - short, clear, to the point. Feel free to come back anytime you need more explanations like this, whether it's for ES6 modules, WebGPU, tessellation shaders, or anything else. I'll keep it KISS! 
