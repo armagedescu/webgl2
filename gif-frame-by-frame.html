@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>gifuct-js Sample</title>
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         margin: 20px;
+      }
+      canvas {
+         border: 1px solid #ccc;
+         margin: 10px;
+      }
+      #info {
+         margin: 10px 0;
+         font-weight: bold;
+      }
+   </style>
+</head>
+<body>
+   <h1>gifuct-js Sample - GIF Frame Processor</h1>
+
+   <input type="file" id="gifInput" accept="image/gif">
+   <br><br>
+
+   <div id="info"></div>
+
+   <div>
+      <h3>Original GIF:</h3>
+      <img id="originalGif">
+   </div>
+
+   <div>
+      <h3>Processed Frames (inverted colors):</h3>
+      <canvas id="outputCanvas"></canvas>
+   </div>
+
+   <script type="module">
+      /*
+       * gifuct-js - A Simple to use javascript .GIF decoder
+       * https://github.com/matt-way/gifuct-js
+       * Authors: Matt Way & Nick Drewe
+       * Copyright (c) 2015 Matt Way
+       * Licensed under the MIT License
+       */
+
+      import { parseGIF, decompressFrames } from './3rdparty/matt-way/gifuct-js/gifuct-js.browser.js';
+
+      const gifInput = document.getElementById('gifInput');
+      const originalGif = document.getElementById('originalGif');
+      const outputCanvas = document.getElementById('outputCanvas');
+      const info = document.getElementById('info');
+      const ctx = outputCanvas.getContext('2d');
+
+      let gifLoadTimestamp = null;
+
+      originalGif.addEventListener('load', () => {
+         gifLoadTimestamp = performance.now();
+         console.log('GIF loaded at timestamp:', gifLoadTimestamp);
+      });
+
+      gifInput.addEventListener('change', async (e) => {
+         const file = e.target.files[0];
+         if (!file) return;
+
+         // Display original GIF
+         originalGif.src = URL.createObjectURL(file);
+
+         // Read file as ArrayBuffer
+         const arrayBuffer = await file.arrayBuffer();
+
+         // Parse GIF structure
+         const gif = parseGIF(arrayBuffer);
+
+         // Decompress all frames
+         const frames = decompressFrames(gif, true);
+
+         console.log('GIF parsed:', {
+            width: gif.lsd.width,
+            height: gif.lsd.height,
+            frameCount: frames.length,
+            firstFrameDelay: frames[0]?.delay
+         });
+         console.log('All frame delays:', frames.map(f => f.delay));
+
+         // Setup output canvas
+         outputCanvas.width = gif.lsd.width;
+         outputCanvas.height = gif.lsd.height;
+
+         info.textContent = `Processing ${frames.length} frames...`;
+
+         // Animate through frames
+         let currentFrame = 0;
+         let isFirstFrame = true;
+         let animationStartTime = null;
+         let nextFrameTime = 0;
+
+         // Calculate cumulative frame times
+         const frameTimes = [];
+         let cumulativeTime = 0;
+         for (let i = 0; i < frames.length; i++) {
+            frameTimes.push(cumulativeTime);
+            cumulativeTime += (frames[i].delay || 100);
+         }
+         const totalAnimationTime = cumulativeTime;
+
+         // Temp canvas for correct GIF compositing before inversion
+         const tempCanvas = document.createElement('canvas');
+         tempCanvas.width = gif.lsd.width;
+         tempCanvas.height = gif.lsd.height;
+         const tempCtx = tempCanvas.getContext('2d',  {willReadFrequently: true});
+         document.body.appendChild(tempCanvas);
+
+         function processAndDisplayFrame(timestamp) {
+            if (animationStartTime === null) {
+               if (gifLoadTimestamp !== null) {
+                  // Sync with the browser's GIF player
+                  animationStartTime = gifLoadTimestamp;
+               } else {
+                  animationStartTime = timestamp;
+               }
+            }
+
+            const elapsedTime = timestamp - animationStartTime;
+            const loopTime = elapsedTime % totalAnimationTime;
+
+            // Find which frame should be displayed at this time
+            let targetFrame = 0;
+            for (let i = frames.length - 1; i >= 0; i--) {
+               if (loopTime >= frameTimes[i]) {
+                  targetFrame = i;
+                  break;
+               }
+            }
+
+            if (targetFrame !== currentFrame) {
+               // Handle disposal method from previous frame on TEMP canvas
+               if (isFirstFrame) {
+                  tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                  isFirstFrame = false;
+               } else if (currentFrame >= 0) {
+                  const prevFrame = frames[currentFrame];
+                  if (prevFrame.disposalType === 2) {
+                     tempCtx.clearRect(
+                        prevFrame.dims.left,
+                        prevFrame.dims.top,
+                        prevFrame.dims.width,
+                        prevFrame.dims.height
+                     );
+                  }
+               }
+
+               currentFrame = targetFrame;
+               const frame = frames[currentFrame];
+
+               // Draw original frame to temp canvas
+               const imageData = new ImageData(
+                  new Uint8ClampedArray(frame.patch),
+                  frame.dims.width,
+                  frame.dims.height
+               );
+               tempCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
+
+               // Get full composited frame and invert it
+               const fullImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+               const data = fullImageData.data;
+               for (let i = 0; i < data.length; i += 4) {
+                  data[i] = 255 - data[i];         // R
+                  data[i + 1] = 255 - data[i + 1]; // G
+                  data[i + 2] = 255 - data[i + 2]; // B
+                  // Alpha unchanged
+               }
+
+               // Draw inverted result to output canvas
+               ctx.putImageData(fullImageData, 0, 0);
+
+               info.textContent = `Frame ${currentFrame + 1} of ${frames.length}`;
+            }
+
+            requestAnimationFrame(processAndDisplayFrame);
+         }
+
+         // Start animation
+         requestAnimationFrame(processAndDisplayFrame);
+      });
+   </script>
+</body>
+</html>
